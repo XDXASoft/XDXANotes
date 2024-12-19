@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "628316324784",
+    "project_id": "xdxanotes",
+    "storage_bucket": "xdxanotes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628316324784:android:91432a3f79da19b5f84c75",
+        "android_client_info": {
+          "package_name": "ru.xdxasoft.xdxanotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpHkG-A8mFM0b3bJWHaMhX2r7OpXyG_FM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

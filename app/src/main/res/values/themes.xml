@@ -1,0 +1,40 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.XDXANotes" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorPrimary">@color/colorPrimaryLightTheme</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:colorPrimaryDark">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="materialButtonStyle">@style/TextBut</item>
+        <item name="iconTint">@color/black</item>
+
+    </style>
+
+    <style name="TextBut" parent="Widget.MaterialComponents.Button">
+
+        <item name="android:textColor">@color/white</item>
+        <item name="shapeAppearance">@style/CustomShapeAppearance</item>
+
+    </style>
+
+    <style name="MyMaterialSwitch" parent="Theme.MaterialComponents.Light">
+        <item name="trackTint">@color/trackTint</item>
+        <item name="thumbTint">@color/colorPrimaryLightTheme</item>
+    </style>
+
+    <style name="CustomShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
+    <style name="MySwitch" parent="Theme.AppCompat.Light">
+        <item name="trackTint">@color/trackTint</item>
+        <item name="colorControlActivated">@color/colorPrimaryLightTheme</item>
+    </style>
+
+    <style name="Theme.XDXANotes" parent="Base.Theme.XDXANotes" />
+
+</resources>

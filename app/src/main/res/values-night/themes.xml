@@ -1,0 +1,42 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.XDXANotes" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
+        <item name="android:windowBackground">@color/gray</item>
+        <item name="android:colorPrimaryDark">@color/gray</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="materialButtonStyle">@style/TextBut</item>
+        <item name="iconTint">@color/white</item>
+
+    </style>
+
+    <style name="TextBut" parent="Widget.MaterialComponents.Button">
+
+        <item name="android:textColor">@color/white</item>
+        <item name="shapeAppearance">@style/CustomShapeAppearance</item>
+
+    </style>
+
+    <style name="CustomShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
+
+    <style name="MyMaterialSwitch" parent="Theme.MaterialComponents.DayNight">
+        <item name="trackTint">@color/colorPrimaryDarkTheme</item>
+        <item name="thumbTint">@color/swichtruecolorDark</item>
+    </style>
+
+
+    <style name="MySwitch" parent="Theme.AppCompat.Light">
+        <item name="trackTint">@color/colorPrimaryDarkTheme</item>
+        <item name="colorControlActivated">@color/swichtruecolorDark</item>
+
+    </style>
+
+
+</resources>
