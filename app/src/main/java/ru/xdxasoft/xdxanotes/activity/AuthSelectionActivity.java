@@ -7,14 +7,17 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +47,8 @@ public class AuthSelectionActivity extends AppCompatActivity {
 
     private Button btn;
 
+
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,9 @@ public class AuthSelectionActivity extends AppCompatActivity {
             return insets;
         });
 
+        LinearLayout toastContainer = findViewById(R.id.toastContainer);
+        ToastManager.init(toastContainer);
+
         auth = FirebaseAuth.getInstance();
 
 
@@ -66,9 +74,36 @@ public class AuthSelectionActivity extends AppCompatActivity {
         mail = findViewById(R.id.logintext);
         pass = findViewById(R.id.passtext);
 
+        pass.setOnEditorActionListener((v, actionId, event) -> {
+            Log.d("AuthSelectionActivity", "Editor action triggered");
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                hideKeyboard();
+                pass.clearFocus();
+                btn.performClick();
+                return true;
+            }
+            return false;
+        });
+
+
+        ScrollView scrollView = findViewById(R.id.scrollView);
+
+        scrollView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                View focusedView = getCurrentFocus();
+                if (focusedView instanceof EditText) {
+                    focusedView.clearFocus();
+                    hideKeyboard();
+                }
+            }
+            return false;
+        });
+
+
         findViewById(R.id.main).setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mail.isFocused() || mail.isFocused()) {
+                if (mail.isFocused() || pass.isFocused()) {
                     hideKeyboard();
                     mail.clearFocus();
                     pass.clearFocus();
@@ -80,7 +115,8 @@ public class AuthSelectionActivity extends AppCompatActivity {
         btn.setOnClickListener(v -> {
             if(mail.getText().toString().isEmpty() || pass.getText().toString().isEmpty())
             {
-                Toast.makeText(AuthSelectionActivity.this, "Введите логин и пароль!", Toast.LENGTH_LONG).show();
+                ToastManager.showToast(AuthSelectionActivity.this, "Введите логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+
 
             }else{
 
@@ -93,7 +129,8 @@ public class AuthSelectionActivity extends AppCompatActivity {
                             startActivity(intent);
                         }else{
 
-                            Toast.makeText(AuthSelectionActivity.this, "Неверный логин или пароль!", Toast.LENGTH_LONG).show();
+                            ToastManager.showToast(AuthSelectionActivity.this, "Неверный логин или пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+
                         }
                     }
                 });
@@ -108,16 +145,5 @@ public class AuthSelectionActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(mail.getWindowToken(), 0);
             imm.hideSoftInputFromWindow(pass.getWindowToken(), 0);
         }
-    }
-
-    public void testerrtoast(View v){
-        String err_code = "E100";
-
-        LinearLayout toastContainer = findViewById(R.id.toastContainer);
-        ToastManager.init(toastContainer);
-        ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: "  + err_code, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
-        ToastManager.showToast(this, "Предупреждение!\nДелить на 0 нельзя", R.drawable.warning_black, Color.YELLOW, Color.BLACK, Color.BLACK);
-        ToastManager.showToast(this, "Аккаунт успешно создан!", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
-
     }
 }
