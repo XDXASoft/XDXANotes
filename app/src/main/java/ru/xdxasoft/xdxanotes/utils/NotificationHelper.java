@@ -15,7 +15,7 @@ public class NotificationHelper {
     private final Context context;
 
     public NotificationHelper(Context context) {
-        this.context = context; // Сохраняем контекст
+        this.context = context;
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel();
     }
@@ -32,10 +32,10 @@ public class NotificationHelper {
     }
 
     public void showNotification(String title, String message) {
-        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID) // Используем сохраненный контекст
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setSmallIcon(android.R.drawable.ic_dialog_info) // Замените на ваш собственный значок
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
 

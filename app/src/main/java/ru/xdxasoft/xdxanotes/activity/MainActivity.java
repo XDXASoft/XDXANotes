@@ -42,7 +42,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
+        String deviceLanguage = Locale.getDefault().getLanguage();
         String language = LocaleHelper.getLanguage(newBase);
+
+        if (language == null || language.isEmpty()) {
+            language = deviceLanguage;
+        }
+
         Context context = LocaleHelper.setLocale(newBase, language);
         super.attachBaseContext(context);
     }
@@ -64,12 +70,11 @@ public class MainActivity extends AppCompatActivity {
         languageSpinner = findViewById(R.id.languageSpinner);
         applyButton = findViewById(R.id.applyButton);
 
-        // Настройка Spinner с доступными языками
+
         final String[] languages = {"en", "ru"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, languages);
         languageSpinner.setAdapter(adapter);
 
-        // Установка текущего выбора
         String currentLanguage = LocaleHelper.getLanguage(this);
         int spinnerPosition = adapter.getPosition(currentLanguage);
         languageSpinner.setSelection(spinnerPosition);
@@ -79,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String selectedLanguage = languageSpinner.getSelectedItem().toString();
                 LocaleHelper.setLocale(MainActivity.this, selectedLanguage);
-                recreate(); // Пересоздание активности для применения изменений
-
+                recreate();
             }
         });
+
 
     }
 

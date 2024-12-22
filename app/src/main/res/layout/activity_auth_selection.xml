@@ -19,6 +19,19 @@
             android:layout_gravity="center"
             android:gravity="center">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/locate"
+                android:textSize="50dp"/>
+
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"/>
+
+
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/logintextdis"
                 android:layout_width="350dp"
@@ -36,28 +49,57 @@
                 app:boxStrokeWidth="1dp"
                 app:hintEnabled="true">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/logintext"
-                android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/logintext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Введите логин"
+                    android:textColor="@color/white"
+                    app:boxStrokeColor="@color/white" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passtextdis"
+                android:layout_width="350dp"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Введите логин"
-                android:textColor="@color/white"
-                app:boxStrokeColor="@color/white" />
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:cursorColor="@color/white"
+                app:boxStrokeColor="@color/white"
+                app:hintTextColor="@color/white"
+                app:boxBackgroundColor="@color/textboxgray"
+                app:hintAnimationEnabled="true"
+                app:boxStrokeWidth="1dp"
+                app:hintEnabled="true">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passtext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Введите пароль"
+                    android:textColor="@color/white"
+                    app:boxStrokeColor="@color/white" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-
-
-
-
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="350dp"
+                android:layout_height="50dp"
+                android:text="Войти"/>
 
 
 
         <Space
                 android:layout_width="wrap_content"
-                android:layout_height="250dp"/>
+                android:layout_height="150dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
