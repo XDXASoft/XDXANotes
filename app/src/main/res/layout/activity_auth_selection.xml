@@ -19,19 +19,43 @@
             android:layout_gravity="center"
             android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/test"
-                android:textStyle="bold"
-                android:textSize="50dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Войти с помощью"
-                android:textStyle="bold"
-                android:textSize="25dp"/>
-            <Space
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/logintextdis"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:cursorColor="@color/white"
+                app:boxStrokeColor="@color/white"
+                app:hintTextColor="@color/white"
+                app:boxBackgroundColor="@color/textboxgray"
+                app:hintAnimationEnabled="true"
+                app:boxStrokeWidth="1dp"
+                app:hintEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/logintext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Введите логин"
+                android:textColor="@color/white"
+                app:boxStrokeColor="@color/white" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+
+
+
+
+        <Space
                 android:layout_width="wrap_content"
                 android:layout_height="250dp"/>
 

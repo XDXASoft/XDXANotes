@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 String selectedLanguage = languageSpinner.getSelectedItem().toString();
                 LocaleHelper.setLocale(MainActivity.this, selectedLanguage);
                 recreate(); // Пересоздание активности для применения изменений
+
             }
         });
 
@@ -108,6 +110,26 @@ public class MainActivity extends AppCompatActivity {
         ToastManager.showToast(this, "Предупреждение!\nДелить на 0 нельзя", R.drawable.warning_black, Color.YELLOW, Color.BLACK, Color.BLACK);
         ToastManager.showToast(this, "Аккаунт успешно создан!", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
 
+    }
+
+    public void test2(View v){
+        String email = "snovamgodam55@gmail.com";
+
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Введите адрес электронной почты", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("ResetPassword", "Email sent.");
+                        Toast.makeText(MainActivity.this, "Ссылка для сброса пароля отправлена на почту", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("ResetPassword", "Error sending email", task.getException());
+                        Toast.makeText(MainActivity.this, "Ошибка при отправке ссылки", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
