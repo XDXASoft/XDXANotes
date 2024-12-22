@@ -106,6 +106,7 @@ public class AuthSelectionActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(mail.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(pass.getWindowToken(), 0);
         }
     }
 
