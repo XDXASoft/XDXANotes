@@ -21,6 +21,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -135,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Ошибка при отправке ссылки", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void test(View v){
+        mAuth.signOut();
+        Intent intent = new Intent(this, AuthSelectionActivity.class);
+        startActivity(intent);
     }
 
 

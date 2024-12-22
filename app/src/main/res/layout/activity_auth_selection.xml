@@ -19,16 +19,20 @@
             android:layout_gravity="center"
             android:gravity="center">
 
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/locate"
-                android:textSize="50dp"/>
+                android:text="@string/Login_hello_text"
+                android:textSize="40dp"/>
 
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"/>
+                android:layout_height="150dp"/>
 
 
 
@@ -53,7 +57,7 @@
                     android:id="@+id/logintext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textEmailAddress"
                     android:hint="Введите логин"
                     android:textColor="@color/white"
                     app:boxStrokeColor="@color/white" />
@@ -82,41 +86,60 @@
                     android:id="@+id/passtext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textPassword"
                     android:hint="Введите пароль"
                     android:textColor="@color/white"
                     app:boxStrokeColor="@color/white" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="350dp"
                 android:layout_height="50dp"
+                android:id="@+id/login_btn"
                 android:text="Войти"/>
 
 
 
-        <Space
+            <Space
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
 
 
 
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:onClick="testerrtoast"
+                    android:text="тост"/>
 
 
-
-        </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/toastContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="0dp"
+        android:visibility="gone"
+        android:paddingBottom="16dp"
+        android:translationZ="999dp" />
 
 </FrameLayout>

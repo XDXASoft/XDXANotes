@@ -51,6 +51,12 @@
                 android:text="Сброс пароля"
                 android:onClick="test2"/>
 
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Выйти"
+                android:onClick="test"/>
+
         </LinearLayout>
 
     </ScrollView>
