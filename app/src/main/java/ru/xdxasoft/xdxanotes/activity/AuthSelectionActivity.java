@@ -68,7 +68,7 @@ public class AuthSelectionActivity extends AppCompatActivity {
 
         findViewById(R.id.main).setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mail.isFocused() && mail.isFocused()) {
+                if (mail.isFocused() || mail.isFocused()) {
                     hideKeyboard();
                     mail.clearFocus();
                     pass.clearFocus();
