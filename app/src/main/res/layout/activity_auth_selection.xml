@@ -39,103 +39,15 @@
                 android:gravity="center">
 
                 <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="150dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Login_hello_text"
-                    android:textSize="40dp"/>
-
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"/>
-
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/logintextdis"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:cursorColor="@color/white"
-                    app:boxStrokeColor="@color/white"
-                    app:hintTextColor="@color/white"
-                    app:boxBackgroundColor="@color/textboxgray"
-                    app:hintAnimationEnabled="true"
-                    app:boxStrokeWidth="1dp"
-                    app:hintEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/logintext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:hint="Введите логин"
-                        android:textColor="@color/white"
-                        app:boxStrokeColor="@color/white" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/passtextdis"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:cursorColor="@color/white"
-                    app:boxStrokeColor="@color/white"
-                    app:hintTextColor="@color/white"
-                    app:boxBackgroundColor="@color/textboxgray"
-                    app:hintAnimationEnabled="true"
-                    app:boxStrokeWidth="1dp"
-                    app:hintEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/passtext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:hint="Введите пароль"
-                        android:textColor="@color/white"
-                        app:boxStrokeColor="@color/white" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="350dp"
                     android:layout_height="50dp"
-                    android:id="@+id/login_btn"
-                    android:text="Войти"/>
+                    android:onClick="XDXANotesLogin"
+                    android:text="XDXANotes Id"/>
 
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:gravity="center">
-
-
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

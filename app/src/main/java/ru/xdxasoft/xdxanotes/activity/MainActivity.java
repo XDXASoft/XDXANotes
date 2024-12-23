@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ import ru.xdxasoft.xdxanotes.utils.ToastManager;
 public class MainActivity extends AppCompatActivity {
 
 
-
+    private EditText testedittext;
     private Spinner languageSpinner;
     private Button applyButton;
     private FirebaseAuth mAuth;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         languageSpinner = findViewById(R.id.languageSpinner);
         applyButton = findViewById(R.id.applyButton);
+        testedittext = findViewById(R.id.testedittext);
 
 
         final String[] languages = {"en", "ru"};
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void test2(View v){
-        String email = "snovamgodam55@gmail.com";
+        String email = testedittext.getText().toString();
 
         if (email.isEmpty()) {
             Toast.makeText(this, "Введите адрес электронной почты", Toast.LENGTH_SHORT).show();

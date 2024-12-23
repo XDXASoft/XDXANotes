@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".activity.RegActivity">
+
+    <LinearLayout
+        android:id="@+id/toastContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:visibility="gone"
+        android:paddingBottom="16dp"
+        android:translationZ="999dp" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Login_hello_text"
+                    android:textSize="40dp"/>
+
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"/>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/logintextdis"
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:cursorColor="@color/white"
+                    app:boxStrokeColor="@color/white"
+                    app:hintTextColor="@color/white"
+                    app:boxBackgroundColor="@color/textboxgray"
+                    app:hintAnimationEnabled="true"
+                    app:boxStrokeWidth="1dp"
+                    app:hintEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/logintext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:hint="Введите логин"
+                        android:textColor="@color/white"
+                        app:boxStrokeColor="@color/white" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/passtextdis"
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:cursorColor="@color/white"
+                    app:boxStrokeColor="@color/white"
+                    app:hintTextColor="@color/white"
+                    app:boxBackgroundColor="@color/textboxgray"
+                    app:hintAnimationEnabled="true"
+                    app:boxStrokeWidth="1dp"
+                    app:hintEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/passtext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:hint="Введите пароль"
+                        android:textColor="@color/white"
+                        app:boxStrokeColor="@color/white" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/reg_btn"
+                    android:text="Зарегистрироваться"/>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Уже есть аккаунт?"
+                            android:textSize="15dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" Войти"
+                            android:textColor="@color/blue"
+                            android:onClick="LoginActivity"
+                            android:textSize="15dp"/>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>
