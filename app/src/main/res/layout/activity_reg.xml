@@ -79,7 +79,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:hint="Введите логин"
+                        android:hint="Введите почту"
                         android:textColor="@color/white"
                         app:boxStrokeColor="@color/white" />
 
@@ -108,7 +108,7 @@
                         android:id="@+id/passtext"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
+                        android:inputType="textPassword"
                         android:hint="Введите пароль"
                         android:importantForAutofill="no"
                         app:passwordToggleEnabled="true"
