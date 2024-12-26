@@ -68,6 +68,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-inappmessaging-display")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-config")
 
     // Для использования аннотаций
     implementation("androidx.annotation:annotation:1.6.0")

@@ -60,6 +60,15 @@
                 android:text="Выйти"
                 android:onClick="test"/>
 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/locate"
+                android:textStyle="bold"
+                android:id="@+id/test123"
+                android:textSize="50dp"/>
+
         </LinearLayout>
 
     </ScrollView>

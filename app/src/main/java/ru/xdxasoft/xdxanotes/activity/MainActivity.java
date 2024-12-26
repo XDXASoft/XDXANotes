@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,31 +15,43 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.Locale;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
+import ru.xdxasoft.xdxanotes.utils.ValidationUtils;
 
 public class MainActivity extends AppCompatActivity {
 
 
     private EditText testedittext;
     private Spinner languageSpinner;
+    private Handler handler;
+    private Runnable runnable;
+
+    private FirebaseRemoteConfig remoteConfig;
     private Button applyButton;
     private FirebaseAuth mAuth;
+    private TextView test123;
 
 
 
@@ -65,8 +78,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        test123 = findViewById(R.id.test123);
         mAuth = FirebaseAuth.getInstance();
+        remoteConfig = FirebaseRemoteConfig.getInstance();
         checkUserSession();
 
         languageSpinner = findViewById(R.id.languageSpinner);
@@ -90,8 +104,59 @@ public class MainActivity extends AppCompatActivity {
                 recreate();
             }
         });
+        remoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(600)
+                .build());
 
 
+
+
+        startFetchingRemoteConfig();
+
+
+    }
+
+    private void startFetchingRemoteConfig() {
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                fetchRemoteConfig();
+                handler.postDelayed(this, 10000);
+            }
+        };
+        handler.post(runnable);
+    }
+
+    private void fetchRemoteConfig() {
+        if (ValidationUtils.isNetworkAvailable(this)) {
+            remoteConfig.fetchAndActivate()
+                    .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Boolean> task) {
+                            if (task.isSuccessful()) {
+                                Boolean updated = task.getResult();
+                                Log.d("RemoteConfig", "Config params updated: " + updated);
+
+                                String value = remoteConfig.getString("test");
+                                Log.d("RemoteConfig", "Value for example_key: " + value);
+
+                                test123.setText(value);
+                            } else {
+                                Log.e("RemoteConfig", "Fetch failed");
+                            }
+                        }
+                    });
+        }else{
+            test123.setText("Internet is not activity");
+            test123.setTextSize(30);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
     }
 
 
