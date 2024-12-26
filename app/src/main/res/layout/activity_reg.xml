@@ -45,6 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/Login_hello_text"
                     android:textSize="40dp"/>
 
@@ -69,6 +70,7 @@
                     app:hintTextColor="@color/white"
                     app:boxBackgroundColor="@color/textboxgray"
                     app:hintAnimationEnabled="true"
+                    android:importantForAutofill="no"
                     app:boxStrokeWidth="1dp"
                     app:hintEnabled="true">
 
@@ -99,6 +101,7 @@
                     app:boxBackgroundColor="@color/textboxgray"
                     app:hintAnimationEnabled="true"
                     app:boxStrokeWidth="1dp"
+                    app:endIconMode="password_toggle"
                     app:hintEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -107,6 +110,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
                         android:hint="Введите пароль"
+                        android:importantForAutofill="no"
+                        app:passwordToggleEnabled="true"
                         android:textColor="@color/white"
                         app:boxStrokeColor="@color/white" />
 

@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">XDXANotes</string>
     <string name="locate">ru</string>
-    <string name="Login_hello_text">Добро пожаловать</string>
+    <string name="Login_hello_text">Добро пожаловать в XDXANotes</string>
 </resources>

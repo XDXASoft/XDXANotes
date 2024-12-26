@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -52,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+
+
+
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);
 
@@ -64,6 +69,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mail = findViewById(R.id.logintext);
         pass = findViewById(R.id.passtext);
+
+        pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         pass.setOnEditorActionListener((v, actionId, event) -> {
             Log.d("LoginActivity", "Editor action triggered");

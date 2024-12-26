@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -88,6 +89,7 @@ public class RegActivity extends AppCompatActivity {
             return false;
         });
 
+        passreg.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         findViewById(R.id.main).setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
