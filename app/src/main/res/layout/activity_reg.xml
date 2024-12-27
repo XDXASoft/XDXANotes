@@ -54,7 +54,34 @@
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"/>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/usernametextdis"
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:cursorColor="@color/white"
+                    app:boxStrokeColor="@color/white"
+                    app:hintTextColor="@color/white"
+                    app:boxBackgroundColor="@color/textboxgray"
+                    app:hintAnimationEnabled="true"
+                    android:importantForAutofill="no"
+                    app:boxStrokeWidth="1dp"
+                    app:hintEnabled="true">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/usernametext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:hint="Введите username"
+                        android:textColor="@color/white"
+                        app:boxStrokeColor="@color/white" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/logintextdis"

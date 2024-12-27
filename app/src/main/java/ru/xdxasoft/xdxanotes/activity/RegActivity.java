@@ -30,10 +30,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
@@ -42,9 +45,10 @@ import ru.xdxasoft.xdxanotes.utils.ToastManager;
 public class RegActivity extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
+    private static FirebaseDatabase firebaseDatabase;
     private Button regbtn;
-    private TextView mailreg, passreg;
-    private FirebaseAuth mauth;
+    private TextView mailreg, passreg, usernamereg;
+    private static FirebaseAuth mauth;
 
 
 
@@ -55,12 +59,16 @@ public class RegActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reg);
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
+
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);
 
         regbtn = findViewById(R.id.reg_btn);
         mailreg = findViewById(R.id.logintext);
         passreg = findViewById(R.id.passtext);
+        usernamereg = findViewById(R.id.usernametext);
         mauth = FirebaseAuth.getInstance();
 
         passreg.setOnEditorActionListener((v, actionId, event) -> {
@@ -105,76 +113,19 @@ public class RegActivity extends AppCompatActivity {
 
 
         regbtn.setOnClickListener(v -> {
-            if (mailreg.getText().toString().isEmpty() || passreg.getText().toString().isEmpty()) {
-                ToastManager.showToast(RegActivity.this, "Введите логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+            String username = usernamereg.getText().toString();
+            String email = mailreg.getText().toString();
+            String password = passreg.getText().toString();
 
+            if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
+                ToastManager.showToast(RegActivity.this,"Введите имя пользователя, логин и пароль!",R.drawable.ic_error,Color.RED,Color.BLACK,Color.BLACK);
             } else {
-                mauth.createUserWithEmailAndPassword(mailreg.getText().toString(), passreg.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    String userId = mauth.getCurrentUser().getUid();
-                                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
-                                    userRef.child("email").setValue(mailreg.getText().toString());
-                                    userRef.child("password").setValue(passreg.getText().toString());
-
-                                    DatabaseReference idRef = FirebaseDatabase.getInstance().getReference("LastUserId");
-                                    idRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            Long lastId = dataSnapshot.getValue(Long.class);
-                                            if (lastId == null) {
-                                                lastId = 0L; // Если ID не найден, начинаем с 0
-                                            }
-                                            Long newId = lastId + 1; // Увеличиваем ID на 1
-
-                                            // Сохранение нового ID для пользователя
-                                            userRef.child("id").setValue(newId);
-
-                                            // Обновление последнего использованного ID в базе данных
-                                            idRef.setValue(newId);
-
-                                            // Получение почты конкретного пользователя с UID "8BxEY8Aps1Vp6thI5RSewYQ7NJU2"
-                                            String targetUserId = "8BxEY8Aps1Vp6thI5RSewYQ7NJU2";
-                                            DatabaseReference targetUserRef = FirebaseDatabase.getInstance().getReference("Users").child(targetUserId);
-                                            targetUserRef.child("email").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    String email = dataSnapshot.getValue(String.class);
-                                                    if (email != null) {
-                                                       ToastManager.showToast(RegActivity.this, "Почта пользователя: " + email, R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-
-                                                    } else {
-                                                        ToastManager.showToast(RegActivity.this, "Почта не найдена", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                    ToastManager.showToast(RegActivity.this, "Ошибка при получении почты: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-
-                                                }
-                                            });
-
-                                            Intent intent = new Intent(RegActivity.this, MainActivity.class);
-                                            startActivity(intent);
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                            ToastManager.showToast(RegActivity.this, "Ошибка при получении ID: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-
-                                        }
-                                    });
-                                } else {
-                                    ToastManager.showToast(RegActivity.this, "Не удалось зарегистрировать пользователя", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-
-                                }
-                            }
-                        });
+                checkUsernameAndRegister(username, email, password);
             }
         });
+
+
+
 
 
     }
@@ -191,4 +142,131 @@ public class RegActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(passreg.getWindowToken(), 0);
         }
     }
+
+    public static boolean isUsernameAvailable(String username) {
+        final boolean[] isAvailable = {true};
+
+        if (firebaseDatabase == null) {
+            return false;
+        }
+
+        DatabaseReference usersRef = firebaseDatabase.getReference("Users");
+        Query query = usersRef.orderByChild("username").equalTo(username);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    isAvailable[0] = false;
+                    System.out.println("Пользователь с username " + username + " уже зарегистрирован");
+                } else {
+                    isAvailable[0] = true;
+                    System.out.println("Пользователь с username " + username + " доступен для регистрации");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.err.println("Ошибка при проверке username: " + databaseError.getMessage());
+                isAvailable[0] = false;
+            }
+        });
+
+        return isAvailable[0];
+    }
+
+
+    private void createUserWithEmailAndPassword(String email, String password, String username) {
+        mauth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mauth.getCurrentUser();
+                        if (user != null) {
+                            updateUserProfile(user, username);
+                            saveUserDataToDatabase(user.getUid(), email, password, username);
+                            Intent intent = new Intent(RegActivity.this, MainActivity.class);
+                            intent.putExtra("ACCOUNT_LOGIN", false);
+                            intent.putExtra("ACCOUNT_MAIL", mailreg.getText().toString());
+                            intent.putExtra("ACCOUNT_USERNAME", usernamereg.getText().toString());
+                            startActivity(intent);
+                        } else {
+                            ToastManager.showToast(RegActivity.this, "Не удалось зарегистрировать пользователя", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                        }
+                    } else {
+                        ToastManager.showToast(RegActivity.this, "Не удалось зарегистрировать пользователя", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                    }
+                });
+    }
+
+    private void updateUserProfile(FirebaseUser user, String username) {
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
+                .build();
+        user.updateProfile(profileUpdates);
+    }
+
+    private void saveUserDataToDatabase(String userId, String email, String password, String username) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        userRef.child("email").setValue(email);
+        userRef.child("password").setValue(password);
+        userRef.child("username").setValue(username);
+
+        DatabaseReference idRef = FirebaseDatabase.getInstance().getReference("LastUserId");
+        idRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Long lastId = dataSnapshot.getValue(Long.class);
+                if (lastId == null) {
+                    lastId = 0L; // Если ID не найден, начинаем с 0
+                }
+                Long newId = lastId + 1; // Увеличиваем ID на 1
+                userRef.child("id").setValue(newId);
+                idRef.setValue(newId);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                ToastManager.showToast(RegActivity.this, "Ошибка при получении ID: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+            }
+        });
+    }
+
+    private void checkUsernameAndRegister(String username, String email, String password) {
+        DatabaseReference usersRef = firebaseDatabase.getReference("Users");
+        Query query = usersRef.orderByChild("username").equalTo(username);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ToastManager.showToast(
+                            RegActivity.this,
+                            "Пользователь с таким именем уже зарегистрирован!",
+                            R.drawable.ic_error,
+                            Color.RED,
+                            Color.BLACK,
+                            Color.BLACK
+                    );
+                } else {
+                    createUserWithEmailAndPassword(email, password, username);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                ToastManager.showToast(
+                        RegActivity.this,
+                        "Ошибка проверки имени пользователя: " + databaseError.getMessage(),
+                        R.drawable.ic_error,
+                        Color.RED,
+                        Color.BLACK,
+                        Color.BLACK
+                );
+            }
+        });
+    }
+
+
+
+
+
 }

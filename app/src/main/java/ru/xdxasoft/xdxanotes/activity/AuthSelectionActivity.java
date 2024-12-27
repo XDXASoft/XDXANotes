@@ -54,6 +54,14 @@ public class AuthSelectionActivity extends AppCompatActivity {
             return insets;
         });
 
+        LinearLayout toastContainer = findViewById(R.id.toastContainer);
+        ToastManager.init(toastContainer);
+
+        boolean isSessionActive = getIntent().getBooleanExtra("SESSION_ACTIVE", false);
+
+        if (!isSessionActive) {
+            ToastManager.showToast(this, "Сессия не активна! Войдите в аккаунт.", R.drawable.warning_black, Color.YELLOW, Color.BLACK, Color.BLACK);
+        }
 
     }
 

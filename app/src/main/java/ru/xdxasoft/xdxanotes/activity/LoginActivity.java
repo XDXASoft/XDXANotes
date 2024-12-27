@@ -55,8 +55,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-
-
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);
 
@@ -124,7 +122,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         if(task.isSuccessful()){
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            boolean accountlogin = false;
+                            intent.putExtra("ACCOUNT_LOGIN", accountlogin);
+                            intent.putExtra("ACCOUNT_MAIL", mail.getText().toString());
                             startActivity(intent);
+                            finish();
                         }else{
 
                             ToastManager.showToast(LoginActivity.this, "Неверный логин или пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);

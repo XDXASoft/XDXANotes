@@ -38,6 +38,7 @@ import java.util.Locale;
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
+import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.ValidationUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,8 +79,55 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        test123 = findViewById(R.id.test123);
+
         mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            String uid = mAuth.getCurrentUser().getUid();
+
+            User.loadUser(uid, new User.OnUserLoadedCallback() {
+                @Override
+                public void onUserLoaded(User user) {
+                    if (user != null) {
+                        Log.d("MainActivity", "Email пользователя: " + user.getEmail());
+                    }
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e("MainActivity", "Ошибка загрузки пользователя: " + errorMessage);
+                }
+            });
+        }
+
+        LinearLayout toastContainer = findViewById(R.id.toastContainer);
+        ToastManager.init(toastContainer);
+
+
+
+
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        String uid = currentUser.getUid();
+
+        User.loadUser(uid, new User.OnUserLoadedCallback() {
+            @Override
+            public void onUserLoaded(User user) {
+                if (user != null) {
+                    boolean accountlogin = getIntent().getBooleanExtra("ACCOUNT_LOGIN", false);
+                    String ACCOUNT_MAIL = getIntent().getStringExtra("ACCOUNT_MAIL");
+                    if (!accountlogin && ACCOUNT_MAIL != null) {
+                        ToastManager.showToast(MainActivity.this, "Успешный вход в аккаунт: " + ACCOUNT_MAIL, R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+            }
+        });
+
+        test123 = findViewById(R.id.test123);
         remoteConfig = FirebaseRemoteConfig.getInstance();
         checkUserSession();
 
@@ -169,7 +217,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Сессия активна!", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(this, AuthSelectionActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            boolean isSessionActive = false;
+            intent.putExtra("SESSION_ACTIVE", isSessionActive);
             startActivity(intent);
+            finish();
             Toast.makeText(this, "Сессия не активна. Пожалуйста, войдите в систему.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -177,8 +229,6 @@ public class MainActivity extends AppCompatActivity {
     public void testerrtoast(View v){
         String err_code = "E100";
 
-        LinearLayout toastContainer = findViewById(R.id.toastContainer);
-        ToastManager.init(toastContainer);
         ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: "  + err_code, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
         ToastManager.showToast(this, "Предупреждение!\nДелить на 0 нельзя", R.drawable.warning_black, Color.YELLOW, Color.BLACK, Color.BLACK);
         ToastManager.showToast(this, "Аккаунт успешно создан!", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
