@@ -17,14 +17,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,6 +36,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.services.PasswordValidationService;
+import ru.xdxasoft.xdxanotes.utils.SessionManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 
 public class RegActivity extends AppCompatActivity {
@@ -49,8 +47,6 @@ public class RegActivity extends AppCompatActivity {
     private Button regbtn;
     private TextView mailreg, passreg, usernamereg;
     private static FirebaseAuth mauth;
-
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -83,9 +79,7 @@ public class RegActivity extends AppCompatActivity {
             return false;
         });
 
-
         ScrollView scrollView = findViewById(R.id.scrollView);
-
         scrollView.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 View focusedView = getCurrentFocus();
@@ -110,24 +104,17 @@ public class RegActivity extends AppCompatActivity {
             return false;
         });
 
-
-
         regbtn.setOnClickListener(v -> {
             String username = usernamereg.getText().toString();
             String email = mailreg.getText().toString();
             String password = passreg.getText().toString();
 
             if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
-                ToastManager.showToast(RegActivity.this,"Введите имя пользователя, логин и пароль!",R.drawable.ic_error,Color.RED,Color.BLACK,Color.BLACK);
+                ToastManager.showToast(RegActivity.this, "Введите имя пользователя, логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
             } else {
                 checkUsernameAndRegister(username, email, password);
             }
         });
-
-
-
-
-
     }
 
     public void LoginActivity(View v){
@@ -174,7 +161,6 @@ public class RegActivity extends AppCompatActivity {
         return isAvailable[0];
     }
 
-
     private void createUserWithEmailAndPassword(String email, String password, String username) {
         mauth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -187,7 +173,18 @@ public class RegActivity extends AppCompatActivity {
                             intent.putExtra("ACCOUNT_LOGIN", false);
                             intent.putExtra("ACCOUNT_MAIL", mailreg.getText().toString());
                             intent.putExtra("ACCOUNT_USERNAME", usernamereg.getText().toString());
+
+                            PasswordValidationService passwordValidationService = new PasswordValidationService();  // Конструктор без контекста
+                            SessionManager sessionManager = new SessionManager(RegActivity.this);
+
+                            String userPassword = passreg.getText().toString();
+                            passwordValidationService.saveLocalPasswordHash(userPassword);
+
+                            String hashedPassword = passwordValidationService.hashPassword(userPassword);
+                            sessionManager.savePasswordHash(hashedPassword);
+
                             startActivity(intent);
+                            finish();
                         } else {
                             ToastManager.showToast(RegActivity.this, "Не удалось зарегистрировать пользователя", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                         }
@@ -225,48 +222,16 @@ public class RegActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                ToastManager.showToast(RegActivity.this, "Ошибка при получении ID: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                System.err.println("Ошибка при сохранении ID пользователя: " + databaseError.getMessage());
             }
         });
     }
 
     private void checkUsernameAndRegister(String username, String email, String password) {
-        DatabaseReference usersRef = firebaseDatabase.getReference("Users");
-        Query query = usersRef.orderByChild("username").equalTo(username);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    ToastManager.showToast(
-                            RegActivity.this,
-                            "Пользователь с таким именем уже зарегистрирован!",
-                            R.drawable.ic_error,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK
-                    );
-                } else {
-                    createUserWithEmailAndPassword(email, password, username);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                ToastManager.showToast(
-                        RegActivity.this,
-                        "Ошибка проверки имени пользователя: " + databaseError.getMessage(),
-                        R.drawable.ic_error,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK
-                );
-            }
-        });
+        if (isUsernameAvailable(username)) {
+            createUserWithEmailAndPassword(email, password, username);
+        } else {
+            ToastManager.showToast(RegActivity.this, "Этот username уже занят", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+        }
     }
-
-
-
-
-
 }

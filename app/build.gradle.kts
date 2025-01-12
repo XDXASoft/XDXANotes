@@ -15,8 +15,6 @@ android {
         versionName = "TEST_DEBUG"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-
     }
 
     buildTypes {
@@ -28,6 +26,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -35,43 +34,38 @@ android {
 }
 
 dependencies {
-
+    // Core dependencies
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.play.services.safetynet)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.annotation:annotation:1.6.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.activity:activity:1.9.2")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
 
-    // Firebase BOM
+    // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth:23.1.0")
     implementation("com.google.firebase:firebase-database:21.0.0")
     implementation("com.google.firebase:firebase-firestore:24.0.1")
-    implementation("androidx.work:work-runtime:2.7.1")
-
-    implementation("com.google.firebase:firebase-messaging:24.1.0")
-
-
+    implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-inappmessaging-display")
-    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-config")
 
-    // Для использования аннотаций
+    // AndroidX
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.activity:activity:1.9.2")
     implementation("androidx.annotation:annotation:1.6.0")
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    implementation("androidx.work:work-runtime:2.7.1")
+    implementation("com.google.android.material:material")
+
+    // Play Services
     implementation("com.google.android.gms:play-services-base:18.0.1")
 
 

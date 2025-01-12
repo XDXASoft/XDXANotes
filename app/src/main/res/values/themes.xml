@@ -37,4 +37,9 @@
 
     <style name="Theme.XDXANotes" parent="Base.Theme.XDXANotes" />
 
+    <style name="CustomDialogStyle" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="cornerRadius">16dp</item>  <!-- Отключаем скругление углов -->
+        <item name="backgroundColor">@color/gray</item>  <!-- Устанавливаем цвет фона -->
+    </style>
+
 </resources>

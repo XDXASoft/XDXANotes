@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
+    <LinearLayout
+        android:id="@+id/toastContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:paddingBottom="16dp"
+        android:translationZ="999dp" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -18,17 +29,11 @@
             android:layout_gravity="center"
             android:gravity="center">
 
-            <Spinner
-                android:id="@+id/languageSpinner"
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/applyButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/locate" />
-
+                android:layout_height="50dp"
+                android:text="dasda"
+                android:onClick="ysdad"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -72,16 +77,5 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/toastContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="0dp"
-        android:visibility="gone"
-        android:paddingBottom="16dp"
-        android:translationZ="999dp" />
 
 </FrameLayout>
