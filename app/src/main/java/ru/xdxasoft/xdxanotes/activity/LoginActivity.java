@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.services.PasswordValidationService;
@@ -45,6 +46,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+        boolean isSessionActive = getIntent().getBooleanExtra("ACCOUNT_VERI", false);
+        String email = getIntent().getStringExtra("ACCOUNT_MAIL");
+        if(isSessionActive == true){
+            ToastManager.showToast(this, "Письмо с подтверждением отправлено на " + email, R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+        }
+
+
+
+
+
+
+
 
         // Инициализация сервисов
         passwordValidationService = new PasswordValidationService();
@@ -103,19 +118,26 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    boolean accountLogin = false;
-                                    intent.putExtra("ACCOUNT_LOGIN", accountLogin);
-                                    intent.putExtra("ACCOUNT_MAIL", mail.getText().toString());
+                                    FirebaseUser user = auth.getCurrentUser();
+                                    if(user != null){
+                                        if (user.isEmailVerified()) {
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            boolean accountLogin = false;
+                                            intent.putExtra("ACCOUNT_LOGIN", accountLogin);
+                                            intent.putExtra("ACCOUNT_MAIL", mail.getText().toString());
 
-                                    // Хэшируем пароль перед сохранением
-                                    String hashedPassword = passwordValidationService.hashPassword(pass.getText().toString());
-                                    sessionManager.savePasswordHash(hashedPassword); // Сохраняем хэш пароля в сессии
-                                    passwordValidationService.saveLocalPasswordHash(pass.getText().toString()); // Сохраняем локально
+                                            String hashedPassword = passwordValidationService.hashPassword(pass.getText().toString());
+                                            sessionManager.savePasswordHash(hashedPassword); // Сохраняем хэш пароля в сессии
+                                            passwordValidationService.saveLocalPasswordHash(pass.getText().toString()); // Сохраняем локально
 
-                                    startActivity(intent);
-                                    finish();
+                                            startActivity(intent);
+                                            finish();
+                                        }else{
+                                            auth.signOut();
+                                            ToastManager.showToast(LoginActivity.this, "Подтвердите почту!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                                        }
+                                    }
                                 } else {
                                     ToastManager.showToast(LoginActivity.this, "Неверный логин или пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                                 }
