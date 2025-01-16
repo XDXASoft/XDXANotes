@@ -41,24 +41,6 @@
                 android:text="@string/locate"
                 android:textStyle="bold"
                 android:textSize="50dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Войти с помощью"
-                android:textStyle="bold"
-                android:textSize="25dp"/>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:id="@+id/testedittext"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Сброс пароля"
-                android:onClick="test2"/>
-
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

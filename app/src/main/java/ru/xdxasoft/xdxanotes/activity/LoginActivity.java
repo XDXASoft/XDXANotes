@@ -159,4 +159,9 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, RegActivity.class);
         startActivity(intent);
     }
+
+    public void RecoveryPassActivity(View v) {
+        Intent intent = new Intent(LoginActivity.this, PasswordRecoveryActivity.class);
+        startActivity(intent);
+    }
 }

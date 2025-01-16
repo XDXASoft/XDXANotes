@@ -233,23 +233,7 @@ public class MainActivity extends AppCompatActivity {
         ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: " + errCode, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
     }
 
-    public void test2(View v) {
-        String email = testEditText.getText().toString();
 
-        if (email == null || email.isEmpty()) {
-            Toast.makeText(this, "Введите адрес электронной почты", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(this, "Ссылка для сброса пароля отправлена на почту", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Ошибка при отправке ссылки", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
 
     public void test(View v) {
         mAuth.signOut();
