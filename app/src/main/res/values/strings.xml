@@ -2,4 +2,7 @@
     <string name="app_name">XDXANotes</string>
     <string name="locate">en</string>
     <string name="Login_hello_text">Welcome to XDXANotes</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="main_text" translatable="false">Click me</string>
+
 </resources>

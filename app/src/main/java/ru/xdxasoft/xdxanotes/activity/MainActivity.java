@@ -2,13 +2,16 @@ package ru.xdxasoft.xdxanotes.activity;
 
 import static ru.xdxasoft.xdxanotes.utils.LocaleHelper.setLocale;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,6 +30,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -36,6 +42,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,7 +50,13 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import java.util.UUID;
+
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.fragments.AccountFragment;
+import ru.xdxasoft.xdxanotes.fragments.CalendarFragment;
+import ru.xdxasoft.xdxanotes.fragments.NotesFragment;
+import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
 import ru.xdxasoft.xdxanotes.services.PasswordValidationService;
 import ru.xdxasoft.xdxanotes.utils.CustomDialog;
 import ru.xdxasoft.xdxanotes.utils.LinkApprovalChecker;
@@ -56,17 +69,16 @@ import ru.xdxasoft.xdxanotes.utils.ValidationUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText testEditText;
-    private Spinner languageSpinner;
     private Handler handler;
     private Runnable runnable;
 
-    private FirebaseRemoteConfig remoteConfig;
-    private Button applyButton;
     private FirebaseAuth mAuth;
-    private TextView test123;
 
 
+    BottomNavigationView bottomNavigationView;
+
+
+    @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,14 +89,61 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
+        String _android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        LinearLayout toastContainer = findViewById(R.id.toastContainer);
+        ToastManager.init(toastContainer);
+
+        openFragment(new NotesFragment());
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+
+            if (item.getItemId() == R.id.notes) {
+                selectedFragment = new NotesFragment();
+            } else if (item.getItemId() == R.id.navigation_search) {
+                selectedFragment = new CalendarFragment();
+            } else if (item.getItemId() == R.id.navigation_settings) {
+                selectedFragment = new SettingsFragment();
+            } else if (item.getItemId() == R.id.navigation_test) {
+                selectedFragment = new AccountFragment();
+            }
 
 
+            if (selectedFragment != null) {
+                openFragment(selectedFragment);
+            }
+            return true;
+        });
+
+        checkURL();
+
+        //CustomDialog.showCustomDialog(this, "w1", "Это кастомный диалог!");
+
+        tets();
 
 
+    }
+
+    public void tets(){
+        Intent intent = getIntent();
+        if (intent.getData() != null && intent.getData().getPath().equals("/test")) {
+            String errCode = "E100";
+            ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: " + errCode, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
+
+        }
+
+        if (mAuth.getCurrentUser() != null) {
+            loadUserData();
+        }
+    }
+
+    public void checkURL(){
         boolean isSwitchEnabled = LinkApprovalChecker.isLinkSwitchEnabled(this);
 
         if (isSwitchEnabled) {
-
             checkUserSession();
         } else {
             LinkApprovalChecker.promptToEnableLinkHandling(this);
@@ -94,110 +153,37 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
-
-
-
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
 
+    public void openFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
+        transaction.replace(R.id.contentFragment, fragment);
 
-        //CustomDialog.showCustomDialog(this, "w1", "Это кастомный диалог!");
+        transaction.addToBackStack(null);
 
-
-
-        LinearLayout toastContainer = findViewById(R.id.toastContainer);
-        ToastManager.init(toastContainer);
-
-        test123 = findViewById(R.id.test123);
-
-        Intent intent = getIntent();
-        if (intent.getData() != null && intent.getData().getPath().equals("/test")) {
-            String errCode = "E100";
-            ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: " + errCode, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
-
-        }
-
-
-        configureRemoteConfig();
-
-        // Загрузка данных пользователя, если он авторизован
-        if (mAuth.getCurrentUser() != null) {
-            loadUserData();
-        }
-
+        transaction.commit();
     }
 
 
-
-    public void switchTheme(int theme) {
-        ThemeManager.saveTheme(this, theme);
-        recreate(); // Перезагружаем Activity для применения темы
-    }
-
-    public void ysdad(View v){
-        LocaleHelper.toggleLanguage(this);
-        switchTheme(ThemeManager.THEME_DARK);
-
-        recreate();
-
-    }
-
-    private void configureRemoteConfig() {
-        remoteConfig = FirebaseRemoteConfig.getInstance();
-        remoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(600)
-                .build());
-        startFetchingRemoteConfig();
-    }
-
-    private void startFetchingRemoteConfig() {
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                fetchRemoteConfig();
-                handler.postDelayed(this, 10000);
-            }
-        };
-        handler.post(runnable);
-    }
-
-    private void fetchRemoteConfig() {
-        if (ValidationUtils.isNetworkAvailable(this)) {
-            remoteConfig.fetchAndActivate()
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            String value = remoteConfig.getString("test");
-                            Log.d("RemoteConfig", "Value for test key: " + value);
-                            test123.setText(value);
-                            test123.setTextSize(30);
-                        } else {
-                            Log.e("RemoteConfig", "Fetch failed", task.getException());
-                        }
-                    });
-        } else {
-            test123.setText("Internet is not active");
-            test123.setTextSize(30);
-        }
-    }
 
     private void checkUserSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            Toast.makeText(this, "Сессия активна!", Toast.LENGTH_SHORT).show();
+
         } else {
-            Intent intent = new Intent(this, AuthSelectionActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-            Toast.makeText(this, "Сессия не активна. Пожалуйста, войдите в систему.", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void loadUserData() {
@@ -226,19 +212,5 @@ public class MainActivity extends AppCompatActivity {
         if (handler != null && runnable != null) {
             handler.removeCallbacks(runnable);
         }
-    }
-
-    public void testerrtoast(View v) {
-        String errCode = "E100";
-        ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: " + errCode, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
-    }
-
-
-
-    public void test(View v) {
-        mAuth.signOut();
-        Intent intent = new Intent(this, AuthSelectionActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

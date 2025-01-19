@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+
+    id("com.google.firebase.crashlytics")
+    id("com.google.firebase.firebase-perf")
 }
 
 android {
@@ -67,6 +70,16 @@ dependencies {
 
     // Play Services
     implementation("com.google.android.gms:play-services-base:18.0.1")
+
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.google.firebase:firebase-crashlytics")
+
+    implementation("com.google.firebase:firebase-perf")
+
+    implementation("androidx.room:room-runtime:2.6.1")
+
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
 
 
 }

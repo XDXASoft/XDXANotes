@@ -18,46 +18,32 @@
         android:paddingBottom="16dp"
         android:translationZ="999dp" />
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/contentFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="dasda"
-                android:onClick="ysdad"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/locate"
-                android:textStyle="bold"
-                android:textSize="50dp"/>
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Выйти"
-                android:onClick="test"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="85dp"
+        android:gravity="center">
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=""
-                android:textStyle="bold"
-                android:id="@+id/test123"
-                android:textSize="50dp"/>
+    </LinearLayout>
 
-        </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="90dp"/>
 
-    </ScrollView>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@color/gray"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </FrameLayout>
