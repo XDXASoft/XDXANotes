@@ -14,7 +14,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="50dp"
-            app:queryHint="Enter text ..."
+            app:queryHint="Поиск"
             app:iconifiedByDefault="false"
             android:layout_alignParentTop="true"
             android:background="#363636"
