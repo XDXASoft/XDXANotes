@@ -47,6 +47,12 @@
             android:name=".activity.XDXANotesLoginActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.DialogExampleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SimpleDialogExampleActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.AuthSelectionActivity"
             android:exported="false" /> <!-- Main Activity -->
         <activity

@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +30,7 @@ import ru.xdxasoft.xdxanotes.fragments.PasswordFragment;
 import ru.xdxasoft.xdxanotes.fragments.CalendarFragment;
 import ru.xdxasoft.xdxanotes.fragments.NotesFragment;
 import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
+import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.LinkApprovalChecker;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ThemeManager;
@@ -54,6 +58,20 @@ public class MainActivity extends AppCompatActivity {
         LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+
+        CustomDialogHelper.showSimpleDialog(
+                this,
+                "Заголовок",
+                "Сообщение",
+                "ОК",
+                (dialog, which) -> {
+                    // Действие при нажатии ОК
+                },
+                "Отмена",
+                (dialog, which) -> dialog.dismiss()
+        );
+        Intent intent = new Intent(this, SimpleDialogExampleActivity.class);
+        startActivity(intent);
 
         String _android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 

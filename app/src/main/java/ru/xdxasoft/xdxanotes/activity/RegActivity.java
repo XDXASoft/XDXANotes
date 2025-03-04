@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,16 +27,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
+import ru.xdxasoft.xdxanotes.utils.AuthManager;
 
 public class RegActivity extends AppCompatActivity {
 
     private Button regbtn;
     private EditText mailreg, passreg, usernamereg;
     private FirebaseAuth mauth;
+    private AuthManager authManager;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,9 @@ public class RegActivity extends AppCompatActivity {
         passreg = findViewById(R.id.passtext);
         usernamereg = findViewById(R.id.usernametext);
         mauth = FirebaseAuth.getInstance();
+        progressBar = findViewById(R.id.progressBar);
+
+        authManager = new AuthManager();
 
         passreg.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
@@ -97,12 +106,45 @@ public class RegActivity extends AppCompatActivity {
                             Color.BLACK
                     );
                 } else {
-                    registerUser(email, password, username); // если имя уникально, продолжаем регистрацию
+                    showLoading(true);
+                    authManager.registerUser(email, password, username, new AuthManager.OnRegistrationListener() {
+                        @Override
+                        public void onSuccess(String message) {
+                            showLoading(false);
+                            ToastManager.showToast(
+                                    RegActivity.this,
+                                    message,
+                                    R.drawable.ic_galohca_black,
+                                    Color.GREEN,
+                                    Color.BLACK,
+                                    Color.BLACK
+                            );
+                            // Переход на экран входа
+                            Intent intent = new Intent(RegActivity.this, LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            showLoading(false);
+                            ToastManager.showToast(
+                                    RegActivity.this,
+                                    error,
+                                    R.drawable.ic_error,
+                                    Color.RED,
+                                    Color.BLACK,
+                                    Color.BLACK
+                            );
+                        }
+                    });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                showLoading(false);
                 ToastManager.showToast(
                         RegActivity.this,
                         "Ошибка проверки имени пользователя: " + databaseError.getMessage(),
@@ -115,57 +157,12 @@ public class RegActivity extends AppCompatActivity {
         });
     }
 
-    private void registerUser(String email, String password, String username) {
-        mauth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Получаем UID пользователя
-                            FirebaseUser user = mauth.getCurrentUser();
-                            String userId = user.getUid();
-
-                            // Ссылка на объект пользователя в базе данных
-                            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
-                            userRef.child("email").setValue(email);
-                            userRef.child("password").setValue(password);
-                            userRef.child("username").setValue(username); // Записываем username
-
-                            // Чтение последнего использованного ID из базы данных
-                            DatabaseReference idRef = FirebaseDatabase.getInstance().getReference("LastUserId");
-                            idRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Long lastId = dataSnapshot.getValue(Long.class);
-                                    if (lastId == null) {
-                                        lastId = 0L; // Если ID не найден, начинаем с 0
-                                    }
-                                    Long newId = lastId + 1; // Увеличиваем ID на 1
-
-                                    // Сохраняем новый ID для пользователя
-                                    userRef.child("id").setValue(newId);
-
-                                    // Обновление последнего использованного ID в базе данных
-                                    idRef.setValue(newId);
-
-                                    // Переход на MainActivity после успешной регистрации
-                                    Intent intent = new Intent(RegActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    ToastManager.showToast(RegActivity.this, "Ошибка при получении ID: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                                }
-                            });
-                        } else {
-                            ToastManager.showToast(RegActivity.this, "Не удалось зарегистрировать пользователя", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                        }
-                    }
-                });
+    private void showLoading(boolean show) {
+        progressBar.setVisibility(show ? ProgressBar.VISIBLE : ProgressBar.GONE);
+        regbtn.setEnabled(!show);
     }
 
-    private void showRegistrationError() {
-        ToastManager.showToast(this, "Не удалось зарегистрировать пользователя", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+    private void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

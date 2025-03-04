@@ -39,8 +39,22 @@
     </style>
 
     <style name="CustomDialogStyle" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <item name="cornerRadius">16dp</item>  <!-- Отключаем скругление углов -->
-        <item name="backgroundColor">@color/gray</item>  <!-- Устанавливаем цвет фона -->
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundColor">@color/textboxgray</item>
+        <item name="android:windowBackground">@drawable/custom_dialog_background_dark</item>
+        <item name="colorAccent">@color/colorPrimaryDarkTheme</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/DialogButtonStyle</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryDarkTheme</item>
+        <item name="rippleColor">@color/colorPrimaryDarkTheme</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="Theme.YourApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
