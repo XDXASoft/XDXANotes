@@ -32,4 +32,9 @@
 
     <!-- Цвет фона -->
     <color name="background_color">#121212</color> <!-- Тёмный фон -->
+
+    <!-- Цвета для диалогов -->
+    <color name="dialog_button_background">@color/textboxgray</color>
+    <color name="dialog_button_stroke">#FFFFFF</color>
+    <color name="dialog_background">@color/textboxgray</color>
 </resources>

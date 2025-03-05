@@ -13,4 +13,7 @@
     <color name="switchThumbColorLight">#202020</color>
     <color name="switchThumbColorDark">#202020</color>
     <color name="blue">#3F51B5</color>
+    <color name="dialog_button_background">@color/textboxgray</color>
+    <color name="dialog_button_stroke">#FFFFFF</color>
+    <color name="dialog_background">@color/textboxgray</color>
 </resources>

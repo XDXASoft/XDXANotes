@@ -68,10 +68,12 @@ public class MainActivity extends AppCompatActivity {
                 "Заголовок",
                 "Сообщение",
                 "ОК",
+                Color.parseColor("#727272"),
                 (dialog, which) -> {
                     // Действие при нажатии ОК
                 },
                 "Отмена",
+                Color.RED,
                 (dialog, which) -> dialog.dismiss()
         );
         Intent intent = new Intent(this, SimpleDialogExampleActivity.class);

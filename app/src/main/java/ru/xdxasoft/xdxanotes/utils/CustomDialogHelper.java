@@ -25,8 +25,10 @@ public class CustomDialogHelper {
      * @param title Заголовок диалога
      * @param message Сообщение диалога
      * @param positiveText Текст положительной кнопки
+     * @param positiveColor Цвет положительной кнопки
      * @param positiveClick Обработчик нажатия положительной кнопки
      * @param negativeText Текст отрицательной кнопки
+     * @param negativeColor Цвет отрицательной кнопки
      * @param negativeClick Обработчик нажатия отрицательной кнопки
      * @return Созданный диалог
      */
@@ -35,8 +37,10 @@ public class CustomDialogHelper {
             String title,
             String message,
             String positiveText,
+            int positiveColor,
             DialogInterface.OnClickListener positiveClick,
             String negativeText,
+            int negativeColor,
             DialogInterface.OnClickListener negativeClick) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialogStyle);
@@ -46,6 +50,18 @@ public class CustomDialogHelper {
                 .setNegativeButton(negativeText, negativeClick);
 
         AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+            if (positiveButton != null) {
+                positiveButton.setTextColor(positiveColor);
+            }
+            if (negativeButton != null) {
+                negativeButton.setTextColor(negativeColor);
+            }
+        });
+
         dialog.show();
         return dialog;
     }
@@ -147,5 +163,38 @@ public class CustomDialogHelper {
     public interface CustomDialogCallback {
 
         void onDialogCreated(Dialog dialog, View dialogView);
+    }
+
+    /**
+     * Перегруженный метод для обратной совместимости
+     *
+     * @param context Контекст
+     * @param title Заголовок диалога
+     * @param message Сообщение диалога
+     * @param positiveButtonText Текст положительной кнопки
+     * @param positiveClickListener Обработчик нажатия положительной кнопки
+     * @param negativeButtonText Текст отрицательной кнопки
+     * @param negativeClickListener Обработчик нажатия отрицательной кнопки
+     */
+    public static void showSimpleDialog(
+            Context context,
+            String title,
+            String message,
+            String positiveButtonText,
+            DialogInterface.OnClickListener positiveClickListener,
+            String negativeButtonText,
+            DialogInterface.OnClickListener negativeClickListener
+    ) {
+        showSimpleDialog(
+                context,
+                title,
+                message,
+                positiveButtonText,
+                context.getResources().getColor(R.color.primary),
+                positiveClickListener,
+                negativeButtonText,
+                context.getResources().getColor(R.color.secondary),
+                negativeClickListener
+        );
     }
 }
