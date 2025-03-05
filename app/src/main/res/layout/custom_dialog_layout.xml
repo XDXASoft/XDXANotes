@@ -58,4 +58,4 @@
             android:text="ОК"
             android:textColor="@color/colorPrimaryDarkTheme" />
     </LinearLayout>
-</LinearLayout> 
+</LinearLayout>

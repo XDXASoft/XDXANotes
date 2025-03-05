@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "ru.xdxasoft.xdxanotes"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "ru.xdxasoft.xdxanotes"

@@ -30,7 +30,9 @@ import ru.xdxasoft.xdxanotes.fragments.PasswordFragment;
 import ru.xdxasoft.xdxanotes.fragments.CalendarFragment;
 import ru.xdxasoft.xdxanotes.fragments.NotesFragment;
 import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
+import ru.xdxasoft.xdxanotes.utils.AuthDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
+import ru.xdxasoft.xdxanotes.utils.DialogLauncher;
 import ru.xdxasoft.xdxanotes.utils.LinkApprovalChecker;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ThemeManager;
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+
+        DialogLauncher.launchAuthDialogExample(this);
 
         CustomDialogHelper.showSimpleDialog(
                 this,

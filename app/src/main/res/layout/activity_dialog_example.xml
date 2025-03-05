@@ -51,4 +51,4 @@
         android:layout_height="wrap_content"
         android:text="1. Используйте класс CustomDialogHelper для создания диалогов\n\n2. Для простых диалогов используйте метод showSimpleDialog()\n\n3. Для диалогов с вводом используйте метод showInputDialog()\n\n4. Для полностью настраиваемых диалогов используйте метод showCustomDialog()" />
 
-</LinearLayout> 
+</LinearLayout>

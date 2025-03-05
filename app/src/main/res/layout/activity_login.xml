@@ -41,7 +41,7 @@
 
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="200dp"/>
+                    android:layout_height="180dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -130,7 +130,59 @@
 
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="15dp"/>
+                    android:layout_height="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/dialog_message"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <!-- GitHub -->
+                    <ImageButton
+                        android:id="@+id/github_button"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/auth_button_background"
+                        android:contentDescription="GitHub"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_github" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="10dp"/>
+
+                    <!-- Google -->
+                    <ImageButton
+                        android:id="@+id/google_button"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/auth_button_background"
+                        android:contentDescription="Google"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_google" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="10dp"/>
+
+                    <!-- VK ID -->
+                    <ImageButton
+                        android:id="@+id/vk_button"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/auth_button_background"
+                        android:contentDescription="VK ID"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_vk" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
