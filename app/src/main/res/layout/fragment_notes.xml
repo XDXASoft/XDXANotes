@@ -14,10 +14,10 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="50dp"
-            app:queryHint="Поиск"
+            app:queryHint="@string/Search"
             app:iconifiedByDefault="false"
             android:layout_alignParentTop="true"
-            android:background="#363636"
+            android:background="@drawable/rounded_search_background"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             />
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            app:backgroundTint="#505050"
+            app:backgroundTint="#484848"
             app:tint="@color/white"
             android:src="@drawable/ic_plus_icon"
             />

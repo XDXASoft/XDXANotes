@@ -77,7 +77,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:hint="Введите username"
+                        android:hint="@string/Enter_username"
                         android:textColor="@color/white"
                         app:boxStrokeColor="@color/white" />
 
@@ -106,7 +106,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:hint="Введите почту"
+                        android:hint="@string/Enter_email"
                         android:textColor="@color/white"
                         app:boxStrokeColor="@color/white" />
 
@@ -136,7 +136,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:hint="Введите пароль"
+                        android:hint="@string/Enter_password"
                         android:importantForAutofill="no"
                         app:passwordToggleEnabled="true"
                         android:textColor="@color/white"
@@ -152,7 +152,7 @@
                     android:layout_width="350dp"
                     android:layout_height="50dp"
                     android:id="@+id/reg_btn"
-                    android:text="Зарегистрироваться"/>
+                    android:text="@string/Register"/>
 
                 <Space
                     android:layout_width="wrap_content"

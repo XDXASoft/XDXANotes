@@ -2,6 +2,7 @@ package ru.xdxasoft.xdxanotes.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -82,6 +83,19 @@ public class MainActivity extends AppCompatActivity {
         String _android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_checked}, // состояние активного элемента
+                        new int[]{} // состояние неактивного элемента
+                },
+                new int[]{
+                        Color.parseColor("#484848"), // цвет для активного элемента
+                        Color.parseColor("#484848")  // цвет для неактивного элемента
+                }
+        );
+
+        bottomNavigationView.setItemActiveIndicatorColor(colorStateList); // Устанавливаем tint для иконок
 
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);

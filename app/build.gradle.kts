@@ -29,6 +29,11 @@ android {
             )
         }
     }
+    buildFeatures {
+        compose = true
+    }
+
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -81,6 +86,13 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
 
     annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+    implementation("androidx.compose.material3:material3:1.3.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha10")
+
+
+    implementation("com.google.android.material:material:1.12.0")
 
 
 }

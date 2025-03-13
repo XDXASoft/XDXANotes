@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="secondary">#FF4081</color>
+    <color name="secondary_dark">#F50057</color>
+    <color name="secondary_light">#FF80AB</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_text">#757575</color>
     <color name="gray">#202020</color>
     <color name="textboxgray">#323232</color>
     <color name="colorPrimaryDarkTheme">#404040</color>
@@ -13,6 +21,20 @@
     <color name="switchThumbColorLight">#202020</color>
     <color name="switchThumbColorDark">#202020</color>
     <color name="blue">#3F51B5</color>
+
+    <color name="primary_color">#BB86FC</color> <!-- Светлый фиолетовый -->
+    <color name="secondary_color">#03DAC6</color> <!-- Светлая бирюза -->
+    <color name="tertiary_color">#FF6E40</color> <!-- Светлый оранжевый -->
+    <color name="neutral_color">#424242</color> <!-- Тёмный серый -->
+
+    <!-- Текстовые цвета -->
+    <color name="primary_text_color">#FFFFFF</color> <!-- Белый текст -->
+    <color name="secondary_text_color">#B0BEC5</color> <!-- Серый текст -->
+
+    <!-- Цвет фона -->
+    <color name="background_color">#121212</color> <!-- Тёмный фон -->
+
+    <!-- Цвета для диалогов -->
     <color name="dialog_button_background">@color/textboxgray</color>
     <color name="dialog_button_stroke">#FFFFFF</color>
     <color name="dialog_background">@color/textboxgray</color>

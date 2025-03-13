@@ -2,7 +2,19 @@
     <string name="app_name">XDXANotes</string>
     <string name="locate">en</string>
     <string name="Login_hello_text">Welcome to XDXANotes</string>
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="main_text" translatable="false">Click me</string>
+    <string name="Open_settings">Open settings</string>
+    <string name="linkson">Enable \'Open supported links\' for the app to work.</string>
+    <string name="Password_recovery">Password recovery</string>
+    <string name="Enter_email">Enter your email</string>
+    <string name="Restore">Restore</string>
+    <string name="Enter_username">Enter username</string>
+    <string name="Enter_password">Enter your password</string>
+    <string name="Register">Register</string>
+    <string name="Add_password">Add password</string>
+    <string name="Name">Name</string>
+    <string name="Login">Login</string>
+    <string name="Password">Password</string>
+    <string name="Save">Save</string>
+    <string name="Search">Search</string>
 
 </resources>

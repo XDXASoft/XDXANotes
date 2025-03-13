@@ -8,6 +8,7 @@
     <color name="secondary_light">#FF80AB</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#202020</color>
     <color name="gray_light">#F5F5F5</color>
     <color name="gray_text">#757575</color>
     <color name="textboxgray">#323232</color>

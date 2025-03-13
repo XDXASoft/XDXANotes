@@ -3,4 +3,18 @@
     <string name="app_name">XDXANotes</string>
     <string name="locate">ru</string>
     <string name="Login_hello_text">Добро пожаловать в XDXANotes</string>
+    <string name="Open_settings">Открыть настройки</string>
+    <string name="linkson">Включите \'Открывать поддерживаемые ссылки\' для работы приложения.</string>
+    <string name="Password_recovery">Восстановление пароля</string>
+    <string name="Enter_email">Введите почту</string>
+    <string name="Restore">Восстановить</string>
+    <string name="Enter_username">Введите username</string>
+    <string name="Enter_password">Введите пароль</string>
+    <string name="Register">Зарегистрироваться</string>
+    <string name="Add_password">Добавить пароль</string>
+    <string name="Name">Название</string>
+    <string name="Login">Логин</string>
+    <string name="Password">Пароль</string>
+    <string name="Save">Сохранить</string>
+    <string name="Search">Поиск</string>
 </resources>
