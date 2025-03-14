@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +32,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
@@ -38,6 +43,8 @@ import ru.xdxasoft.xdxanotes.utils.AuthManager;
 public class RegActivity extends AppCompatActivity {
 
     private Button regbtn;
+
+    private ImageButton github_button,  google_button,  vk_button;
     private EditText mailreg, passreg, usernamereg;
     private FirebaseAuth mauth;
     private AuthManager authManager;
@@ -57,6 +64,30 @@ public class RegActivity extends AppCompatActivity {
         usernamereg = findViewById(R.id.usernametext);
         mauth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
+        github_button = findViewById(R.id.github_button);
+        google_button = findViewById(R.id.google_button);
+        vk_button = findViewById(R.id.vk_button);
+
+        github_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInWithGitHub();
+            }
+        });
+
+        google_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInWithGoogle();
+            }
+        });
+
+        vk_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         authManager = new AuthManager();
 
@@ -171,4 +202,58 @@ public class RegActivity extends AppCompatActivity {
         Intent intent = new Intent(RegActivity.this, LoginActivity.class);
         startActivity(intent);
     }
+
+    private void signInWithGitHub() {
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
+
+        List<String> scopes = new ArrayList<>();
+        scopes.add("user:email");
+        provider.setScopes(scopes);
+
+        FirebaseAuth.getInstance()
+                .startActivityForSignInWithProvider(this, provider.build())
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        Toast.makeText(this, "Аутентификация успешна: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ERRGITHUBAUTH", e.getMessage());
+                    Toast.makeText(this, "Ошибка аутентификации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void signInWithGoogle() {
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("google.com");
+
+        List<String> scopes = new ArrayList<>();
+        scopes.add("email");
+        scopes.add("profile");
+        provider.setScopes(scopes);
+
+        FirebaseAuth.getInstance()
+                .startActivityForSignInWithProvider(this, provider.build())
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        ToastManager.showToast(this, "Аутентификация успешна: " + user.getEmail(), R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("ACCOUNT_LOGIN", false);
+                        intent.putExtra("ACCOUNT_MAIL", user.getEmail());
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ERRGOOGLEAUTH", e.getMessage());
+                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                });
+    }
+
 }

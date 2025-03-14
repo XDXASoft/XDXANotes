@@ -3,16 +3,23 @@ package ru.xdxasoft.xdxanotes.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.activity.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,8 +28,9 @@ import ru.xdxasoft.xdxanotes.R;
  */
 public class SettingsFragment extends Fragment {
 
+
     private FirebaseAuth mAuth;
-    Button test;
+    Button test, mailverefi;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -74,6 +82,31 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         test = view.findViewById(R.id.test);
+        mailverefi = view.findViewById(R.id.mailverefi);
+
+        String mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        mailverefi.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (user != null) {
+                if (!user.isEmailVerified()) {
+                    user.sendEmailVerification()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+
+                                } else {
+
+                                }
+                            });
+                } else {
+
+                }
+            } else {
+
+            }
+        });
+
         test.setOnClickListener(v -> {
             mAuth.signOut();
         });

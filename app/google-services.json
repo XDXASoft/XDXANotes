@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "628316324784",
+    "firebase_url": "https://xdxanotes-default-rtdb.firebaseio.com",
     "project_id": "xdxanotes",
     "storage_bucket": "xdxanotes.firebasestorage.app"
   },
@@ -12,7 +13,28 @@
           "package_name": "ru.xdxasoft.xdxanotes"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "628316324784-9n154e57ojbvs8k9lae2m9km3h4un7k2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.xdxasoft.xdxanotes",
+            "certificate_hash": "8ddaf28b0b3abde48c7744758f3d39c04f02b0ef"
+          }
+        },
+        {
+          "client_id": "628316324784-gj7nsbgbsihtkcj16c5r3qg3qqfve8b2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.xdxasoft.xdxanotes",
+            "certificate_hash": "588791a5a98df6378ec4153e32bdafbf9aa045fb"
+          }
+        },
+        {
+          "client_id": "628316324784-h7ptknb0s3l4u4mprofdgkn748s0iktr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDpHkG-A8mFM0b3bJWHaMhX2r7OpXyG_FM"
@@ -20,7 +42,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628316324784-h7ptknb0s3l4u4mprofdgkn748s0iktr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -10,6 +10,15 @@ android {
     namespace = "ru.xdxasoft.xdxanotes"
     compileSdk = 35
 
+    applicationVariants.all {
+        outputs.all {
+
+            if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
+                this.outputFileName = "XDXANotes.apk"
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "ru.xdxasoft.xdxanotes"
         minSdk = 29
@@ -29,12 +38,6 @@ android {
             )
         }
     }
-    buildFeatures {
-        compose = true
-    }
-
-
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -75,7 +78,9 @@ dependencies {
     implementation("com.google.android.material:material")
 
     // Play Services
-    implementation("com.google.android.gms:play-services-base:18.0.1")
+
+    implementation ("com.google.android.gms:play-services-auth:19.2.0")
+    implementation ("com.google.android.gms:play-services-base:18.1.0")
 
     implementation("com.google.firebase:firebase-analytics")
 
@@ -87,12 +92,10 @@ dependencies {
 
     annotationProcessor("androidx.room:room-compiler:2.6.1")
 
-    implementation("androidx.compose.material3:material3:1.3.1")
-    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
-    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha10")
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation ("com.google.code.gson:gson:2.8.8")
 
-
-    implementation("com.google.android.material:material:1.12.0")
 
 
 }

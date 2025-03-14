@@ -140,6 +140,7 @@
                     android:orientation="horizontal">
 
                     <!-- GitHub -->
+
                     <ImageButton
                         android:id="@+id/github_button"
                         android:layout_width="48dp"
@@ -178,6 +179,7 @@
                         android:contentDescription="VK ID"
                         android:padding="16dp"
                         android:src="@drawable/ic_vk" />
+
                 </LinearLayout>
 
                 <Space

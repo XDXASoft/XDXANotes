@@ -58,6 +58,8 @@
         <activity
             android:name=".activity.AuthSelectionActivity"
             android:exported="false" /> <!-- Main Activity -->
+
+
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
