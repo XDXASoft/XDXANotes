@@ -20,12 +20,9 @@
     <color name="trackTint">#C8C8C8</color>
     <color name="switchThumbColorLight">#202020</color>
     <color name="switchThumbColorDark">#202020</color>
-    <color name="blue">#3F51B5</color>
+    <color name="blue">#4E69F0</color>
 
-    <color name="primary_color">#BB86FC</color> <!-- Светлый фиолетовый -->
-    <color name="secondary_color">#03DAC6</color> <!-- Светлая бирюза -->
-    <color name="tertiary_color">#FF6E40</color> <!-- Светлый оранжевый -->
-    <color name="neutral_color">#424242</color> <!-- Тёмный серый -->
+
 
     <!-- Текстовые цвета -->
     <color name="primary_text_color">#FFFFFF</color> <!-- Белый текст -->

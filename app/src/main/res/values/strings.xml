@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">XDXANotes</string>
+    <string name="app_name" translatable="false">XDXANotes</string>
     <string name="locate">en</string>
     <string name="Login_hello_text">Welcome to XDXANotes</string>
     <string name="Open_settings">Open settings</string>
@@ -16,5 +16,15 @@
     <string name="Password">Password</string>
     <string name="Save">Save</string>
     <string name="Search">Search</string>
+    <string name="Edit_password">Edit password</string>
+    <string name="Don_t_have_an_account">Don\'t have an account?</string>
+    <string name="Forgot_your_password">Forgot your password?</string>
+    <string name="Notes">Notes</string>
+    <string name="Schedule">Schedule</string>
+    <string name="Passwords">Passwords</string>
+    <string name="Settings">Settings</string>
+    <string name="Already_have_an_account">Already have an account?</string>
+    <string name="Authorization">Authorization</string>
+    <string name="Registration">Registration</string>
 
 </resources>

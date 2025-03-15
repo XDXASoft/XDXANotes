@@ -20,7 +20,8 @@
             android:background="@drawable/rounded_search_background"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            />
+            app:queryBackground="@drawable/rounded_search_background"
+        />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_home"

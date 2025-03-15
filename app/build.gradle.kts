@@ -14,7 +14,7 @@ android {
         outputs.all {
 
             if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
-                this.outputFileName = "XDXANotes.apk"
+                this.outputFileName = "XDXANotes_${versionName}.apk"
             }
         }
     }
@@ -24,7 +24,7 @@ android {
         minSdk = 29
         targetSdk = 34
         versionCode = 1
-        versionName = "TEST_DEBUG"
+        versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

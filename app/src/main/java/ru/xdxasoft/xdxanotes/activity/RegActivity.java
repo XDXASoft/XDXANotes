@@ -194,14 +194,15 @@ public class RegActivity extends AppCompatActivity {
         regbtn.setEnabled(!show);
     }
 
-    private void showMessage(String message) {
+    public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    private void LoginActivity(View v) {
+    public void LoginActivity(View v) {
         Intent intent = new Intent(RegActivity.this, LoginActivity.class);
         startActivity(intent);
     }
+
 
     private void signInWithGitHub() {
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");

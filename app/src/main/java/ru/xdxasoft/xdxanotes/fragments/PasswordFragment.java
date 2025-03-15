@@ -133,7 +133,7 @@ public class PasswordFragment extends Fragment {
 
     private void showBottomSheet(Password password) {
         currentEditingPassword = password;
-        tvBottomSheetTitle.setText(password == null ? getString(R.string.Add_password) : "Редактировать пароль");
+        tvBottomSheetTitle.setText(password == null ? getString(R.string.Add_password) : getString(R.string.Edit_password));
 
         if (password != null) {
             etTitle.setText(password.getTitle());

@@ -4,21 +4,21 @@
     <item
         android:id="@+id/navigation_notes"
         android:icon="@drawable/ic_sticky_note"
-        android:title="Заметки" />
+        android:title="@string/Notes" />
 
     <item
         android:id="@+id/navigation_schedule"
         android:icon="@drawable/ic_calendar"
-        android:title="Расписание" />
+        android:title="@string/Schedule" />
 
     <item
         android:id="@+id/navigation_passwordmanager"
         android:icon="@drawable/ic_key"
-        android:title="Пароли" />
+        android:title="@string/Passwords" />
 
     <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings"
-        android:title="Настройки" />
+        android:title="@string/Settings" />
 
 </menu>
