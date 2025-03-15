@@ -16,6 +16,17 @@
         android:background="#484848"
         app:title="@string/note_editor"
         app:titleTextColor="@color/white">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:text="@string/create_note"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
         
         <RelativeLayout
             android:layout_width="match_parent"

@@ -178,8 +178,8 @@ public class LoginActivity extends AppCompatActivity {
                                             intent.putExtra("ACCOUNT_MAIL", mail.getText().toString());
 
                                             String hashedPassword = passwordValidationService.hashPassword(pass.getText().toString());
-                                            sessionManager.savePasswordHash(hashedPassword); // Сохраняем хэш пароля в сессии
-                                            passwordValidationService.saveLocalPasswordHash(pass.getText().toString()); // Сохраняем локально
+                                            sessionManager.savePasswordHash(hashedPassword);
+                                            passwordValidationService.saveLocalPasswordHash(pass.getText().toString());
 
                                             startActivity(intent);
                                             finish();

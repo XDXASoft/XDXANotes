@@ -46,4 +46,5 @@
     <string name="empty_note_error">Please add some text to your note</string>
     <string name="save_error">Error saving note</string>
     <string name="initialization_error">Error initializing editor</string>
+    <string name="create_note">Create Note</string>
 </resources>

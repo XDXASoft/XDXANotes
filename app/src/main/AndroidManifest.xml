@@ -27,7 +27,7 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activity.CheckDomanUrlActivity"
-            android:exported="false" /> <!-- Firebase Messaging Service -->
+            android:exported="false" />
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:exported="true">
@@ -57,7 +57,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.AuthSelectionActivity"
-            android:exported="false" /> <!-- Main Activity -->
+            android:exported="false" />
 
 
         <activity

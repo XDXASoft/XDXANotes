@@ -46,4 +46,6 @@
     <string name="empty_note_error">Пожалуйста, добавьте текст в заметку</string>
     <string name="save_error">Ошибка при сохранении заметки</string>
     <string name="initialization_error">Ошибка инициализации редактора</string>
+    <string name="create_note">Создание заметки</string>
+
 </resources>

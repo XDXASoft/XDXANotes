@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        // Применяем язык перед созданием активности
         super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
     }
 
@@ -73,11 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Инициализация Firebase
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
 
-        // Анонимная авторизация, если пользователь не авторизован
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             signInAnonymously();

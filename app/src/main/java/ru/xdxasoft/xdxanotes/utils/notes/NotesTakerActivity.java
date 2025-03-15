@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,12 +43,20 @@ public class NotesTakerActivity extends AppCompatActivity {
             editText_notes = findViewById(R.id.editText_notes);
             imageView_save = findViewById(R.id.imageView_save);
 
+            TextView toolbarTitle = findViewById(R.id.toolbar_title);
+
+            // Проверяем, редактируем ли существующую заметку
             notes = new Notes();
             try {
                 notes = (Notes) getIntent().getSerializableExtra("old_note");
-                editText_title.setText(notes.getTitle());
-                editText_notes.setText(notes.getNotes());
-                isOldNote = true;
+                if (notes != null) {
+                    editText_title.setText(notes.getTitle());
+                    editText_notes.setText(notes.getNotes());
+                    isOldNote = true;
+
+                    // Меняем заголовок, если редактируем существующую заметку
+                    toolbarTitle.setText(R.string.edit_note);
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Error getting old note", e);
             }

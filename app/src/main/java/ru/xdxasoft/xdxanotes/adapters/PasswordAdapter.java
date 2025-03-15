@@ -43,7 +43,7 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
             return new PasswordViewHolder(view);
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreateViewHolder", e);
-            // Fallback для предотвращения краша
+            
             View view = new View(parent.getContext());
             return new PasswordViewHolder(view);
         }
@@ -63,7 +63,7 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
                     holder.tvUsername.setText(password.getUsername());
                 }
 
-                // Маскируем пароль для отображения
+                
                 if (holder.tvPassword != null) {
                     String maskedPassword = "••••••••";
                     holder.tvPassword.setText(maskedPassword);

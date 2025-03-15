@@ -12,9 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
 
-/**
- * Пример использования кастомных диалогов
- */
+
 public class DialogExampleActivity extends AppCompatActivity {
 
     @Override
@@ -22,22 +20,17 @@ public class DialogExampleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog_example);
 
-        // Кнопка для показа простого диалога
         Button simpleDialogButton = findViewById(R.id.simple_dialog_button);
         simpleDialogButton.setOnClickListener(v -> showSimpleDialog());
 
-        // Кнопка для показа диалога с вводом
         Button inputDialogButton = findViewById(R.id.input_dialog_button);
         inputDialogButton.setOnClickListener(v -> showInputDialog());
 
-        // Кнопка для показа настраиваемого диалога
         Button customDialogButton = findViewById(R.id.custom_dialog_button);
         customDialogButton.setOnClickListener(v -> showCustomDialog());
     }
 
-    /**
-     * Показывает простой диалог с заголовком и сообщением
-     */
+
     private void showSimpleDialog() {
         CustomDialogHelper.showSimpleDialog(
                 this,
@@ -50,9 +43,6 @@ public class DialogExampleActivity extends AppCompatActivity {
         );
     }
 
-    /**
-     * Показывает диалог с полем ввода
-     */
     private void showInputDialog() {
         CustomDialogHelper.showInputDialog(
                 this,
@@ -65,9 +55,7 @@ public class DialogExampleActivity extends AppCompatActivity {
         );
     }
 
-    /**
-     * Показывает полностью настраиваемый диалог
-     */
+
     private void showCustomDialog() {
         CustomDialogHelper.showCustomDialog(this, (dialog, dialogView) -> {
             TextView titleTextView = dialogView.findViewById(R.id.dialog_title);
