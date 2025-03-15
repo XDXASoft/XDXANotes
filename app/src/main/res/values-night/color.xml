@@ -35,4 +35,19 @@
     <color name="dialog_button_background">@color/textboxgray</color>
     <color name="dialog_button_stroke">#FFFFFF</color>
     <color name="dialog_background">@color/textboxgray</color>
+
+    
+    <!-- Добавляем цвета для заметок -->
+    <color name="color1">#FFF8BBD0</color> <!-- Light Pink -->
+    <color name="color2">#FFE1BEE7</color> <!-- Light Purple -->
+    <color name="color3">#FFBBDEFB</color> <!-- Light Blue -->
+    <color name="color4">#FFC8E6C9</color> <!-- Light Green -->
+    <color name="color5">#FFFFF9C4</color> <!-- Light Yellow -->
+
+    <color name="text_color">#212121</color>
+    <color name="text_secondary">#757575</color>
+
+    <!-- Цвета фона -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="divider_color">#BDBDBD</color>
 </resources>

@@ -1,30 +1,49 @@
 package ru.xdxasoft.xdxanotes.models;
 
-public class Password {
+import androidx.annotation.Keep;
 
-    private long id;
+import java.io.Serializable;
+
+import ru.xdxasoft.xdxanotes.utils.IdGenerator;
+
+@Keep // Аннотация для ProGuard, чтобы не удалял этот класс
+public class Password implements Serializable {
+
+    private String id;
     private String title;
     private String username;
     private String password;
 
-    public Password(long id, String title, String username, String password) {
+    // Пустой конструктор для Firebase - ОБЯЗАТЕЛЬНО должен быть!
+    public Password() {
+        // Пустой конструктор
+    }
+
+    public Password(String id, String title, String username, String password) {
         this.id = id;
         this.title = title;
         this.username = username;
         this.password = password;
     }
 
-    // Геттеры и сеттеры
-    public long getId() {
-        return id;
+    // Конструктор для создания нового пароля с автоматической генерацией ID
+    public Password(String title, String username, String password) {
+        this.id = IdGenerator.generateRandomId();
+        this.title = title;
+        this.username = username;
+        this.password = password;
     }
 
-    public void setId(long id) {
+    public String getId() {
+        return id != null ? id : "";
+    }
+
+    public void setId(String id) {
         this.id = id;
     }
 
     public String getTitle() {
-        return title;
+        return title != null ? title : "";
     }
 
     public void setTitle(String title) {
@@ -32,7 +51,7 @@ public class Password {
     }
 
     public String getUsername() {
-        return username;
+        return username != null ? username : "";
     }
 
     public void setUsername(String username) {
@@ -40,7 +59,7 @@ public class Password {
     }
 
     public String getPassword() {
-        return password;
+        return password != null ? password : "";
     }
 
     public void setPassword(String password) {

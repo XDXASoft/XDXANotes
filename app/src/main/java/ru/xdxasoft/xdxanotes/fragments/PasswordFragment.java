@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,9 @@ import java.util.List;
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.adapters.PasswordAdapter;
 import ru.xdxasoft.xdxanotes.models.Password;
+import ru.xdxasoft.xdxanotes.utils.IdGenerator;
+import ru.xdxasoft.xdxanotes.utils.PasswordDatabaseHelper;
+import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 
 /**
  * A simple {@link Fragment} subclass. Use the
@@ -49,12 +53,14 @@ public class PasswordFragment extends Fragment {
     private PasswordAdapter adapter;
     private List<Password> passwords;
     private SQLiteDatabase database;
+    private PasswordDatabaseHelper dbHelper;
     private FloatingActionButton fabAdd;
     private BottomSheetDialog bottomSheetDialog;
     private EditText etTitle, etUsername, etPassword;
     private Button btnSave;
     private TextView tvBottomSheetTitle;
     private Password currentEditingPassword;
+    private FirebaseManager firebaseManager;
 
     public PasswordFragment() {
         // Required empty public constructor
@@ -92,13 +98,32 @@ public class PasswordFragment extends Fragment {
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password, container, false);
 
-        initViews(view);
-        initDatabase();
-        setupRecyclerView();
-        setupBottomSheet();
-        loadPasswords();
+        try {
+            initViews(view);
+            initDatabase();
+            setupRecyclerView();
+            setupBottomSheet();
 
-        fabAdd.setOnClickListener(v -> showBottomSheet(null));
+            firebaseManager = FirebaseManager.getInstance(requireContext());
+
+            // Загружаем локальные пароли
+            loadPasswords();
+
+            // Синхронизируем с Firebase
+            if (firebaseManager.isUserLoggedIn()) {
+                firebaseManager.syncPasswordsWithFirebase(success -> {
+                    if (success) {
+                        // Обновляем список паролей после синхронизации
+                        loadPasswords();
+                    }
+                });
+            }
+
+            fabAdd.setOnClickListener(v -> showBottomSheet(null));
+        } catch (Exception e) {
+            Log.e("PasswordFragment", "Error in onCreateView", e);
+            Toast.makeText(requireContext(), "Ошибка инициализации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         return view;
     }
@@ -109,12 +134,8 @@ public class PasswordFragment extends Fragment {
     }
 
     private void initDatabase() {
-        database = requireContext().openOrCreateDatabase("passwords.db", Context.MODE_PRIVATE, null);
-        database.execSQL("CREATE TABLE IF NOT EXISTS passwords ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "title TEXT, "
-                + "username TEXT, "
-                + "password TEXT)");
+        dbHelper = new PasswordDatabaseHelper(requireContext());
+        database = dbHelper.getWritableDatabase();
     }
 
     private void setupBottomSheet() {
@@ -165,14 +186,16 @@ public class PasswordFragment extends Fragment {
         Cursor cursor = database.rawQuery("SELECT * FROM passwords", null);
         while (cursor.moveToNext()) {
             passwords.add(new Password(
-                    cursor.getLong(0),
+                    cursor.getString(0),
                     cursor.getString(1),
                     cursor.getString(2),
                     cursor.getString(3)
             ));
         }
         cursor.close();
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void savePassword() {
@@ -190,11 +213,22 @@ public class PasswordFragment extends Fragment {
         cv.put("username", username);
         cv.put("password", password);
 
+        String id;
         if (currentEditingPassword != null) {
-            database.update("passwords", cv, "id = ?",
-                    new String[]{String.valueOf(currentEditingPassword.getId())});
+            id = currentEditingPassword.getId();
+            database.update("passwords", cv, "id = ?", new String[]{id});
         } else {
+            id = IdGenerator.generateRandomId();
+            cv.put("id", id);
             database.insert("passwords", null, cv);
+        }
+
+        // Создаем объект пароля для сохранения в Firebase
+        Password updatedPassword = new Password(id, title, username, password);
+
+        // Сохраняем пароль в Firebase
+        if (firebaseManager.isUserLoggedIn()) {
+            firebaseManager.savePasswordToFirebase(updatedPassword, null);
         }
 
         loadPasswords();
@@ -208,8 +242,14 @@ public class PasswordFragment extends Fragment {
         Toast.makeText(requireContext(), "Скопировано", Toast.LENGTH_SHORT).show();
     }
 
-    private void deletePassword(long id) {
-        database.delete("passwords", "id = ?", new String[]{String.valueOf(id)});
+    private void deletePassword(String id) {
+        // Удаляем пароль из Firebase перед удалением из локальной БД
+        if (firebaseManager.isUserLoggedIn()) {
+            firebaseManager.deletePasswordFromFirebase(id, null);
+        }
+
+        // Удаляем из локальной БД
+        database.delete("passwords", "id = ?", new String[]{id});
         loadPasswords();
     }
 }

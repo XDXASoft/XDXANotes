@@ -6,8 +6,9 @@ import ru.xdxasoft.xdxanotes.utils.notes.Models.Notes;
 
 public interface NotesClickListener {
 
-    void onClick (Notes notes);
-    void onLongCLick (Notes notes, CardView cardView);
+    void onClick(Notes notes);
+
+    void onLongCLick(Notes notes, CardView cardView);
 
     void onLongClick(Notes notes, CardView cardView);
 }

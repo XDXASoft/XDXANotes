@@ -1,85 +1,140 @@
 package ru.xdxasoft.xdxanotes.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
-import java.util.function.Consumer;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.models.Password;
-import com.google.android.material.button.MaterialButton;
 
 public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.PasswordViewHolder> {
 
+    private static final String TAG = "PasswordAdapter";
+
     private List<Password> passwords;
-    private Consumer<String> onCopyClick;
-    private Consumer<Long> onDeleteClick;
-    private Consumer<Password> onEditClick;
+    private OnCopyClickListener copyListener;
+    private OnDeleteClickListener deleteListener;
+    private OnEditClickListener editListener;
 
-    public PasswordAdapter(List<Password> passwords, Consumer<String> onCopyClick, Consumer<Long> onDeleteClick, Consumer<Password> onEditClick) {
+    public PasswordAdapter(List<Password> passwords,
+            OnCopyClickListener copyListener,
+            OnDeleteClickListener deleteListener,
+            OnEditClickListener editListener) {
         this.passwords = passwords;
-        this.onCopyClick = onCopyClick;
-        this.onDeleteClick = onDeleteClick;
-        this.onEditClick = onEditClick;
+        this.copyListener = copyListener;
+        this.deleteListener = deleteListener;
+        this.editListener = editListener;
+    }
+
+    @NonNull
+    @Override
+    public PasswordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        try {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_password, parent, false);
+            return new PasswordViewHolder(view);
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onCreateViewHolder", e);
+            // Fallback для предотвращения краша
+            View view = new View(parent.getContext());
+            return new PasswordViewHolder(view);
+        }
     }
 
     @Override
-    public PasswordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_password, parent, false);
-        return new PasswordViewHolder(view);
-    }
+    public void onBindViewHolder(@NonNull PasswordViewHolder holder, int position) {
+        try {
+            if (position >= 0 && position < passwords.size()) {
+                Password password = passwords.get(position);
 
-    @Override
-    public void onBindViewHolder(PasswordViewHolder holder, int position) {
-        Password password = passwords.get(position);
-        holder.bind(password);
+                if (holder.tvTitle != null) {
+                    holder.tvTitle.setText(password.getTitle());
+                }
+
+                if (holder.tvUsername != null) {
+                    holder.tvUsername.setText(password.getUsername());
+                }
+
+                // Маскируем пароль для отображения
+                if (holder.tvPassword != null) {
+                    String maskedPassword = "••••••••";
+                    holder.tvPassword.setText(maskedPassword);
+                }
+
+                if (holder.btnCopy != null) {
+                    holder.btnCopy.setOnClickListener(v -> {
+                        if (copyListener != null) {
+                            copyListener.onCopyClick(password.getPassword());
+                        }
+                    });
+                }
+
+                if (holder.btnDelete != null) {
+                    holder.btnDelete.setOnClickListener(v -> {
+                        if (deleteListener != null) {
+                            deleteListener.onDeleteClick(password.getId());
+                        }
+                    });
+                }
+
+                if (holder.itemView != null) {
+                    holder.itemView.setOnClickListener(v -> {
+                        if (editListener != null) {
+                            editListener.onEditClick(password);
+                        }
+                    });
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onBindViewHolder at position " + position, e);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return passwords.size();
+        return passwords != null ? passwords.size() : 0;
     }
 
-    class PasswordViewHolder extends RecyclerView.ViewHolder {
+    public static class PasswordViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle, tvUsername, tvPassword;
-        MaterialButton btnEdit, btnDelete, btnShowPassword, btnCopyUsername, btnCopyPassword;
-        boolean isPasswordVisible = false;
+        ImageButton btnCopy, btnDelete;
 
-        PasswordViewHolder(View itemView) {
+        public PasswordViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvUsername = itemView.findViewById(R.id.tvUsername);
-            tvPassword = itemView.findViewById(R.id.tvPassword);
-            btnEdit = itemView.findViewById(R.id.btnEdit);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
-            btnShowPassword = itemView.findViewById(R.id.btnShowPassword);
-            btnCopyUsername = itemView.findViewById(R.id.btnCopyUsername);
-            btnCopyPassword = itemView.findViewById(R.id.btnCopyPassword);
+
+            try {
+                tvTitle = itemView.findViewById(R.id.tvTitle);
+                tvUsername = itemView.findViewById(R.id.tvUsername);
+                tvPassword = itemView.findViewById(R.id.tvPassword);
+                btnCopy = itemView.findViewById(R.id.btnCopy);
+                btnDelete = itemView.findViewById(R.id.btnDelete);
+            } catch (Exception e) {
+                Log.e(TAG, "Error in PasswordViewHolder constructor", e);
+            }
         }
+    }
 
-        void bind(Password password) {
-            tvTitle.setText(password.getTitle());
-            tvUsername.setText(password.getUsername());
-            tvPassword.setText("••••••••");
+    public interface OnCopyClickListener {
 
-            btnShowPassword.setOnClickListener(v -> {
-                isPasswordVisible = !isPasswordVisible;
-                tvPassword.setText(isPasswordVisible ? password.getPassword() : "••••••••");
-                btnShowPassword.setIconResource(isPasswordVisible
-                        ? android.R.drawable.ic_menu_view
-                        : android.R.drawable.ic_menu_view);
-            });
+        void onCopyClick(String text);
+    }
 
-            btnCopyUsername.setOnClickListener(v -> onCopyClick.accept(password.getUsername()));
-            btnCopyPassword.setOnClickListener(v -> onCopyClick.accept(password.getPassword()));
-            btnEdit.setOnClickListener(v -> onEditClick.accept(password));
-            btnDelete.setOnClickListener(v -> onDeleteClick.accept(password.getId()));
-        }
+    public interface OnDeleteClickListener {
+
+        void onDeleteClick(String id);
+    }
+
+    public interface OnEditClickListener {
+
+        void onEditClick(Password password);
     }
 }

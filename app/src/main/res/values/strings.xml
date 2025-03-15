@@ -26,5 +26,24 @@
     <string name="Already_have_an_account">Already have an account?</string>
     <string name="Authorization">Authorization</string>
     <string name="Registration">Registration</string>
-
+    <string name="settings">Settings</string>
+    <string name="synchronization">Synchronization</string>
+    <string name="sync_notes">Sync Notes</string>
+    <string name="sync_passwords">Sync Passwords</string>
+    <string name="language">Language</string>
+    <string name="current_language">Current language</string>
+    <string name="toggle_language">Switch Language</string>
+    <string name="use_system_language">Use System Language</string>
+    <string name="language_mode">Language mode</string>
+    <string name="using_system_language">Using system language</string>
+    <string name="using_custom_language">Using custom language</string>
+    <string name="note_editor">Note Editor</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="note_title">Title</string>
+    <string name="note_content">Enter your note</string>
+    <string name="save_note">Save Note</string>
+    <string name="note_saved">Note saved</string>
+    <string name="empty_note_error">Please add some text to your note</string>
+    <string name="save_error">Error saving note</string>
+    <string name="initialization_error">Error initializing editor</string>
 </resources>

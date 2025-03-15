@@ -1,11 +1,9 @@
 package ru.xdxasoft.xdxanotes.utils.notes.DataBase;
 
-
-import static androidx.room.OnConflictStrategy.REPLACE;
-
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -15,19 +13,21 @@ import ru.xdxasoft.xdxanotes.utils.notes.Models.Notes;
 @Dao
 public interface MainDAO {
 
-    @Insert (onConflict = REPLACE)
-    void  insert (Notes notes);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(Notes notes);
 
-    @Query ("SELECT * FROM notes ORDER BY id DESC")
+    @Query("SELECT * FROM notes ORDER BY pinned DESC, ID DESC")
     List<Notes> getAll();
 
-    @Query("UPDATE notes SET title = :title, notes = :notes WHERE ID = :id")
-    void update (int id, String title, String notes);
-
-    @Delete
-    void  delete (Notes notes);
+    @Query("SELECT * FROM notes WHERE ID = :id")
+    Notes getById(int id);
 
     @Query("UPDATE notes SET pinned = :pin WHERE ID = :id")
-    void pin (int id, boolean pin);
+    void pin(int id, boolean pin);
 
+    @Query("UPDATE notes SET title = :title, notes = :notes WHERE ID = :id")
+    void update(int id, String title, String notes);
+
+    @Delete
+    void delete(Notes notes);
 }

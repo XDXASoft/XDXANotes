@@ -5,53 +5,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
+    android:background="@color/background_color"
     android:orientation="vertical"
     tools:context=".utils.notes.NotesTakerActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_notes"
-        app:title="@string/app_name"
-        app:titleTextColor="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:background="#484848"
+        app:title="@string/note_editor"
+        app:titleTextColor="@color/white">
+        
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+
 
             <ImageView
                 android:id="@+id/imageView_save"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentEnd="true"
-                android:background="@android:color/transparent"
-                android:padding="6dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/save_note"
+                android:padding="12dp"
                 android:src="@drawable/ic_save" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <EditText
-        android:id="@+id/editText_title"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Title: "
-        android:textColorHint="@color/white"
-        android:padding="8dp"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:singleLine="true"
-        />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <EditText
-        android:id="@+id/editText_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter text"
-        android:textColorHint="@color/white"
-        android:padding="8dp"
-        android:textStyle="normal"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/gray"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/editText_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_search_background"
+
+                android:hint="@string/note_title"
+                android:importantForAutofill="no"
+                android:inputType="textCapSentences"
+                android:maxLines="1"
+                android:padding="12dp"
+                android:textColor="@color/text_color"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/editText_notes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/rounded_search_background"
+
+                android:gravity="top"
+                android:hint="@string/note_content"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="5"
+                android:padding="12dp"
+                android:textColor="@color/text_color"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

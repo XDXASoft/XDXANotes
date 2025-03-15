@@ -26,4 +26,24 @@
     <string name="Already_have_an_account">Уже есть аккаунт?</string>
     <string name="Authorization">Авторизация</string>
     <string name="Registration">Регистрация</string>
+    <string name="settings">Настройки</string>
+    <string name="synchronization">Синхронизация</string>
+    <string name="sync_notes">Синхронизировать заметки</string>
+    <string name="sync_passwords">Синхронизировать пароли</string>
+    <string name="language">Язык</string>
+    <string name="current_language">Текущий язык</string>
+    <string name="toggle_language">Переключить язык</string>
+    <string name="use_system_language">Использовать язык системы</string>
+    <string name="language_mode">Режим языка</string>
+    <string name="using_system_language">Используется язык системы</string>
+    <string name="using_custom_language">Используется выбранный язык</string>
+    <string name="note_editor">Редактор заметок</string>
+    <string name="edit_note">Редактировать заметку</string>
+    <string name="note_title">Заголовок</string>
+    <string name="note_content">Введите текст заметки</string>
+    <string name="save_note">Сохранить заметку</string>
+    <string name="note_saved">Заметка сохранена</string>
+    <string name="empty_note_error">Пожалуйста, добавьте текст в заметку</string>
+    <string name="save_error">Ошибка при сохранении заметки</string>
+    <string name="initialization_error">Ошибка инициализации редактора</string>
 </resources>

@@ -1,6 +1,7 @@
 package ru.xdxasoft.xdxanotes.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,6 +42,7 @@ import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ThemeManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
+import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,10 +50,15 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnable;
 
     private FirebaseAuth mAuth;
+    private static final String TAG = "MainActivity";
 
+    private BottomNavigationView bottomNavigationView;
 
-    BottomNavigationView bottomNavigationView;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // Применяем язык перед созданием активности
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
 
     @SuppressLint("HardwareIds")
     @Override
@@ -59,8 +68,23 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         ThemeManager.applyTheme(this);
         LocaleHelper.applyLanguage(this);
+
+        checkSystemLanguage();
+
         setContentView(R.layout.activity_main);
+
+        // Инициализация Firebase
+        FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
+
+        // Анонимная авторизация, если пользователь не авторизован
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            signInAnonymously();
+        } else {
+            // Инициализируем FirebaseManager
+            FirebaseManager.getInstance(this);
+        }
 
         DialogLauncher.launchAuthDialogExample(this);
 
@@ -86,12 +110,12 @@ public class MainActivity extends AppCompatActivity {
 
         ColorStateList colorStateList = new ColorStateList(
                 new int[][]{
-                        new int[]{android.R.attr.state_checked}, // состояние активного элемента
-                        new int[]{} // состояние неактивного элемента
+                    new int[]{android.R.attr.state_checked}, // состояние активного элемента
+                    new int[]{} // состояние неактивного элемента
                 },
                 new int[]{
-                        Color.parseColor("#484848"), // цвет для активного элемента
-                        Color.parseColor("#484848")  // цвет для неактивного элемента
+                    Color.parseColor("#484848"), // цвет для активного элемента
+                    Color.parseColor("#484848") // цвет для неактивного элемента
                 }
         );
 
@@ -100,43 +124,73 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);
 
-        openFragment(new NotesFragment());
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Fragment selectedFragment = null;
 
             if (item.getItemId() == R.id.navigation_notes) {
                 selectedFragment = new NotesFragment();
-            } else if (item.getItemId() == R.id.navigation_schedule) {
-                selectedFragment = new CalendarFragment();
-            } else if (item.getItemId() == R.id.navigation_settings) {
-                selectedFragment = new SettingsFragment();
             } else if (item.getItemId() == R.id.navigation_passwordmanager) {
                 selectedFragment = new PasswordFragment();
+            } else if (item.getItemId() == R.id.navigation_settings) {
+                selectedFragment = new SettingsFragment();
+            }else if (item.getItemId() == R.id.navigation_schedule) {
+                selectedFragment = new CalendarFragment();
             }
-
 
             if (selectedFragment != null) {
-                openFragment(selectedFragment);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.contentFragment, selectedFragment)
+                        .commit();
+                return true;
             }
-            return true;
+            return false;
         });
+
+        // Устанавливаем NotesFragment как фрагмент по умолчанию
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.contentFragment, new NotesFragment())
+                    .commit();
+            bottomNavigationView.setSelectedItemId(R.id.navigation_notes);
+        }
 
         checkURL();
 
         //CustomDialog.showCustomDialog(this, "w1", "Это кастомный диалог!");
-
         tets();
-
-
     }
 
-    public void tets(){
+    private void checkSystemLanguage() {
+        try {
+            // Если выбрано использование языка системы
+            if (LocaleHelper.isUsingSystemLanguage(this)) {
+                String currentLanguage = LocaleHelper.getLanguage(this);
+                String systemLanguage = LocaleHelper.getSystemLanguage();
+
+                // Если язык системы изменился, обновляем язык приложения
+                if (!currentLanguage.equals(systemLanguage)) {
+                    Log.d(TAG, "Язык системы изменился с " + currentLanguage + " на " + systemLanguage);
+                    LocaleHelper.setLocale(this, systemLanguage);
+                    recreate(); // Пересоздаем активность для применения изменений
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при проверке языка системы: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Проверяем язык системы при возобновлении активности
+        checkSystemLanguage();
+    }
+
+    public void tets() {
         Intent intent = getIntent();
         if (intent.getData() != null && intent.getData().getPath().equals("/test")) {
             String errCode = "E100";
             ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: " + errCode, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
-
         }
 
         if (mAuth.getCurrentUser() != null) {
@@ -144,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void checkURL(){
+    public void checkURL() {
         boolean isSwitchEnabled = LinkApprovalChecker.isLinkSwitchEnabled(this);
 
         if (isSwitchEnabled) {
@@ -164,18 +218,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void openFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-        transaction.replace(R.id.contentFragment, fragment);
-
-        transaction.addToBackStack(null);
-
-        transaction.commit();
+    private void signInAnonymously() {
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Успешная анонимная авторизация
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Инициализируем FirebaseManager
+                            FirebaseManager.getInstance(this);
+                        }
+                    } else {
+                        // Ошибка авторизации
+                        Toast.makeText(MainActivity.this, "Ошибка авторизации: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
-
-
 
     private void checkUserSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -187,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
     }
 
     private void loadUserData() {
