@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Введите 6-значный код из SMS"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/et_2fa_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLength="6"
+        android:hint="Код подтверждения"/>
+
+    <Button
+        android:id="@+id/btn_resend_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отправить код повторно"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

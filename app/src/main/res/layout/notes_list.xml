@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:background="#484848"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="#484848"
         android:padding="8dp">
 
         <RelativeLayout
@@ -28,7 +30,7 @@
                 android:padding="4dp"
                 android:singleLine="true"
                 android:text="Title"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -51,7 +53,7 @@
             android:maxLines="10"
             android:padding="4dp"
             android:text="Note content"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="14sp" />
 
         <TextView
@@ -64,7 +66,7 @@
             android:padding="4dp"
             android:singleLine="true"
             android:text="Date"
-            android:textColor="@color/black"
+            android:textColor="#a9a5ab"
             android:textSize="12sp"
             android:textStyle="italic" />
 

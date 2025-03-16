@@ -9,7 +9,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import android.content.Context;
+import android.graphics.Color;
+
+import ru.xdxasoft.xdxanotes.R;
 
 public class AuthManager {
 
@@ -21,122 +26,141 @@ public class AuthManager {
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void registerUser(String email, String password, String username, OnRegistrationListener listener) {
-        // Сначала проверяем существование email
-        mAuth.fetchSignInMethodsForEmail(email)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        SignInMethodQueryResult result = task.getResult();
-                        if (result != null && result.getSignInMethods() != null
-                                && !result.getSignInMethods().isEmpty()) {
-                            // Email существует, удаляем старый аккаунт
-                            deleteOldAccountAndCreate(email, password, username, listener);
-                        } else {
-                            // Email не существует, создаем новый аккаунт
-                            createNewAccount(email, password, username, listener);
-                        }
-                    } else {
-                        listener.onFailure("Ошибка при проверке email");
-                    }
-                });
-    }
-
-    private void deleteOldAccountAndCreate(String email, String password, String username,
-            OnRegistrationListener listener) {
-        // Создаем временные учетные данные
-        AuthCredential credential = EmailAuthProvider.getCredential(email, password);
-
-        // Пытаемся удалить существующий аккаунт через админский SDK
-        mAuth.signInWithCredential(credential)
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        // Удаляем данные из базы данных
-                        mDatabase.child("Users").child(user.getUid()).removeValue()
-                                .addOnCompleteListener(removeTask -> {
-                                    // Удаляем аккаунт
-                                    user.delete()
-                                            .addOnSuccessListener(aVoid -> {
-                                                // После успешного удаления создаем новый
-                                                createNewAccount(email, password, username, listener);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                mAuth.signOut();
-                                                createNewAccount(email, password, username, listener);
-                                            });
-                                })
-                                .addOnFailureListener(e -> {
-                                    mAuth.signOut();
-                                    createNewAccount(email, password, username, listener);
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Если не удалось войти, все равно пробуем создать новый
-                    createNewAccount(email, password, username, listener);
-                });
-    }
-
-    private void createNewAccount(String email, String password, String username,
-            OnRegistrationListener listener) {
-        // Сначала пытаемся удалить, если вдруг остался
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser oldUser = authResult.getUser();
-                    if (oldUser != null) {
-                        oldUser.delete().addOnCompleteListener(deleteTask -> {
-                            actuallyCreateAccount(email, password, username, listener);
-                        });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    actuallyCreateAccount(email, password, username, listener);
-                });
-    }
-
-    private void actuallyCreateAccount(String email, String password, String username,
-            OnRegistrationListener listener) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        user.sendEmailVerification()
-                                .addOnSuccessListener(aVoid -> {
-                                    Map<String, Object> userData = new HashMap<>();
-                                    userData.put("username", username);
-                                    userData.put("email", user.getEmail());
-                                    userData.put("verified", false);
-                                    userData.put("userId", user.getUid());
-                                    userData.put("createdAt", System.currentTimeMillis());
-
-                                    mDatabase.child("Users").child(user.getUid())
-                                            .setValue(userData)
-                                            .addOnSuccessListener(unused -> {
-                                                mAuth.signOut();
-                                                listener.onSuccess("Регистрация успешна! Проверьте почту для подтверждения");
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                user.delete();
-                                                mAuth.signOut();
-                                                listener.onFailure("Ошибка при сохранении данных");
-                                            });
-                                })
-                                .addOnFailureListener(e -> {
-                                    user.delete();
-                                    mAuth.signOut();
-                                    listener.onFailure("Ошибка при отправке письма подтверждения");
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    listener.onFailure("Ошибка при создании аккаунта: " + e.getMessage());
-                });
-    }
-
     public interface OnRegistrationListener {
 
         void onSuccess(String message);
 
         void onFailure(String error);
+    }
+
+    public void registerUser(String email, String password, String username, OnRegistrationListener listener) {
+        mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<String> signInMethods = task.getResult().getSignInMethods();
+                if (signInMethods != null && !signInMethods.isEmpty()) {
+                    // Если email существует, удаляем старый аккаунт
+                    deleteExistingAccountAndRegister(email, password, username, listener);
+                } else {
+                    // Если email новый, регистрируем
+                    createNewAccount(email, password, username, listener);
+                }
+            } else {
+                listener.onFailure("Ошибка проверки email");
+            }
+        });
+    }
+
+    private void deleteExistingAccountAndRegister(String email, String password, String username, OnRegistrationListener listener) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(signInTask -> {
+                    if (signInTask.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            user.delete().addOnCompleteListener(deleteTask -> {
+                                if (deleteTask.isSuccessful()) {
+                                    createNewAccount(email, password, username, listener);
+                                } else {
+                                    listener.onFailure("Ошибка удаления существующего аккаунта");
+                                }
+                            });
+                        }
+                    } else {
+                        listener.onFailure("Этот email уже зарегистрирован");
+                    }
+                });
+    }
+
+    private void createNewAccount(String email, String password, String username, OnRegistrationListener listener) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Отправляем письмо для верификации
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(verificationTask -> {
+                                        if (verificationTask.isSuccessful()) {
+                                            // Сохраняем информацию о пользователе
+                                            User newUser = new User(username, email);
+                                            mDatabase.child("Users").child(user.getUid()).setValue(newUser)
+                                                    .addOnCompleteListener(databaseTask -> {
+                                                        if (databaseTask.isSuccessful()) {
+                                                            mAuth.signOut();
+                                                            listener.onSuccess("Регистрация успешна! Проверьте почту для подтверждения.");
+                                                        } else {
+                                                            listener.onFailure("Ошибка сохранения данных пользователя");
+                                                        }
+                                                    });
+                                        } else {
+                                            listener.onFailure("Ошибка отправки письма подтверждения");
+                                        }
+                                    });
+                        }
+                    } else {
+                        listener.onFailure("Ошибка регистрации: " + task.getException().getMessage());
+                    }
+                });
+    }
+
+    public void resendVerificationEmail(OnRegistrationListener listener) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            user.sendEmailVerification()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listener.onSuccess("Письмо подтверждения отправлено повторно");
+                        } else {
+                            listener.onFailure("Ошибка отправки письма");
+                        }
+                    });
+        }
+    }
+
+    public void sendVerificationEmail(Context context) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            user.sendEmailVerification()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            ToastManager.showToast(context,
+                                    "Письмо подтверждения отправлено на " + user.getEmail(),
+                                    R.drawable.ic_galohca_black,
+                                    Color.GREEN,
+                                    Color.BLACK,
+                                    Color.BLACK);
+                        } else {
+                            ToastManager.showToast(context,
+                                    "Ошибка отправки письма: " + task.getException().getMessage(),
+                                    R.drawable.ic_error,
+                                    Color.RED,
+                                    Color.BLACK,
+                                    Color.BLACK);
+                        }
+                    });
+        }
+    }
+
+    public void checkEmailVerification(Context context, FirebaseUser user) {
+        if (user != null) {
+            if (!user.isEmailVerified()) {
+                CustomDialogHelper.showSimpleDialog(
+                        context,
+                        "Подтверждение email",
+                        "Ваш email не подтвержден. Хотите получить письмо с подтверждением повторно?",
+                        "Да",
+                        Color.parseColor("#727272"),
+                        (dialog, which) -> {
+                            sendVerificationEmail(context);
+                            dialog.dismiss();
+                        },
+                        "Отмена",
+                        Color.RED,
+                        (dialog, which) -> {
+                            mAuth.signOut();
+                            dialog.dismiss();
+                        }
+                );
+            }
+        }
     }
 }

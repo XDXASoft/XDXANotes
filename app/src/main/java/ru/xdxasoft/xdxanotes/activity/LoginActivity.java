@@ -1,10 +1,12 @@
 package ru.xdxasoft.xdxanotes.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -19,9 +21,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -39,6 +43,8 @@ import java.util.List;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.services.PasswordValidationService;
+import ru.xdxasoft.xdxanotes.utils.AuthManager;
+import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.SessionManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 
@@ -50,9 +56,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private ImageButton github_button, google_button, vk_button;
 
-
     private PasswordValidationService passwordValidationService;
     private SessionManager sessionManager;
+    private AuthManager authManager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -60,18 +66,26 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        boolean isSessionActive = getIntent().getBooleanExtra("ACCOUNT_VERI", false);
-        String email = getIntent().getStringExtra("ACCOUNT_MAIL");
-        if (isSessionActive == true) {
-            ToastManager.showToast(this, "Письмо с подтверждением отправлено на " + email, R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+        LinearLayout toastContainer = findViewById(R.id.toastContainer);
+        ToastManager.init(toastContainer);
+
+        boolean isVerificationSent = getIntent().getBooleanExtra("ACCOUNT_VERI", false);
+        String emailFromIntent = getIntent().getStringExtra("ACCOUNT_MAIL");
+
+        if (isVerificationSent && emailFromIntent != null) {
+            ToastManager.showToast(this,
+                    "Письмо с подтверждением отправлено на " + emailFromIntent,
+                    R.drawable.ic_galohca_black,
+                    Color.GREEN,
+                    Color.BLACK,
+                    Color.BLACK);
+            mail.setText(emailFromIntent);
         }
 
         // Инициализация сервисов
         passwordValidationService = new PasswordValidationService();
         sessionManager = new SessionManager(this);
-
-        LinearLayout toastContainer = findViewById(R.id.toastContainer);
-        ToastManager.init(toastContainer);
+        authManager = new AuthManager();
 
         auth = FirebaseAuth.getInstance();
         btn = findViewById(R.id.login_btn);
@@ -80,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
         github_button = findViewById(R.id.github_button);
         google_button = findViewById(R.id.google_button);
         vk_button = findViewById(R.id.vk_button);
-
 
         github_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,40 +173,85 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btn.setOnClickListener(v -> {
-            if (mail.getText().toString().isEmpty() || pass.getText().toString().isEmpty()) {
-                ToastManager.showToast(LoginActivity.this, "Введите логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-            } else {
-                auth.signInWithEmailAndPassword(mail.getText().toString(), pass.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    FirebaseUser user = auth.getCurrentUser();
-                                    if (user != null) {
-                                        if (user.isEmailVerified()) {
-                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            boolean accountLogin = false;
-                                            intent.putExtra("ACCOUNT_LOGIN", accountLogin);
-                                            intent.putExtra("ACCOUNT_MAIL", mail.getText().toString());
+            String email = mail.getText().toString().trim();
+            String password = pass.getText().toString().trim();
 
-                                            String hashedPassword = passwordValidationService.hashPassword(pass.getText().toString());
-                                            sessionManager.savePasswordHash(hashedPassword);
-                                            passwordValidationService.saveLocalPasswordHash(pass.getText().toString());
+            if (email.isEmpty() || password.isEmpty()) {
+                ToastManager.showToast(this,
+                        "Введите логин и пароль!",
+                        R.drawable.ic_error,
+                        Color.RED,
+                        Color.BLACK,
+                        Color.BLACK);
+                return;
+            }
 
-                                            startActivity(intent);
-                                            finish();
-                                        } else {
-                                            auth.signOut();
-                                            ToastManager.showToast(LoginActivity.this, "Подтвердите почту!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                                        }
-                                    }
+            // Вход пользователя
+            auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = auth.getCurrentUser();
+                            if (user != null) {
+                                if (user.isEmailVerified()) {
+                                    // Email подтвержден, разрешаем вход
+                                    Intent intent = new Intent(this, MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("ACCOUNT_MAIL", email);
+
+                                    // Сохраняем хэш пароля
+                                    String hashedPassword = passwordValidationService.hashPassword(password);
+                                    sessionManager.savePasswordHash(hashedPassword);
+                                    passwordValidationService.saveLocalPasswordHash(password);
+
+                                    startActivity(intent);
+                                    finish();
                                 } else {
-                                    ToastManager.showToast(LoginActivity.this, "Неверный логин или пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                                    // Email не подтвержден
+                                    auth.signOut();
+
+                                    // Показываем диалог с предложением отправить письмо повторно
+                                    CustomDialogHelper.showSimpleDialog(
+                                            this,
+                                            "Email не подтвержден",
+                                            "Ваш email не подтвержден. Хотите получить письмо с подтверждением повторно?",
+                                            "Да",
+                                            Color.parseColor("#727272"),
+                                            (dialog, which) -> {
+                                                // Повторная отправка письма подтверждения
+                                                user.sendEmailVerification()
+                                                        .addOnCompleteListener(verificationTask -> {
+                                                            if (verificationTask.isSuccessful()) {
+                                                                ToastManager.showToast(this,
+                                                                        "Письмо подтверждения отправлено на " + email,
+                                                                        R.drawable.ic_galohca_black,
+                                                                        Color.GREEN,
+                                                                        Color.BLACK,
+                                                                        Color.BLACK);
+                                                            } else {
+                                                                ToastManager.showToast(this,
+                                                                        "Ошибка отправки письма",
+                                                                        R.drawable.ic_error,
+                                                                        Color.RED,
+                                                                        Color.BLACK,
+                                                                        Color.BLACK);
+                                                            }
+                                                        });
+                                            },
+                                            "Отмена",
+                                            Color.RED,
+                                            (dialog, which) -> dialog.dismiss()
+                                    );
                                 }
                             }
-                        });
-            }
+                        } else {
+                            ToastManager.showToast(this,
+                                    "Неверный логин или пароль!",
+                                    R.drawable.ic_error,
+                                    Color.RED,
+                                    Color.BLACK,
+                                    Color.BLACK);
+                        }
+                    });
         });
     }
 
@@ -290,6 +348,36 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("YAauth", "Error message: " + authException.getMessage());
                     }
                 });
+    }
+
+    private void showVerificationDialog() {
+        CustomDialogHelper.showSimpleDialog(
+                this,
+                "Подтверждение email",
+                "Ваш email не подтвержден. Хотите получить письмо с подтверждением повторно?",
+                "Да",
+                Color.parseColor("#727272"),
+                (dialog, which) -> {
+                    authManager.resendVerificationEmail(new AuthManager.OnRegistrationListener() {
+                        @Override
+                        public void onSuccess(String message) {
+                            dialog.dismiss();
+                            ToastManager.showToast(LoginActivity.this, message,
+                                    R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            dialog.dismiss();
+                            ToastManager.showToast(LoginActivity.this, error,
+                                    R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                        }
+                    });
+                },
+                "Отмена",
+                Color.RED,
+                (dialog, which) -> dialog.dismiss()
+        );
     }
 
 }

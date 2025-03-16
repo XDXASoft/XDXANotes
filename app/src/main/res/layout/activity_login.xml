@@ -11,12 +11,8 @@
         android:id="@+id/toastContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        android:paddingBottom="16dp"
-        android:translationZ="999dp" />
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical" />
 
     <ScrollView
         android:id="@+id/scrollView"

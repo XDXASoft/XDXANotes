@@ -82,4 +82,35 @@
         android:id="@+id/btnlogauth"
         android:layout_marginBottom="16dp"/>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etPhone"
+        android:inputType="phone"
+        android:hint="+71234567890" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSendVerification"
+        android:text="Отправить код" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etCode"
+        android:inputType="number"
+        android:visibility="gone" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnVerifyCode"
+        android:text="Подтвердить"
+        android:visibility="gone" />
+
 </LinearLayout>

@@ -14,15 +14,13 @@ public class User {
     private Long id;
 
     public User() {
+        // Пустой конструктор нужен для Firebase
     }
 
-        public User(String email, String username, String password) {
-            this.email = email;
-            this.username = username;
-            this.password = password;
-        }
-
-
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
 
     public String getEmail() {
         return email;
@@ -78,7 +76,9 @@ public class User {
     }
 
     public interface OnUserLoadedCallback {
+
         void onUserLoaded(User user);
+
         void onError(String errorMessage);
     }
 }
