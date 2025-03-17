@@ -52,6 +52,23 @@ public class FirebaseManager {
         notesDatabase = RoomDB.getInstance(context);
         dbHelper = new PasswordDatabaseHelper(context);
         passwordsDatabase = dbHelper.getWritableDatabase();
+
+        // Добавляем слушатель изменения состояния авторизации
+        mAuth.addAuthStateListener(firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // Если пользователь вошел, обновляем userId
+                userId = user.getUid();
+                // Очищаем локальную базу данных
+                notesDatabase.mainDao().deleteAll();
+                // Синхронизируем с Firebase
+                syncNotesWithFirebase(null);
+            } else {
+                // Если пользователь вышел, очищаем userId и локальную базу
+                userId = null;
+                notesDatabase.mainDao().deleteAll();
+            }
+        });
     }
 
     public static synchronized FirebaseManager getInstance(Context context) {
@@ -88,30 +105,26 @@ public class FirebaseManager {
                         try {
                             Notes note = noteSnapshot.getValue(Notes.class);
                             if (note != null && note.getID() > 0) {
-                                firebaseNotes.put(String.valueOf(note.getID()), note);
+                                // Проверяем, что заметка принадлежит текущему пользователю
+                                if (userId.equals(note.getUserId())) {
+                                    firebaseNotes.put(String.valueOf(note.getID()), note);
+                                }
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Error parsing note from Firebase", e);
                         }
                     }
 
-                    // Получаем локальные заметки
-                    List<Notes> localNotes = notesDatabase.mainDao().getAll();
-                    Map<String, Notes> localNotesMap = new HashMap<>();
+                    // Очищаем локальную базу данных
+                    notesDatabase.mainDao().deleteAll();
 
-                    for (Notes localNote : localNotes) {
-                        localNotesMap.put(String.valueOf(localNote.getID()), localNote);
-                    }
-
-                    // Добавляем заметки из Firebase, которых нет локально
-                    for (Map.Entry<String, Notes> entry : firebaseNotes.entrySet()) {
-                        if (!localNotesMap.containsKey(entry.getKey())) {
-                            try {
-                                notesDatabase.mainDao().insert(entry.getValue());
-                                Log.d(TAG, "Inserted note from Firebase: " + entry.getValue().getTitle());
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error inserting note from Firebase", e);
-                            }
+                    // Добавляем заметки из Firebase
+                    for (Notes note : firebaseNotes.values()) {
+                        try {
+                            notesDatabase.mainDao().insert(note);
+                            Log.d(TAG, "Inserted note from Firebase: " + note.getTitle());
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error inserting note from Firebase", e);
                         }
                     }
 
@@ -152,6 +165,7 @@ public class FirebaseManager {
             noteValues.put("notes", note.getNotes());
             noteValues.put("date", note.getDate());
             noteValues.put("pinned", note.isPinned());
+            noteValues.put("userId", userId);
 
             mDatabase.child("Users").child(userId).child("notes").child(String.valueOf(note.getID()))
                     .setValue(noteValues)
@@ -217,6 +231,7 @@ public class FirebaseManager {
                         try {
                             Password password = passwordSnapshot.getValue(Password.class);
                             if (password != null && password.getId() != null && !password.getId().isEmpty()) {
+                                password.setUserId(userId);
                                 firebasePasswords.put(password.getId(), password);
                             }
                         } catch (Exception e) {
@@ -225,7 +240,7 @@ public class FirebaseManager {
                     }
 
                     // Получаем локальные пароли
-                    Cursor cursor = passwordsDatabase.rawQuery("SELECT * FROM passwords", null);
+                    Cursor cursor = passwordsDatabase.rawQuery("SELECT * FROM passwords WHERE userId = ?", new String[]{userId});
                     Map<String, Password> localPasswordsMap = new HashMap<>();
 
                     while (cursor.moveToNext()) {
@@ -234,30 +249,25 @@ public class FirebaseManager {
                                 id,
                                 cursor.getString(1),
                                 cursor.getString(2),
-                                cursor.getString(3)
+                                cursor.getString(3),
+                                cursor.getString(4)
                         );
                         localPasswordsMap.put(id, password);
                     }
                     cursor.close();
 
-                    // Добавляем пароли из Firebase, которых нет локально
-                    boolean dataChanged = false;
-                    for (Map.Entry<String, Password> entry : firebasePasswords.entrySet()) {
-                        if (!localPasswordsMap.containsKey(entry.getKey())) {
-                            try {
-                                Password password = entry.getValue();
-                                ContentValues cv = new ContentValues();
-                                cv.put("id", password.getId());
-                                cv.put("title", password.getTitle());
-                                cv.put("username", password.getUsername());
-                                cv.put("password", password.getPassword());
-                                passwordsDatabase.insert("passwords", null, cv);
-                                dataChanged = true;
-                                Log.d(TAG, "Inserted password from Firebase: " + password.getTitle());
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error inserting password from Firebase", e);
-                            }
-                        }
+                    // Очищаем старые пароли текущего пользователя
+                    passwordsDatabase.delete("passwords", "userId = ?", new String[]{userId});
+
+                    // Сохраняем новые пароли
+                    for (Password password : firebasePasswords.values()) {
+                        ContentValues values = new ContentValues();
+                        values.put("id", password.getId());
+                        values.put("title", password.getTitle());
+                        values.put("username", password.getUsername());
+                        values.put("password", password.getPassword());
+                        values.put("userId", password.getUserId());
+                        passwordsDatabase.insert("passwords", null, values);
                     }
 
                     if (callback != null) {
@@ -273,7 +283,7 @@ public class FirebaseManager {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Firebase sync cancelled", databaseError.toException());
+                Log.e(TAG, "Error syncing passwords: " + databaseError.getMessage());
                 if (callback != null) {
                     callback.onSyncComplete(false);
                 }
@@ -290,12 +300,16 @@ public class FirebaseManager {
         }
 
         try {
+            // Устанавливаем userId для пароля
+            password.setUserId(userId);
+
             // Создаем копию пароля для Firebase
             Map<String, Object> passwordValues = new HashMap<>();
             passwordValues.put("id", password.getId());
             passwordValues.put("title", password.getTitle());
             passwordValues.put("username", password.getUsername());
             passwordValues.put("password", password.getPassword());
+            passwordValues.put("userId", password.getUserId());
 
             mDatabase.child("Users").child(userId).child("passwords").child(password.getId())
                     .setValue(passwordValues)

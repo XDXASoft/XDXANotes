@@ -303,16 +303,8 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (!dataSnapshot.exists()) {
-                                    // Если пользователь новый, создаем запись в базе данных
-                                    User newUser = new User(user.getEmail(), "github");
-                                    usersRef.push().setValue(newUser)
-                                            .addOnSuccessListener(aVoid -> {
-                                                ToastManager.showToast(LoginActivity.this, "Регистрация успешна!", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
-                                                navigateToMainActivity(user.getEmail());
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                ToastManager.showToast(LoginActivity.this, "Ошибка при создании профиля: " + e.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                                            });
+                                    // Если пользователь новый, показываем диалог с условиями
+                                    showPrivacyTermsDialogForService(user, "github");
                                 } else {
                                     // Если пользователь уже существует, просто переходим в главную активность
                                     navigateToMainActivity(user.getEmail());

@@ -22,6 +22,7 @@ import java.util.Random;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
+import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 import ru.xdxasoft.xdxanotes.utils.notes.Models.Notes;
 
 public class NotesTakerActivity extends AppCompatActivity {
@@ -79,12 +80,18 @@ public class NotesTakerActivity extends AppCompatActivity {
                         if (!isOldNote) {
                             notes = new Notes();
                             // Генерируем случайный ID для новой заметки
-                            notes.setID(new Random().nextInt(1000000) + 1); // Добавляем +1, чтобы избежать ID = 0
+                            notes.setID(new Random().nextInt(1000000) + 1);
+                            // Устанавливаем время создания только для новых заметок
+                            notes.setDate(formatter.format(date));
+                            // Устанавливаем userId для новой заметки
+                            FirebaseManager firebaseManager = FirebaseManager.getInstance(NotesTakerActivity.this);
+                            if (firebaseManager.isUserLoggedIn()) {
+                                notes.setUserId(firebaseManager.getUserId());
+                            }
                         }
 
                         notes.setTitle(title);
                         notes.setNotes(description);
-                        notes.setDate(formatter.format(date));
 
                         Log.d(TAG, "Saving note: ID=" + notes.getID() + ", Title=" + notes.getTitle());
 

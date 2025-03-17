@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PasswordDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "passwords.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public PasswordDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -19,7 +19,8 @@ public class PasswordDatabaseHelper extends SQLiteOpenHelper {
                 + "id TEXT PRIMARY KEY, "
                 + "title TEXT, "
                 + "username TEXT, "
-                + "password TEXT)");
+                + "password TEXT, "
+                + "userId TEXT)");
     }
 
     @Override
@@ -31,10 +32,14 @@ public class PasswordDatabaseHelper extends SQLiteOpenHelper {
                     + "id TEXT PRIMARY KEY, "
                     + "title TEXT, "
                     + "username TEXT, "
-                    + "password TEXT)");
-            db.execSQL("INSERT INTO passwords (id, title, username, password) "
-                    + "SELECT CAST(id AS TEXT), title, username, password FROM passwords_old");
+                    + "password TEXT, "
+                    + "userId TEXT)");
+            db.execSQL("INSERT INTO passwords (id, title, username, password, userId) "
+                    + "SELECT CAST(id AS TEXT), title, username, password, '' FROM passwords_old");
             db.execSQL("DROP TABLE passwords_old");
+        } else if (oldVersion < 3) {
+            // Добавление поля userId
+            db.execSQL("ALTER TABLE passwords ADD COLUMN userId TEXT DEFAULT ''");
         }
     }
 }

@@ -132,6 +132,8 @@ public class RegActivity extends AppCompatActivity {
         Button continueButton = dialogView.findViewById(R.id.continue_button);
         Button cancelButton = dialogView.findViewById(R.id.cancel_button);
 
+        continueButton.setAlpha(0.5f);
+
         // Обработка клика по ссылке политики конфиденциальности
         privacyPolicyLink.setOnClickListener(v -> {
             String url = "https://your-website.com/privacy-policy"; // Замените на ваш URL
@@ -173,18 +175,10 @@ public class RegActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String message) {
                 showLoading(false);
-                ToastManager.showToast(
-                        RegActivity.this,
-                        message,
-                        R.drawable.ic_galohca_black,
-                        Color.GREEN,
-                        Color.BLACK,
-                        Color.BLACK
-                );
-                Intent intent = new Intent(RegActivity.this, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    showPrivacyTermsDialogForService(user, "email");
+                }
             }
 
             @Override
@@ -314,6 +308,8 @@ public class RegActivity extends AppCompatActivity {
         Button continueButton = dialogView.findViewById(R.id.continue_button);
         Button cancelButton = dialogView.findViewById(R.id.cancel_button);
 
+        continueButton.setAlpha(0.5f);
+
         // Обработка клика по ссылке политики конфиденциальности
         privacyPolicyLink.setOnClickListener(v -> {
             String url = "https://your-website.com/privacy-policy"; // Замените на ваш URL
@@ -341,50 +337,45 @@ public class RegActivity extends AppCompatActivity {
 
         continueButton.setOnClickListener(v -> {
             dialog.dismiss();
-            proceedWithServiceLogin(user, service);
+            // Создаем запись в базе данных
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+            User newUser = new User(user.getEmail(), service);
+            usersRef.push().setValue(newUser)
+                    .addOnSuccessListener(aVoid -> {
+                        ToastManager.showToast(RegActivity.this,
+                                "Регистрация успешна!",
+                                R.drawable.ic_galohca_black,
+                                Color.GREEN,
+                                Color.BLACK,
+                                Color.BLACK);
+                        navigateToMainActivity(user.getEmail());
+                    })
+                    .addOnFailureListener(e -> {
+                        ToastManager.showToast(RegActivity.this,
+                                "Ошибка при создании профиля: " + e.getMessage(),
+                                R.drawable.ic_error,
+                                Color.RED,
+                                Color.BLACK,
+                                Color.BLACK);
+                    });
         });
 
         cancelButton.setOnClickListener(v -> {
             dialog.dismiss();
-            // Отменяем вход и выходим из аккаунта
-            FirebaseAuth.getInstance().signOut();
-            ToastManager.showToast(this, "Для использования приложения необходимо принять условия использования", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+            // Отменяем регистрацию
+            user.delete().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    ToastManager.showToast(RegActivity.this,
+                            "Регистрация отменена",
+                            R.drawable.ic_error,
+                            Color.RED,
+                            Color.BLACK,
+                            Color.BLACK);
+                }
+            });
         });
 
         dialog.show();
-    }
-
-    private void proceedWithServiceLogin(FirebaseUser user, String service) {
-        // Проверяем, существует ли пользователь в базе данных
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
-        Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    // Если пользователь новый, создаем запись в базе данных
-                    String username = user.getEmail().split("@")[0]; // Используем часть email как имя пользователя
-                    User newUser = new User(user.getEmail(), service);
-                    usersRef.push().setValue(newUser)
-                            .addOnSuccessListener(aVoid -> {
-                                ToastManager.showToast(RegActivity.this, "Регистрация успешна!", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
-                                navigateToMainActivity(user.getEmail());
-                            })
-                            .addOnFailureListener(e -> {
-                                ToastManager.showToast(RegActivity.this, "Ошибка при создании профиля: " + e.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                            });
-                } else {
-                    // Если пользователь уже существует, просто переходим в главную активность
-                    navigateToMainActivity(user.getEmail());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                ToastManager.showToast(RegActivity.this, "Ошибка проверки пользователя: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-            }
-        });
     }
 
     private void navigateToMainActivity(String email) {

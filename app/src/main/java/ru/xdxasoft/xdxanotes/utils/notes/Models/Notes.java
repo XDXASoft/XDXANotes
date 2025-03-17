@@ -28,6 +28,9 @@ public class Notes implements Serializable {
     @ColumnInfo(name = "pinned")
     boolean pinned = false;
 
+    @ColumnInfo(name = "userId")
+    String userId = "";
+
     // Пустой конструктор для Firebase
     public Notes() {
         // Пустой конструктор
@@ -71,5 +74,13 @@ public class Notes implements Serializable {
 
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public String getUserId() {
+        return userId != null ? userId : "";
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -16,7 +16,7 @@ public interface MainDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Notes notes);
 
-    @Query("SELECT * FROM notes ORDER BY pinned DESC, ID DESC")
+    @Query("SELECT * FROM notes ORDER BY pinned DESC, date DESC")
     List<Notes> getAll();
 
     @Query("SELECT * FROM notes WHERE ID = :id")
@@ -30,4 +30,7 @@ public interface MainDAO {
 
     @Delete
     void delete(Notes notes);
+
+    @Query("DELETE FROM notes")
+    void deleteAll();
 }

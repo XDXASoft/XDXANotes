@@ -183,56 +183,68 @@ public class PasswordFragment extends Fragment {
 
     private void loadPasswords() {
         passwords.clear();
-        Cursor cursor = database.rawQuery("SELECT * FROM passwords", null);
+        Cursor cursor = database.query("passwords", null, "userId = ?",
+                new String[]{firebaseManager.getUserId()}, null, null, "title ASC");
+
         while (cursor.moveToNext()) {
-            passwords.add(new Password(
-                    cursor.getString(0),
-                    cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getString(3)
-            ));
+            String id = cursor.getString(0);
+            String title = cursor.getString(1);
+            String username = cursor.getString(2);
+            String password = cursor.getString(3);
+            String userId = cursor.getString(4);
+
+            Password passwordObj = new Password(id, title, username, password, userId);
+            passwords.add(passwordObj);
         }
         cursor.close();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
+        adapter.notifyDataSetChanged();
     }
 
     private void savePassword() {
-        String title = etTitle.getText().toString();
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        String title = etTitle.getText().toString().trim();
+        String username = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
         if (title.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Пожалуйста, заполните все поля", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        ContentValues cv = new ContentValues();
-        cv.put("title", title);
-        cv.put("username", username);
-        cv.put("password", password);
-
-        String id;
+        Password newPassword;
         if (currentEditingPassword != null) {
-            id = currentEditingPassword.getId();
-            database.update("passwords", cv, "id = ?", new String[]{id});
+            newPassword = currentEditingPassword;
+            newPassword.setTitle(title);
+            newPassword.setUsername(username);
+            newPassword.setPassword(password);
         } else {
-            id = IdGenerator.generateRandomId();
-            cv.put("id", id);
-            database.insert("passwords", null, cv);
+            newPassword = new Password(title, username, password, firebaseManager.getUserId());
         }
 
-        // Создаем объект пароля для сохранения в Firebase
-        Password updatedPassword = new Password(id, title, username, password);
+        // Сохраняем в Firebase
+        firebaseManager.savePasswordToFirebase(newPassword, success -> {
+            if (success) {
+                // Сохраняем локально
+                ContentValues values = new ContentValues();
+                values.put("id", newPassword.getId());
+                values.put("title", newPassword.getTitle());
+                values.put("username", newPassword.getUsername());
+                values.put("password", newPassword.getPassword());
+                values.put("userId", newPassword.getUserId());
 
-        // Сохраняем пароль в Firebase
-        if (firebaseManager.isUserLoggedIn()) {
-            firebaseManager.savePasswordToFirebase(updatedPassword, null);
-        }
+                if (currentEditingPassword != null) {
+                    database.update("passwords", values, "id = ? AND userId = ?",
+                            new String[]{newPassword.getId(), newPassword.getUserId()});
+                } else {
+                    database.insert("passwords", null, values);
+                }
 
-        loadPasswords();
-        bottomSheetDialog.dismiss();
+                loadPasswords();
+                bottomSheetDialog.dismiss();
+                Toast.makeText(getContext(), "Пароль сохранен", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Ошибка при сохранении пароля", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void copyToClipboard(String text) {
