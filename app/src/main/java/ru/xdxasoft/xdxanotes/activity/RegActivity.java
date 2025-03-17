@@ -2,20 +2,25 @@ package ru.xdxasoft.xdxanotes.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,8 +49,8 @@ public class RegActivity extends AppCompatActivity {
 
     private Button regbtn;
 
-    private ImageButton github_button,  google_button,  vk_button;
-    private EditText mailreg, passreg, usernamereg;
+    private ImageButton github_button, google_button, vk_button;
+    private EditText mailreg, passreg;
     private FirebaseAuth mauth;
     private AuthManager authManager;
     private ProgressBar progressBar;
@@ -61,7 +66,6 @@ public class RegActivity extends AppCompatActivity {
         regbtn = findViewById(R.id.reg_btn);
         mailreg = findViewById(R.id.logintext);
         passreg = findViewById(R.id.passtext);
-        usernamereg = findViewById(R.id.usernametext);
         mauth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
         github_button = findViewById(R.id.github_button);
@@ -103,13 +107,11 @@ public class RegActivity extends AppCompatActivity {
         regbtn.setOnClickListener(v -> {
             String email = mailreg.getText().toString().trim();
             String password = passreg.getText().toString().trim();
-            String username = usernamereg.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
-                ToastManager.showToast(this, "Введите имя пользователя, логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+            if (email.isEmpty() || password.isEmpty()) {
+                ToastManager.showToast(this, "Введите логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
             } else {
-                // Проверяем уникальность имени пользователя перед регистрацией
-                checkUsernameAndRegister(username, email, password);
+                showPrivacyTermsDialog(email, password);
             }
         });
     }
@@ -121,65 +123,76 @@ public class RegActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUsernameAndRegister(String username, String email, String password) {
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
-        Query query = usersRef.orderByChild("username").equalTo(username);
+    private void showPrivacyTermsDialog(String email, String password) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_privacy_terms, null);
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        TextView privacyPolicyLink = dialogView.findViewById(R.id.privacy_policy_link);
+        TextView termsLink = dialogView.findViewById(R.id.terms_link);
+        CheckBox acceptCheckbox = dialogView.findViewById(R.id.accept_checkbox);
+        Button continueButton = dialogView.findViewById(R.id.continue_button);
+        Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+
+        // Обработка клика по ссылке политики конфиденциальности
+        privacyPolicyLink.setOnClickListener(v -> {
+            String url = "https://your-website.com/privacy-policy"; // Замените на ваш URL
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
+
+        // Обработка клика по ссылке условий использования
+        termsLink.setOnClickListener(v -> {
+            String url = "https://your-website.com/terms-of-service"; // Замените на ваш URL
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        acceptCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            continueButton.setEnabled(isChecked);
+            continueButton.setAlpha(isChecked ? 1.0f : 0.5f);
+        });
+
+        continueButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            proceedWithRegistration(email, password);
+        });
+
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void proceedWithRegistration(String email, String password) {
+        showLoading(true);
+        authManager.registerUser(email, password, new AuthManager.OnRegistrationListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    ToastManager.showToast(
-                            RegActivity.this,
-                            "Пользователь с таким именем уже зарегистрирован!",
-                            R.drawable.ic_error,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK
-                    );
-                } else {
-                    showLoading(true);
-                    authManager.registerUser(email, password, username, new AuthManager.OnRegistrationListener() {
-                        @Override
-                        public void onSuccess(String message) {
-                            showLoading(false);
-                            ToastManager.showToast(
-                                    RegActivity.this,
-                                    message,
-                                    R.drawable.ic_galohca_black,
-                                    Color.GREEN,
-                                    Color.BLACK,
-                                    Color.BLACK
-                            );
-                            // Переход на экран входа
-                            Intent intent = new Intent(RegActivity.this, LoginActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-                        }
-
-                        @Override
-                        public void onFailure(String error) {
-                            showLoading(false);
-                            ToastManager.showToast(
-                                    RegActivity.this,
-                                    error,
-                                    R.drawable.ic_error,
-                                    Color.RED,
-                                    Color.BLACK,
-                                    Color.BLACK
-                            );
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onSuccess(String message) {
                 showLoading(false);
                 ToastManager.showToast(
                         RegActivity.this,
-                        "Ошибка проверки имени пользователя: " + databaseError.getMessage(),
+                        message,
+                        R.drawable.ic_galohca_black,
+                        Color.GREEN,
+                        Color.BLACK,
+                        Color.BLACK
+                );
+                Intent intent = new Intent(RegActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                showLoading(false);
+                ToastManager.showToast(
+                        RegActivity.this,
+                        error,
                         R.drawable.ic_error,
                         Color.RED,
                         Color.BLACK,
@@ -203,7 +216,6 @@ public class RegActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     private void signInWithGitHub() {
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
 
@@ -216,15 +228,35 @@ public class RegActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        Toast.makeText(this, "Аутентификация успешна: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                        // Проверяем, существует ли пользователь в базе данных
+                        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+                        Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    // Если пользователь новый, показываем диалог с условиями
+                                    showPrivacyTermsDialogForService(user, "github");
+                                } else {
+                                    // Если пользователь уже существует, просто переходим в главную активность
+                                    navigateToMainActivity(user.getEmail());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                ToastManager.showToast(RegActivity.this,
+                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                                        R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGITHUBAUTH", e.getMessage());
-                    Toast.makeText(this, "Ошибка аутентификации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
+                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                 });
     }
 
@@ -241,20 +273,127 @@ public class RegActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        ToastManager.showToast(this, "Аутентификация успешна: " + user.getEmail(), R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+                        // Проверяем, существует ли пользователь в базе данных
+                        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+                        Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("ACCOUNT_LOGIN", false);
-                        intent.putExtra("ACCOUNT_MAIL", user.getEmail());
-                        startActivity(intent);
-                        finish();
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    // Если пользователь новый, показываем диалог с условиями
+                                    showPrivacyTermsDialogForService(user, "google");
+                                } else {
+                                    // Если пользователь уже существует, просто переходим в главную активность
+                                    navigateToMainActivity(user.getEmail());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                ToastManager.showToast(RegActivity.this,
+                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                                        R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGOOGLEAUTH", e.getMessage());
-                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
+                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                 });
+    }
+
+    private void showPrivacyTermsDialogForService(FirebaseUser user, String service) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_privacy_terms, null);
+
+        TextView privacyPolicyLink = dialogView.findViewById(R.id.privacy_policy_link);
+        TextView termsLink = dialogView.findViewById(R.id.terms_link);
+        CheckBox acceptCheckbox = dialogView.findViewById(R.id.accept_checkbox);
+        Button continueButton = dialogView.findViewById(R.id.continue_button);
+        Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+
+        // Обработка клика по ссылке политики конфиденциальности
+        privacyPolicyLink.setOnClickListener(v -> {
+            String url = "https://your-website.com/privacy-policy"; // Замените на ваш URL
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
+
+        // Обработка клика по ссылке условий использования
+        termsLink.setOnClickListener(v -> {
+            String url = "https://your-website.com/terms-of-service"; // Замените на ваш URL
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        acceptCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            continueButton.setEnabled(isChecked);
+            continueButton.setAlpha(isChecked ? 1.0f : 0.5f);
+        });
+
+        continueButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            proceedWithServiceLogin(user, service);
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            // Отменяем вход и выходим из аккаунта
+            FirebaseAuth.getInstance().signOut();
+            ToastManager.showToast(this, "Для использования приложения необходимо принять условия использования", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+        });
+
+        dialog.show();
+    }
+
+    private void proceedWithServiceLogin(FirebaseUser user, String service) {
+        // Проверяем, существует ли пользователь в базе данных
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+        Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    // Если пользователь новый, создаем запись в базе данных
+                    String username = user.getEmail().split("@")[0]; // Используем часть email как имя пользователя
+                    User newUser = new User(user.getEmail(), service);
+                    usersRef.push().setValue(newUser)
+                            .addOnSuccessListener(aVoid -> {
+                                ToastManager.showToast(RegActivity.this, "Регистрация успешна!", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+                                navigateToMainActivity(user.getEmail());
+                            })
+                            .addOnFailureListener(e -> {
+                                ToastManager.showToast(RegActivity.this, "Ошибка при создании профиля: " + e.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                            });
+                } else {
+                    // Если пользователь уже существует, просто переходим в главную активность
+                    navigateToMainActivity(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                ToastManager.showToast(RegActivity.this, "Ошибка проверки пользователя: " + databaseError.getMessage(), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+            }
+        });
+    }
+
+    private void navigateToMainActivity(String email) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("ACCOUNT_LOGIN", false);
+        intent.putExtra("ACCOUNT_MAIL", email);
+        startActivity(intent);
+        finish();
     }
 
 }

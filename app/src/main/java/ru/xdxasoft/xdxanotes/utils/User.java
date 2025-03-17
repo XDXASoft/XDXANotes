@@ -12,14 +12,19 @@ public class User {
     private String username;
     private String password;
     private Long id;
+    private String service;
 
     public User() {
         // Пустой конструктор нужен для Firebase
     }
 
-    public User(String username, String email) {
-        this.username = username;
+    public User(String email) {
         this.email = email;
+    }
+
+    public User(String email, String service) {
+        this.email = email;
+        this.service = service;
     }
 
     public String getEmail() {
@@ -52,6 +57,14 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
 
     public static void loadUser(String uid, final OnUserLoadedCallback callback) {

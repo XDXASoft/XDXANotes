@@ -33,16 +33,16 @@ public class AuthManager {
         void onFailure(String error);
     }
 
-    public void registerUser(String email, String password, String username, OnRegistrationListener listener) {
+    public void registerUser(String email, String password, OnRegistrationListener listener) {
         mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 List<String> signInMethods = task.getResult().getSignInMethods();
                 if (signInMethods != null && !signInMethods.isEmpty()) {
                     // Если email существует, удаляем старый аккаунт
-                    deleteExistingAccountAndRegister(email, password, username, listener);
+                    deleteExistingAccountAndRegister(email, password, listener);
                 } else {
                     // Если email новый, регистрируем
-                    createNewAccount(email, password, username, listener);
+                    createNewAccount(email, password, listener);
                 }
             } else {
                 listener.onFailure("Ошибка проверки email");
@@ -50,7 +50,7 @@ public class AuthManager {
         });
     }
 
-    private void deleteExistingAccountAndRegister(String email, String password, String username, OnRegistrationListener listener) {
+    private void deleteExistingAccountAndRegister(String email, String password, OnRegistrationListener listener) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(signInTask -> {
                     if (signInTask.isSuccessful()) {
@@ -58,7 +58,7 @@ public class AuthManager {
                         if (user != null) {
                             user.delete().addOnCompleteListener(deleteTask -> {
                                 if (deleteTask.isSuccessful()) {
-                                    createNewAccount(email, password, username, listener);
+                                    createNewAccount(email, password, listener);
                                 } else {
                                     listener.onFailure("Ошибка удаления существующего аккаунта");
                                 }
@@ -70,7 +70,7 @@ public class AuthManager {
                 });
     }
 
-    private void createNewAccount(String email, String password, String username, OnRegistrationListener listener) {
+    private void createNewAccount(String email, String password, OnRegistrationListener listener) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -81,7 +81,7 @@ public class AuthManager {
                                     .addOnCompleteListener(verificationTask -> {
                                         if (verificationTask.isSuccessful()) {
                                             // Сохраняем информацию о пользователе
-                                            User newUser = new User(username, email);
+                                            User newUser = new User(email);
                                             mDatabase.child("Users").child(user.getUid()).setValue(newUser)
                                                     .addOnCompleteListener(databaseTask -> {
                                                         if (databaseTask.isSuccessful()) {
