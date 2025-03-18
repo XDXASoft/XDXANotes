@@ -19,6 +19,15 @@
         android:theme="@style/Base.Theme.XDXANotes"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".utils.notes.NotesTakerActivity"
             android:exported="false" />
         <activity
@@ -28,7 +37,6 @@
         <activity
             android:name=".activity.CheckDomanUrlActivity"
             android:exported="false" />
-
         <activity
             android:name=".activity.LoginActivity"
             android:exported="false"
@@ -52,16 +60,10 @@
         <activity
             android:name=".activity.AuthSelectionActivity"
             android:exported="false" />
-
-
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 

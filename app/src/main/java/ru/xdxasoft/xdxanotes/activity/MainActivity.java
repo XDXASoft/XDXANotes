@@ -63,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        if(mAuth.getCurrentUser() == null){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+
 
         EdgeToEdge.enable(this);
         ThemeManager.applyTheme(this);
@@ -72,9 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        FirebaseApp.initializeApp(this);
-        mAuth = FirebaseAuth.getInstance();
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             signInAnonymously();
@@ -83,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
             FirebaseManager.getInstance(this);
         }
 
-        DialogLauncher.launchAuthDialogExample(this);
 
         CustomDialogHelper.showSimpleDialog(
                 this,
@@ -98,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 Color.RED,
                 (dialog, which) -> dialog.dismiss()
         );
-        Intent intent = new Intent(this, SimpleDialogExampleActivity.class);
-        startActivity(intent);
 
         String _android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 

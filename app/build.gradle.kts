@@ -4,6 +4,7 @@ plugins {
 
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.firebase-perf")
+
 }
 
 android {
