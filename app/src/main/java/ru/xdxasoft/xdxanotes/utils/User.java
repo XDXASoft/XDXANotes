@@ -13,6 +13,7 @@ public class User {
     private String password;
     private Long id;
     private String service;
+    private boolean privacyAccepted = false;
 
     public User() {
         // Пустой конструктор нужен для Firebase
@@ -25,6 +26,12 @@ public class User {
     public User(String email, String service) {
         this.email = email;
         this.service = service;
+    }
+
+    public User(String email, String service, boolean privacyAccepted) {
+        this.email = email;
+        this.service = service;
+        this.privacyAccepted = privacyAccepted;
     }
 
     public String getEmail() {
@@ -65,6 +72,14 @@ public class User {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public boolean isPrivacyAccepted() {
+        return privacyAccepted;
+    }
+
+    public void setPrivacyAccepted(boolean privacyAccepted) {
+        this.privacyAccepted = privacyAccepted;
     }
 
     public static void loadUser(String uid, final OnUserLoadedCallback callback) {

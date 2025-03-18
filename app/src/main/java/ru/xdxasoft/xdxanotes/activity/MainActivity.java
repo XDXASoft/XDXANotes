@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -28,6 +29,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.fragments.PasswordFragment;
@@ -67,13 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser() == null){
+        if (mAuth.getCurrentUser() == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
+            return;
         }
 
-
+        // Проверяем согласие с политикой конфиденциальности из базы данных
+        checkPrivacyAcceptanceFromDatabase();
 
         EdgeToEdge.enable(this);
         ThemeManager.applyTheme(this);
@@ -90,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             // Инициализируем FirebaseManager
             FirebaseManager.getInstance(this);
         }
-
 
         CustomDialogHelper.showSimpleDialog(
                 this,
@@ -135,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new PasswordFragment();
             } else if (item.getItemId() == R.id.navigation_settings) {
                 selectedFragment = new SettingsFragment();
-            }else if (item.getItemId() == R.id.navigation_schedule) {
+            } else if (item.getItemId() == R.id.navigation_schedule) {
                 selectedFragment = new CalendarFragment();
             }
 
@@ -267,6 +274,60 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("MainActivity", "Ошибка загрузки пользователя: " + errorMessage);
                 }
             });
+        }
+    }
+
+    // Новый метод для проверки принятия политики из базы данных
+    private void checkPrivacyAcceptanceFromDatabase() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Показываем индикатор загрузки, если необходимо
+            // Здесь можно добавить progressBar.setVisibility(View.VISIBLE);
+
+            // Ищем пользователя в базе данных по ID текущего пользователя
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+            usersRef.orderByChild("email").equalTo(currentUser.getEmail())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            boolean privacyAccepted = false;
+
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    User user = snapshot.getValue(User.class);
+                                    if (user != null && user.isPrivacyAccepted()) {
+                                        privacyAccepted = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!privacyAccepted) {
+                                // Если политика не принята, возвращаем на экран входа
+                                FirebaseAuth.getInstance().signOut();
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                intent.putExtra("PRIVACY_NOT_ACCEPTED", true);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            // Скрываем индикатор загрузки, если был показан
+                            // progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Обработка ошибки - возвращаем на экран входа при проблеме доступа к данным
+                            Log.e(TAG, "Ошибка при проверке принятия политики: " + databaseError.getMessage());
+                            FirebaseAuth.getInstance().signOut();
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                            // Скрываем индикатор загрузки, если был показан
+                            // progressBar.setVisibility(View.GONE);
+                        }
+                    });
         }
     }
 
