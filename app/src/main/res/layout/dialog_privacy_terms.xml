@@ -34,8 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Посмотреть текст"
-            android:textColor="@color/colorPrimaryDarkTheme"
+            android:text="Посмотреть"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:clickable="true"
             android:focusable="true"
@@ -55,18 +55,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Посмотреть текст"
-            android:textColor="@color/colorPrimaryDarkTheme"
+            android:text="Посмотреть"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:clickable="true"
             android:focusable="true"
             android:background="?attr/selectableItemBackground" />
     </LinearLayout>
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/accept_checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/MyMaterialCheckBox"
         android:layout_marginBottom="16dp"
         android:text="Я согласен с политикой конфиденциальности и условиями использования"
         android:textColor="@color/white" />

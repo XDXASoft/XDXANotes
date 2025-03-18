@@ -31,6 +31,14 @@
         <item name="thumbTint">@color/swichtruecolorDark</item>
     </style>
 
+    <style name="MyMaterialCheckBox" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+    </style>
+
 
     <style name="MySwitch" parent="Theme.AppCompat.Light">
         <item name="trackTint">@color/colorPrimaryDarkTheme</item>

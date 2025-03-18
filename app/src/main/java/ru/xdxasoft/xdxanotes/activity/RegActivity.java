@@ -134,17 +134,15 @@ public class RegActivity extends AppCompatActivity {
 
         continueButton.setAlpha(0.5f);
 
-        // Обработка клика по ссылке политики конфиденциальности
         privacyPolicyLink.setOnClickListener(v -> {
-            String url = "https://your-website.com/privacy-policy"; // Замените на ваш URL
+            String url = "https://notes.xdxa.ru/privacy-policy";
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);
         });
 
-        // Обработка клика по ссылке условий использования
         termsLink.setOnClickListener(v -> {
-            String url = "https://your-website.com/terms-of-service"; // Замените на ваш URL
+            String url = "https://notes.xdxa.ru/terms-of-service";
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);
