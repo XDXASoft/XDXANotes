@@ -43,12 +43,14 @@ import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
 import ru.xdxasoft.xdxanotes.utils.AuthDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.DialogLauncher;
+import ru.xdxasoft.xdxanotes.utils.FcmTopicManager;
 import ru.xdxasoft.xdxanotes.utils.LinkApprovalChecker;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ThemeManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
+import ru.xdxasoft.xdxanotes.utils.FcmGuarantee;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+
         // Проверка политики конфиденциальности перенесена в SplashActivity
         EdgeToEdge.enable(this);
         ThemeManager.applyTheme(this);
@@ -88,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
         checkSystemLanguage();
 
         setContentView(R.layout.activity_main);
+
+        // Отключаем оптимизацию батареи
+        FcmGuarantee.disableBatteryOptimizations(this);
+
+        // Настраиваем периодическую проверку FCM
+        FcmGuarantee.setupFcmHealthCheck(this);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {

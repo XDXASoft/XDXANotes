@@ -58,18 +58,21 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-
     // Firebase dependencies
-    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth:23.1.0")
-    implementation("com.google.firebase:firebase-database:21.0.0")
-    implementation("com.google.firebase:firebase-firestore:24.0.1")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+
+    // УБЕРИТЕ ВЕРСИИ со всех Firebase зависимостей!
     implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth") // убрана версия
+    implementation("com.google.firebase:firebase-database") // убрана версия
+    implementation("com.google.firebase:firebase-firestore") // убрана версия
     implementation("com.google.firebase:firebase-inappmessaging-display")
     implementation("com.google.firebase:firebase-config")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-perf")
 
-    // AndroidX
+    // AndroidX и остальные зависимости без изменений
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.activity:activity:1.9.2")
@@ -79,24 +82,11 @@ dependencies {
     implementation("com.google.android.material:material")
 
     // Play Services
-
-    implementation ("com.google.android.gms:play-services-auth:19.2.0")
-    implementation ("com.google.android.gms:play-services-base:18.1.0")
-
-    implementation("com.google.firebase:firebase-analytics")
-
-    implementation("com.google.firebase:firebase-crashlytics")
-
-    implementation("com.google.firebase:firebase-perf")
+    implementation("com.google.android.gms:play-services-base:18.1.0")
 
     implementation("androidx.room:room-runtime:2.6.1")
-
     annotationProcessor("androidx.room:room-compiler:2.6.1")
-
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation ("com.google.code.gson:gson:2.8.8")
-
-
-
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.google.code.gson:gson:2.8.8")
 }

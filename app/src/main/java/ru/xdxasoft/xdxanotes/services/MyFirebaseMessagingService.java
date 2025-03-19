@@ -5,11 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -22,101 +20,52 @@ import ru.xdxasoft.xdxanotes.activity.MainActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "MyFirebaseMsgService";
+    private static final String TAG = "FCM_SERVICE";
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "onMessageReceived: Получено сообщение");
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
+        // Форсируем работу через WakeLock
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "FCM:MessageWakeLock");
 
-        // Проверяем, есть ли данные в сообщении
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+        wakeLock.acquire(60 * 1000); // 3 минуты для обработки
 
-            // Извлекаем данные (например, title, body, и type) из сообщения
-            String title = remoteMessage.getData().get("title");
-            String body = remoteMessage.getData().get("body");
-            String type = remoteMessage.getData().get("type"); // Дополнительный параметр для определения типа сообщения
+        try {
+            // Показываем уведомление с максимальным приоритетом
+            NotificationManager notificationManager
+                    = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-            // Если данные присутствуют, проверяем тип сообщения
-            if (type != null) {
-                if (type.equals("in_app")) {
-                    // Если это in-app сообщение, показываем его в приложении
-                    showInAppMessage(title, body);
-                } else {
-                    // Если это обычное уведомление, показываем уведомление
-                    sendNotification(title, body);
-                }
-            } else {
-                Log.d(TAG, "Нет данных для уведомления");
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "urgent_channel")
+                    .setSmallIcon(android.R.drawable.ic_popup_reminder)
+                    .setContentTitle(remoteMessage.getNotification() != null
+                            ? remoteMessage.getNotification().getTitle() : "Новое сообщение")
+                    .setContentText(remoteMessage.getNotification() != null
+                            ? remoteMessage.getNotification().getBody() : "Проверьте приложение")
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(
+                        "urgent_channel",
+                        "Срочные уведомления",
+                        NotificationManager.IMPORTANCE_HIGH);
+                channel.enableVibration(true);
+                channel.setBypassDnd(true);
+                notificationManager.createNotificationChannel(channel);
             }
-        } else {
-            Log.d(TAG, "Нет данных в сообщении");
-        }
 
-        // Обрабатываем стандартное уведомление, если оно есть
-        if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification("FCM Message", remoteMessage.getNotification().getBody());
+            notificationManager.notify(1, builder.build());
+        } finally {
+            wakeLock.release();
         }
     }
 
     @Override
     public void onNewToken(@NonNull String token) {
-        Log.d(TAG, "Refreshed token: " + token);
-        sendRegistrationToServer(token); // Отправляем новый токен на сервер
-    }
-
-    private void sendRegistrationToServer(String token) {
-        // TODO: Реализовать отправку токена на сервер
-        Log.d(TAG, "Token sent to server: " + token);
-    }
-
-    private void sendNotification(String title, String messageBody) {
-        // Создаем Intent для открытия MainActivity при клике на уведомление
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_IMMUTABLE);
-
-        String channelId = "fcm_default_channel";
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        // Строим уведомление
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.ic_galohca_black)
-                        .setContentTitle(title)
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Создаем канал уведомлений для Android Oreo и выше
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        // Отправляем уведомление
-        notificationManager.notify(0 /* ID уведомления */, notificationBuilder.build());
-    }
-
-    private void showInAppMessage(String title, String body) {
-        // Показываем in-app сообщение с помощью Toast
-        Toast.makeText(getApplicationContext(), title + ": " + body, Toast.LENGTH_LONG).show();
-
-        Log.d(TAG, title + ": " + body);
-        // Вы можете также использовать другие способы отображения сообщений внутри приложения:
-        // Например, показывать диалог или фрагмент с сообщением:
-        // new AlertDialog.Builder(this)
-        //         .setTitle(title)
-        //         .setMessage(body)
-        //         .setPositiveButton("OK", null)
-        //         .show();
+        Log.d(TAG, "Новый токен: " + token);
     }
 }
