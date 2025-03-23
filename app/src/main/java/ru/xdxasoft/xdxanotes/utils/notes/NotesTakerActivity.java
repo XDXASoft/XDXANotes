@@ -3,6 +3,7 @@ package ru.xdxasoft.xdxanotes.utils.notes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import java.util.Random;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
+import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 import ru.xdxasoft.xdxanotes.utils.notes.Models.Notes;
 
@@ -46,7 +48,6 @@ public class NotesTakerActivity extends AppCompatActivity {
 
             TextView toolbarTitle = findViewById(R.id.toolbar_title);
 
-            // Проверяем, редактируем ли существующую заметку
             notes = new Notes();
             try {
                 notes = (Notes) getIntent().getSerializableExtra("old_note");
@@ -55,7 +56,6 @@ public class NotesTakerActivity extends AppCompatActivity {
                     editText_notes.setText(notes.getNotes());
                     isOldNote = true;
 
-                    // Меняем заголовок, если редактируем существующую заметку
                     toolbarTitle.setText(R.string.edit_note);
                 }
             } catch (Exception e) {
@@ -70,7 +70,12 @@ public class NotesTakerActivity extends AppCompatActivity {
                         String description = editText_notes.getText().toString();
 
                         if (description.isEmpty()) {
-                            Toast.makeText(NotesTakerActivity.this, "Please add some notes!", Toast.LENGTH_SHORT).show();
+                            ToastManager.showToast(NotesTakerActivity.this,
+                                    getString(R.string.Please_add_some_notes),
+                                    R.drawable.warning_black,
+                                    Color.YELLOW,
+                                    Color.BLACK,
+                                    Color.BLACK);
                             return;
                         }
 
@@ -79,11 +84,8 @@ public class NotesTakerActivity extends AppCompatActivity {
 
                         if (!isOldNote) {
                             notes = new Notes();
-                            // Генерируем случайный ID для новой заметки
                             notes.setID(new Random().nextInt(1000000) + 1);
-                            // Устанавливаем время создания только для новых заметок
                             notes.setDate(formatter.format(date));
-                            // Устанавливаем userId для новой заметки
                             FirebaseManager firebaseManager = FirebaseManager.getInstance(NotesTakerActivity.this);
                             if (firebaseManager.isUserLoggedIn()) {
                                 notes.setUserId(firebaseManager.getUserId());
@@ -101,13 +103,22 @@ public class NotesTakerActivity extends AppCompatActivity {
                         finish();
                     } catch (Exception e) {
                         Log.e(TAG, "Error saving note", e);
-                        Toast.makeText(NotesTakerActivity.this, "Ошибка при сохранении: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                        ToastManager.showToast(NotesTakerActivity.this,
+                                getString(R.string.Error_while_saving) + e.getMessage(),
+                                R.drawable.ic_error,
+                                Color.RED,
+                                Color.BLACK,
+                                Color.BLACK);
+                        }
                 }
             });
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
-            Toast.makeText(this, "Ошибка инициализации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+            ToastManager.showToast(NotesTakerActivity.this,
+                    getString(R.string.Initialization_error) + e.getMessage(),
+                    R.drawable.ic_error,
+                    Color.RED,
+                    Color.BLACK,
+                    Color.BLACK);}
     }
 }

@@ -9,11 +9,7 @@ public class IdGenerator {
     private static final int ID_LENGTH = 16;
     private static final SecureRandom random = new SecureRandom();
 
-    /**
-     * Генерирует случайный ID длиной 16 символов из букв a-z, A-Z и цифр 0-9
-     *
-     * @return Уникальный строковый идентификатор
-     */
+
     public static String generateRandomId() {
         StringBuilder sb = new StringBuilder(ID_LENGTH);
         for (int i = 0; i < ID_LENGTH; i++) {
@@ -23,11 +19,7 @@ public class IdGenerator {
         return sb.toString();
     }
 
-    /**
-     * Альтернативный метод генерации ID на основе UUID
-     *
-     * @return Уникальный строковый идентификатор без дефисов
-     */
+
     public static String generateUUID() {
         return UUID.randomUUID().toString().replace("-", "");
     }

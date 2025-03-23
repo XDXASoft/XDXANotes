@@ -13,14 +13,9 @@ import androidx.appcompat.app.AlertDialog;
 
 import ru.xdxasoft.xdxanotes.R;
 
-/**
- * Упрощенный класс для создания и настройки кастомных диалогов
- */
 public class SimpleDialogHelper {
 
-    /**
-     * Создает и показывает простой диалог с заголовком и сообщением
-     */
+
     public static AlertDialog showSimpleDialog(
             Context context,
             String title,
@@ -41,9 +36,6 @@ public class SimpleDialogHelper {
         return dialog;
     }
 
-    /**
-     * Создает и показывает диалог с полем ввода
-     */
     public static Dialog showInputDialog(
             Context context,
             String title,
@@ -57,13 +49,11 @@ public class SimpleDialogHelper {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialogStyle);
         builder.setTitle(title);
 
-        // Создаем поле ввода
         final EditText input = new EditText(context);
         input.setHint(hint);
         input.setText(defaultText);
         builder.setView(input);
 
-        // Добавляем кнопки
         builder.setPositiveButton(positiveText, (dialog, which) -> {
             if (positiveClick != null) {
                 positiveClick.onClick(dialog, which);
@@ -77,17 +67,13 @@ public class SimpleDialogHelper {
         return dialog;
     }
 
-    /**
-     * Интерфейс для получения введенного текста
-     */
+
     public interface InputCallback {
 
         void onInput(String text);
     }
 
-    /**
-     * Создает и показывает диалог с полем ввода и callback для получения текста
-     */
+
     public static Dialog showInputDialogWithCallback(
             Context context,
             String title,
@@ -100,13 +86,11 @@ public class SimpleDialogHelper {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialogStyle);
         builder.setTitle(title);
 
-        // Создаем поле ввода
         final EditText input = new EditText(context);
         input.setHint(hint);
         input.setText(defaultText);
         builder.setView(input);
 
-        // Добавляем кнопки
         builder.setPositiveButton(positiveText, (dialog, which) -> {
             if (callback != null) {
                 callback.onInput(input.getText().toString());

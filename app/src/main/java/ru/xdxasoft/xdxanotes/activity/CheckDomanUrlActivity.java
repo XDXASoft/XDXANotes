@@ -67,7 +67,7 @@ public class CheckDomanUrlActivity extends AppCompatActivity {
         }, 5000);
     }
 
-    public void setingsactivity(View v){
+    public void settingsactivity(View v){
         Intent intent = new Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);

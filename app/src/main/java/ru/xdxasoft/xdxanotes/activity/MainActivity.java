@@ -50,7 +50,6 @@ import ru.xdxasoft.xdxanotes.utils.ThemeManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
-import ru.xdxasoft.xdxanotes.utils.FcmGuarantee;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-
-        // Проверка политики конфиденциальности перенесена в SplashActivity
         EdgeToEdge.enable(this);
         ThemeManager.applyTheme(this);
         LocaleHelper.applyLanguage(this);
@@ -92,33 +89,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Отключаем оптимизацию батареи
-        FcmGuarantee.disableBatteryOptimizations(this);
-
-        // Настраиваем периодическую проверку FCM
-        FcmGuarantee.setupFcmHealthCheck(this);
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             signInAnonymously();
         } else {
-            // Инициализируем FirebaseManager
             FirebaseManager.getInstance(this);
         }
 
-        CustomDialogHelper.showSimpleDialog(
-                this,
-                "Заголовок",
-                "Сообщение",
-                "ОК",
-                Color.parseColor("#727272"),
-                (dialog, which) -> {
-                    // Действие при нажатии ОК
-                },
-                "Отмена",
-                Color.RED,
-                (dialog, which) -> dialog.dismiss()
-        );
 
         String _android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -126,17 +103,16 @@ public class MainActivity extends AppCompatActivity {
 
         ColorStateList colorStateList = new ColorStateList(
                 new int[][]{
-                    new int[]{android.R.attr.state_checked}, // состояние активного элемента
-                    new int[]{} // состояние неактивного элемента
+                    new int[]{android.R.attr.state_checked},
+                    new int[]{}
                 },
                 new int[]{
-                    Color.parseColor("#484848"), // цвет для активного элемента
-                    Color.parseColor("#484848") // цвет для неактивного элемента
+                    Color.parseColor("#484848"),
+                    Color.parseColor("#484848")
                 }
         );
 
-        bottomNavigationView.setItemActiveIndicatorColor(colorStateList); // Устанавливаем tint для иконок
-
+        bottomNavigationView.setItemActiveIndicatorColor(colorStateList);
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);
 
@@ -162,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // Устанавливаем NotesFragment как фрагмент по умолчанию
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.contentFragment, new NotesFragment())
@@ -172,22 +147,19 @@ public class MainActivity extends AppCompatActivity {
 
         checkURL();
 
-        //CustomDialog.showCustomDialog(this, "w1", "Это кастомный диалог!");
         tets();
     }
 
     private void checkSystemLanguage() {
         try {
-            // Если выбрано использование языка системы
             if (LocaleHelper.isUsingSystemLanguage(this)) {
                 String currentLanguage = LocaleHelper.getLanguage(this);
                 String systemLanguage = LocaleHelper.getSystemLanguage();
 
-                // Если язык системы изменился, обновляем язык приложения
                 if (!currentLanguage.equals(systemLanguage)) {
                     Log.d(TAG, "Язык системы изменился с " + currentLanguage + " на " + systemLanguage);
                     LocaleHelper.setLocale(this, systemLanguage);
-                    recreate(); // Пересоздаем активность для применения изменений
+                    recreate();
                 }
             }
         } catch (Exception e) {
@@ -198,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Проверяем язык системы при возобновлении активности
         checkSystemLanguage();
     }
 
@@ -238,16 +209,12 @@ public class MainActivity extends AppCompatActivity {
         mAuth.signInAnonymously()
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Успешная анонимная авторизация
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Инициализируем FirebaseManager
                             FirebaseManager.getInstance(this);
                         }
                     } else {
-                        // Ошибка авторизации
-                        Toast.makeText(MainActivity.this, "Ошибка авторизации: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        ToastManager.showToast(this, getString(R.string.Authentication_error) + task.getException().getMessage(), R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
                     }
                 });
     }
@@ -290,5 +257,9 @@ public class MainActivity extends AppCompatActivity {
         if (handler != null && runnable != null) {
             handler.removeCallbacks(runnable);
         }
+    }
+
+    public void showCustomToast(String message, int drawableRes, int color1, int textColor, int backgroundColor, boolean isDEBUG) {
+        ToastManager.showToast(this, message, drawableRes, color1, textColor, backgroundColor, isDEBUG);
     }
 }

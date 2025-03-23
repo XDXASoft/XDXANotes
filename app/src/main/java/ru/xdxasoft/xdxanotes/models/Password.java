@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 import ru.xdxasoft.xdxanotes.utils.IdGenerator;
 
-@Keep // Аннотация для ProGuard, чтобы не удалял этот класс
+@Keep
 public class Password implements Serializable {
 
     private String id;
@@ -15,9 +15,8 @@ public class Password implements Serializable {
     private String password;
     private String userId;
 
-    // Пустой конструктор для Firebase - ОБЯЗАТЕЛЬНО должен быть!
     public Password() {
-        // Пустой конструктор
+
     }
 
     public Password(String id, String title, String username, String password, String userId) {
@@ -28,7 +27,6 @@ public class Password implements Serializable {
         this.userId = userId;
     }
 
-    // Конструктор для создания нового пароля с автоматической генерацией ID
     public Password(String title, String username, String password, String userId) {
         this.id = IdGenerator.generateRandomId();
         this.title = title;

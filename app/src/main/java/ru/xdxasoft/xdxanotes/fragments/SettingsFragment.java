@@ -1,6 +1,7 @@
 package ru.xdxasoft.xdxanotes.fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -105,36 +106,113 @@ public class SettingsFragment extends Fragment {
             fbabtn.setOnClickListener(v->{
                 fba.signOut();
             });
-            // Отображаем текущий язык и режим
             updateLanguageInfo();
 
             btnSyncNotes.setOnClickListener(v -> {
                 if (firebaseManager.isUserLoggedIn()) {
-                    Toast.makeText(requireContext(), "Синхронизация заметок...", Toast.LENGTH_SHORT).show();
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    if (mainActivity != null) {
+                        mainActivity.showCustomToast(
+                                getString(R.string.Syncing_notes),
+                                R.drawable.ic_galohca_black,
+                                Color.GREEN,
+                                Color.BLACK,
+                                Color.BLACK,
+                                false
+                        );
+                    }
+
                     firebaseManager.syncNotesWithFirebase(success -> {
                         if (success) {
-                            Toast.makeText(requireContext(), "Заметки синхронизированы", Toast.LENGTH_SHORT).show();
+                            if (mainActivity != null) {
+                                mainActivity.showCustomToast(
+                                        getString(R.string.Notes_are_synchronized),
+                                        R.drawable.ic_galohca_black,
+                                        Color.GREEN,
+                                        Color.BLACK,
+                                        Color.BLACK,
+                                        false
+                                );
+                            }
                         } else {
-                            Toast.makeText(requireContext(), "Ошибка синхронизации заметок", Toast.LENGTH_SHORT).show();
+                            if (mainActivity != null) {
+                                mainActivity.showCustomToast(
+                                        getString(R.string.Error_saving_note),
+                                        R.drawable.ic_error_black,
+                                        Color.RED,
+                                        Color.BLACK,
+                                        Color.BLACK,
+                                        false
+                                );
+                            }
+
                         }
                     });
                 } else {
-                    Toast.makeText(requireContext(), "Вы не авторизованы", Toast.LENGTH_SHORT).show();
-                }
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    if (mainActivity != null) {
+                        mainActivity.showCustomToast(
+                                getString(R.string.You_are_not_logged_in),
+                                R.drawable.ic_error_black,
+                                Color.RED,
+                                Color.BLACK,
+                                Color.BLACK,
+                                false
+                        );
+                    }
+                    }
             });
 
             btnSyncPasswords.setOnClickListener(v -> {
                 if (firebaseManager.isUserLoggedIn()) {
-                    Toast.makeText(requireContext(), "Синхронизация паролей...", Toast.LENGTH_SHORT).show();
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    if (mainActivity != null) {
+                        mainActivity.showCustomToast(
+                                getString(R.string.Synchronizing_passwords),
+                                R.drawable.ic_galohca_black,
+                                Color.GREEN,
+                                Color.BLACK,
+                                Color.BLACK,
+                                false
+                        );
+                    }
                     firebaseManager.syncPasswordsWithFirebase(success -> {
+
                         if (success) {
-                            Toast.makeText(requireContext(), "Пароли синхронизированы", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(requireContext(), "Ошибка синхронизации паролей", Toast.LENGTH_SHORT).show();
-                        }
+                            if (mainActivity != null) {
+                                mainActivity.showCustomToast(
+                                        getString(R.string.Passwords_are_synchronized),
+                                        R.drawable.ic_galohca_black,
+                                        Color.GREEN,
+                                        Color.BLACK,
+                                        Color.BLACK,
+                                        false
+                                );
+                            }
+                            } else {
+                            if (mainActivity != null) {
+                                mainActivity.showCustomToast(
+                                        getString(R.string.Password_sync_error),
+                                        R.drawable.ic_error_black,
+                                        Color.RED,
+                                        Color.BLACK,
+                                        Color.BLACK,
+                                        false
+                                );
+                            }}
                     });
                 } else {
-                    Toast.makeText(requireContext(), "Вы не авторизованы", Toast.LENGTH_SHORT).show();
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    if (mainActivity != null) {
+                        mainActivity.showCustomToast(
+                                getString(R.string.You_are_not_logged_in),
+                                R.drawable.ic_error_black,
+                                Color.RED,
+                                Color.BLACK,
+                                Color.BLACK,
+                                false
+                        );
+                    }
                 }
             });
 
@@ -151,7 +229,17 @@ public class SettingsFragment extends Fragment {
             });
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreateView", e);
-            Toast.makeText(requireContext(), "Ошибка инициализации настроек: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.showCustomToast(
+                        getString(R.string.Error_initializing_settings) + e.getMessage(),
+                        R.drawable.ic_error_black,
+                        Color.RED,
+                        Color.BLACK,
+                        Color.BLACK,
+                        false
+                );
+            }
         }
 
         return view;

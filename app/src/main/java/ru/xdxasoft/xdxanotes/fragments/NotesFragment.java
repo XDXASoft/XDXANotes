@@ -2,6 +2,7 @@ package ru.xdxasoft.xdxanotes.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,12 +21,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.google.android.material.color.ColorRoles;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.activity.MainActivity;
+import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 import ru.xdxasoft.xdxanotes.utils.notes.Adapter.NotesListAdapter;
 import ru.xdxasoft.xdxanotes.utils.notes.DataBase.RoomDB;
@@ -55,19 +59,28 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         fabAdd = view.findViewById(R.id.fab_add);
         searchViewHome = view.findViewById(R.id.searchView_home);
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            mainActivity.showCustomToast(
+                    "TEST из фрагмента",
+                    R.drawable.ic_settings,
+                    -5592406,
+                    Color.BLACK,
+                    Color.BLACK,
+                    true
+            );
+        }
+
         try {
             database = RoomDB.getInstance(requireContext());
             firebaseManager = FirebaseManager.getInstance(requireContext());
 
-            // Загружаем локальные заметки
             notes = database.mainDao().getAll();
             updateRecycler(notes);
 
-            // Синхронизируем с Firebase
             if (firebaseManager.isUserLoggedIn()) {
                 firebaseManager.syncNotesWithFirebase(success -> {
                     if (success) {
-                        // Обновляем список заметок после синхронизации
                         try {
                             notes.clear();
                             notes.addAll(database.mainDao().getAll());
@@ -85,7 +98,17 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             }
         } catch (Exception e) {
             Log.e(TAG, "Error initializing database or Firebase", e);
-            Toast.makeText(requireContext(), "Ошибка инициализации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            if (mainActivity != null) {
+                mainActivity.showCustomToast(
+                        getString(R.string.Initialization_error) + e.getMessage(),
+                        R.drawable.ic_error_black,
+                        Color.RED,
+                        Color.BLACK,
+                        Color.BLACK,
+                        false
+                );
+            }
         }
 
         fabAdd.setOnClickListener(v -> {
@@ -134,18 +157,15 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             if (requestCode == 101 && resultCode == Activity.RESULT_OK && data != null) {
                 Notes newNote = (Notes) data.getSerializableExtra("note");
                 if (newNote != null) {
-                    // Сохраняем в локальную БД
                     database.mainDao().insert(newNote);
                     Log.d(TAG, "New note saved locally: " + newNote.getTitle());
 
-                    // Обновляем список
                     notes.clear();
                     notes.addAll(database.mainDao().getAll());
                     if (notesListAdapter != null) {
                         notesListAdapter.notifyDataSetChanged();
                     }
 
-                    // Сохраняем в Firebase
                     if (firebaseManager.isUserLoggedIn()) {
                         firebaseManager.saveNoteToFirebase(newNote, success -> {
                             if (success) {
@@ -159,18 +179,15 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             } else if (requestCode == 102 && resultCode == Activity.RESULT_OK && data != null) {
                 Notes updatedNote = (Notes) data.getSerializableExtra("note");
                 if (updatedNote != null) {
-                    // Обновляем в локальной БД
                     database.mainDao().update(updatedNote.getID(), updatedNote.getTitle(), updatedNote.getNotes());
                     Log.d(TAG, "Note updated locally: " + updatedNote.getTitle());
 
-                    // Обновляем список
                     notes.clear();
                     notes.addAll(database.mainDao().getAll());
                     if (notesListAdapter != null) {
                         notesListAdapter.notifyDataSetChanged();
                     }
 
-                    // Обновляем в Firebase
                     if (firebaseManager.isUserLoggedIn()) {
                         firebaseManager.saveNoteToFirebase(updatedNote, success -> {
                             if (success) {
@@ -184,7 +201,18 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             }
         } catch (Exception e) {
             Log.e(TAG, "Error in onActivityResult", e);
-            Toast.makeText(requireContext(), "Ошибка при сохранении заметки: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            MainActivity mainActivity = (MainActivity) getActivity();
+
+            if (mainActivity != null) {
+                mainActivity.showCustomToast(
+                        getString(R.string.Error_saving_note) + e.getMessage(),
+                        R.drawable.ic_error_black,
+                        Color.RED,
+                        Color.BLACK,
+                        Color.BLACK,
+                        false
+                );
+            }
         }
     }
 
@@ -242,10 +270,31 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             if (item.getItemId() == R.id.pin) {
                 if (selectedNote.isPinned()) {
                     database.mainDao().pin(selectedNote.getID(), false);
-                    Toast.makeText(requireContext(), "Unpinned", Toast.LENGTH_SHORT).show();
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    if (mainActivity != null) {
+                        mainActivity.showCustomToast(
+                                getString(R.string.Unpinned),
+                                R.drawable.ic_galohca_black,
+                                Color.GREEN,
+                                Color.BLACK,
+                                Color.BLACK,
+                                false
+                        );
+                    }
                 } else {
                     database.mainDao().pin(selectedNote.getID(), true);
-                    Toast.makeText(requireContext(), "Pinned", Toast.LENGTH_SHORT).show();
+
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    if (mainActivity != null) {
+                        mainActivity.showCustomToast(
+                                getString(R.string.Pinned),
+                                R.drawable.ic_galohca_black,
+                                Color.GREEN,
+                                Color.BLACK,
+                                Color.BLACK,
+                                false
+                        );
+                    }
                 }
 
                 notes.clear();
@@ -254,9 +303,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     notesListAdapter.notifyDataSetChanged();
                 }
 
-                // Обновляем в Firebase
                 if (firebaseManager.isUserLoggedIn()) {
-                    // Получаем обновленную заметку
                     Notes updatedNote = database.mainDao().getById(selectedNote.getID());
                     if (updatedNote != null) {
                         firebaseManager.saveNoteToFirebase(updatedNote, null);
@@ -266,19 +313,28 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 return true;
 
             } else if (item.getItemId() == R.id.delete) {
-                // Удаляем из Firebase перед удалением из локальной БД
                 if (firebaseManager.isUserLoggedIn()) {
                     firebaseManager.deleteNoteFromFirebase(selectedNote, null);
                 }
 
-                // Удаляем из локальной БД
                 database.mainDao().delete(selectedNote);
                 notes.remove(selectedNote);
                 if (notesListAdapter != null) {
                     notesListAdapter.notifyDataSetChanged();
                 }
 
-                Toast.makeText(requireContext(), "Note removed", Toast.LENGTH_SHORT).show();
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity != null) {
+                    mainActivity.showCustomToast(
+                            getString(R.string.Note_removed),
+                            R.drawable.ic_galohca_black,
+                            Color.GREEN,
+                            Color.BLACK,
+                            Color.BLACK,
+                            false
+                    );
+                }
+
                 return true;
 
             } else {

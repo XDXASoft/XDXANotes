@@ -12,14 +12,9 @@ import androidx.appcompat.app.AlertDialog;
 
 import ru.xdxasoft.xdxanotes.R;
 
-/**
- * Класс для работы с диалогом авторизации через социальные сети
- */
 public class AuthDialogHelper {
 
-    /**
-     * Интерфейс для обработки нажатий на кнопки авторизации
-     */
+
     public interface AuthDialogCallback {
 
         void onGithubAuth();
@@ -46,10 +41,8 @@ public class AuthDialogHelper {
             String message,
             AuthDialogCallback callback) {
 
-        // Создаем View для диалога
         View dialogView = LayoutInflater.from(context).inflate(R.layout.auth_dialog_layout, null);
 
-        // Находим элементы интерфейса
         TextView titleTextView = dialogView.findViewById(R.id.dialog_title);
         TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
         ImageButton closeButton = dialogView.findViewById(R.id.close_button);
@@ -57,7 +50,6 @@ public class AuthDialogHelper {
         ImageButton googleButton = dialogView.findViewById(R.id.google_button);
         ImageButton vkButton = dialogView.findViewById(R.id.vk_button);
 
-        // Устанавливаем текст
         if (title != null) {
             titleTextView.setText(title);
         }
@@ -66,16 +58,13 @@ public class AuthDialogHelper {
             messageTextView.setText(message);
         }
 
-        // Создаем диалог
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialogStyle);
         builder.setView(dialogView);
 
-        // Отключаем стандартные кнопки
         builder.setCancelable(false);
 
         final AlertDialog dialog = builder.create();
 
-        // Устанавливаем обработчики нажатий
         closeButton.setOnClickListener(v -> {
             if (callback != null) {
                 callback.onDialogClosed();

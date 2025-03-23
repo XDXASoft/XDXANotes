@@ -37,26 +37,21 @@ public class SplashActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
 
-        // Короткая задержка для показа сплэш-экрана
         new Handler().postDelayed(this::checkUserAndNavigate, 2000);
     }
 
     private void checkUserAndNavigate() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            // Если пользователь не авторизован, перенаправляем на экран входа
             navigateToLogin(false);
         } else {
-            // Проверяем принятие политики конфиденциальности
             checkPrivacyAcceptanceFromDatabase();
         }
     }
 
-    // Метод для проверки принятия политики из базы данных
     private void checkPrivacyAcceptanceFromDatabase() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Ищем пользователя в базе данных по email текущего пользователя
             DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
             usersRef.orderByChild("email").equalTo(currentUser.getEmail())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,10 +70,8 @@ public class SplashActivity extends AppCompatActivity {
                             }
 
                             if (privacyAccepted) {
-                                // Если политика принята, переходим на главный экран
                                 navigateToMain();
                             } else {
-                                // Если политика не принята, возвращаем на экран входа с флагом
                                 FirebaseAuth.getInstance().signOut();
                                 navigateToLogin(true);
                             }
@@ -86,7 +79,6 @@ public class SplashActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // Обработка ошибки - перенаправляем на экран входа при проблеме доступа к данным
                             Log.e(TAG, "Ошибка при проверке принятия политики: " + databaseError.getMessage());
                             FirebaseAuth.getInstance().signOut();
                             navigateToLogin(false);

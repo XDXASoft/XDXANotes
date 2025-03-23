@@ -53,18 +53,13 @@ public class FirebaseManager {
         dbHelper = new PasswordDatabaseHelper(context);
         passwordsDatabase = dbHelper.getWritableDatabase();
 
-        // Добавляем слушатель изменения состояния авторизации
         mAuth.addAuthStateListener(firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
-                // Если пользователь вошел, обновляем userId
                 userId = user.getUid();
-                // Очищаем локальную базу данных
                 notesDatabase.mainDao().deleteAll();
-                // Синхронизируем с Firebase
                 syncNotesWithFirebase(null);
             } else {
-                // Если пользователь вышел, очищаем userId и локальную базу
                 userId = null;
                 notesDatabase.mainDao().deleteAll();
             }
@@ -86,7 +81,6 @@ public class FirebaseManager {
         return userId;
     }
 
-    // ===== NOTES METHODS =====
     public void syncNotesWithFirebase(final SyncCallback callback) {
         if (!isUserLoggedIn()) {
             if (callback != null) {
@@ -99,13 +93,11 @@ public class FirebaseManager {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    // Получаем заметки из Firebase
                     Map<String, Notes> firebaseNotes = new HashMap<>();
                     for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                         try {
                             Notes note = noteSnapshot.getValue(Notes.class);
                             if (note != null && note.getID() > 0) {
-                                // Проверяем, что заметка принадлежит текущему пользователю
                                 if (userId.equals(note.getUserId())) {
                                     firebaseNotes.put(String.valueOf(note.getID()), note);
                                 }
@@ -115,10 +107,8 @@ public class FirebaseManager {
                         }
                     }
 
-                    // Очищаем локальную базу данных
                     notesDatabase.mainDao().deleteAll();
 
-                    // Добавляем заметки из Firebase
                     for (Notes note : firebaseNotes.values()) {
                         try {
                             notesDatabase.mainDao().insert(note);
@@ -158,7 +148,6 @@ public class FirebaseManager {
         }
 
         try {
-            // Создаем копию заметки для Firebase
             Map<String, Object> noteValues = new HashMap<>();
             noteValues.put("ID", note.getID());
             noteValues.put("title", note.getTitle());
@@ -212,7 +201,6 @@ public class FirebaseManager {
                 });
     }
 
-    // ===== PASSWORDS METHODS =====
     public void syncPasswordsWithFirebase(final SyncCallback callback) {
         if (!isUserLoggedIn()) {
             if (callback != null) {
@@ -225,7 +213,6 @@ public class FirebaseManager {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    // Получаем пароли из Firebase
                     Map<String, Password> firebasePasswords = new HashMap<>();
                     for (DataSnapshot passwordSnapshot : dataSnapshot.getChildren()) {
                         try {
@@ -239,7 +226,6 @@ public class FirebaseManager {
                         }
                     }
 
-                    // Получаем локальные пароли
                     Cursor cursor = passwordsDatabase.rawQuery("SELECT * FROM passwords WHERE userId = ?", new String[]{userId});
                     Map<String, Password> localPasswordsMap = new HashMap<>();
 
@@ -256,10 +242,8 @@ public class FirebaseManager {
                     }
                     cursor.close();
 
-                    // Очищаем старые пароли текущего пользователя
                     passwordsDatabase.delete("passwords", "userId = ?", new String[]{userId});
 
-                    // Сохраняем новые пароли
                     for (Password password : firebasePasswords.values()) {
                         ContentValues values = new ContentValues();
                         values.put("id", password.getId());
@@ -300,10 +284,8 @@ public class FirebaseManager {
         }
 
         try {
-            // Устанавливаем userId для пароля
             password.setUserId(userId);
 
-            // Создаем копию пароля для Firebase
             Map<String, Object> passwordValues = new HashMap<>();
             passwordValues.put("id", password.getId());
             passwordValues.put("title", password.getTitle());
@@ -356,7 +338,6 @@ public class FirebaseManager {
                 });
     }
 
-    // ===== CALLBACK INTERFACES =====
     public interface SyncCallback {
 
         void onSyncComplete(boolean success);

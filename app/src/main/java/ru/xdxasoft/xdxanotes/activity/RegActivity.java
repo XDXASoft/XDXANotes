@@ -109,7 +109,7 @@ public class RegActivity extends AppCompatActivity {
             String password = passreg.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                ToastManager.showToast(this, "Введите логин и пароль!", R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                ToastManager.showToast(this, getString(R.string.Enter_your_login_and_password), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
             } else {
                 showPrivacyTermsDialog(email, password);
             }
@@ -175,17 +175,14 @@ public class RegActivity extends AppCompatActivity {
                 showLoading(false);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    // При регистрации через email, пользователь автоматически принимает политику
-                    // Показываем диалог, но это только информационное уведомление
                     ToastManager.showToast(
                             RegActivity.this,
-                            "Для использования приложения необходимо принять условия использования",
+                            getString(R.string.To_use_the_application_you_must_accept_the_terms_of_use),
                             R.drawable.ic_galohca_black,
                             Color.GREEN,
                             Color.BLACK,
                             Color.BLACK
                     );
-                    // Для email-регистрации уже установлен флаг privacyAccepted = true
                     showPrivacyTermsDialogForService(user, "email");
                 }
             }
@@ -210,9 +207,7 @@ public class RegActivity extends AppCompatActivity {
         regbtn.setEnabled(!show);
     }
 
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
+
 
     public void LoginActivity(View v) {
         Intent intent = new Intent(RegActivity.this, LoginActivity.class);
@@ -232,7 +227,6 @@ public class RegActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        // Проверяем, есть ли пользователь в базе и принял ли он политику
                         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
                         Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
@@ -240,7 +234,6 @@ public class RegActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    // Проверяем, принял ли пользователь политику
                                     boolean privacyAccepted = false;
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         User existingUser = snapshot.getValue(User.class);
@@ -249,15 +242,12 @@ public class RegActivity extends AppCompatActivity {
                                             break;
                                         }
                                     }
-                                    // Если пользователь существует и уже принял политику, переходим в главный экран
                                     if (privacyAccepted) {
                                         navigateToMainActivity(user.getEmail(), true);
                                     } else {
-                                        // Если пользователь существует, но не принял политику, показываем диалог
                                         showPrivacyTermsDialogForService(user, "github");
                                     }
                                 } else {
-                                    // Если пользователь новый, показываем диалог
                                     showPrivacyTermsDialogForService(user, "github");
                                 }
                             }
@@ -266,7 +256,7 @@ public class RegActivity extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.e("GITHUB_AUTH", "Ошибка проверки пользователя: " + databaseError.getMessage());
                                 ToastManager.showToast(RegActivity.this,
-                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                                        getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
                                         Color.RED,
                                         Color.BLACK,
@@ -277,7 +267,7 @@ public class RegActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGITHUBAUTH", e.getMessage());
-                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
+                    ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
                             R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                 });
     }
@@ -295,7 +285,6 @@ public class RegActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        // Проверяем, есть ли пользователь в базе и принял ли он политику
                         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
                         Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
@@ -303,7 +292,6 @@ public class RegActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    // Проверяем, принял ли пользователь политику
                                     boolean privacyAccepted = false;
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         User existingUser = snapshot.getValue(User.class);
@@ -312,15 +300,12 @@ public class RegActivity extends AppCompatActivity {
                                             break;
                                         }
                                     }
-                                    // Если пользователь существует и уже принял политику, переходим в главный экран
                                     if (privacyAccepted) {
                                         navigateToMainActivity(user.getEmail(), true);
                                     } else {
-                                        // Если пользователь существует, но не принял политику, показываем диалог
                                         showPrivacyTermsDialogForService(user, "google");
                                     }
                                 } else {
-                                    // Если пользователь новый, показываем диалог
                                     showPrivacyTermsDialogForService(user, "google");
                                 }
                             }
@@ -329,7 +314,7 @@ public class RegActivity extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.e("GOOGLE_AUTH", "Ошибка проверки пользователя: " + databaseError.getMessage());
                                 ToastManager.showToast(RegActivity.this,
-                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                                        getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
                                         Color.RED,
                                         Color.BLACK,
@@ -340,7 +325,7 @@ public class RegActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGOOGLEAUTH", e.getMessage());
-                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
+                    ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
                             R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                 });
     }
@@ -357,7 +342,6 @@ public class RegActivity extends AppCompatActivity {
         continueButton.setAlpha(0.5f);
         continueButton.setEnabled(false);
 
-        // Обработка клика по ссылке политики конфиденциальности
         privacyPolicyLink.setOnClickListener(v -> {
             String url = "https://notes.xdxa.ru/privacy-policy";
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -365,7 +349,6 @@ public class RegActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Обработка клика по ссылке условий использования
         termsLink.setOnClickListener(v -> {
             String url = "https://notes.xdxa.ru/terms-of-service";
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -384,7 +367,6 @@ public class RegActivity extends AppCompatActivity {
 
         continueButton.setOnClickListener(v -> {
             dialog.dismiss();
-            // Создаем запись в базе данных только после принятия условий
             DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
             Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
@@ -392,36 +374,32 @@ public class RegActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.exists()) {
-                        // Если пользователь новый, создаем запись в базе данных с флагом принятия политики
                         User newUser = new User(user.getEmail(), service, true);
                         usersRef.push().setValue(newUser)
                                 .addOnSuccessListener(aVoid -> {
                                     ToastManager.showToast(RegActivity.this,
-                                            "Регистрация успешна!",
+                                            getString(R.string.Registration_successful),
                                             R.drawable.ic_galohca_black,
                                             Color.GREEN,
                                             Color.BLACK,
                                             Color.BLACK);
-                                    // Передаем флаг согласия с политикой в MainActivity
                                     navigateToMainActivity(user.getEmail(), true);
                                 })
                                 .addOnFailureListener(e -> {
                                     ToastManager.showToast(RegActivity.this,
-                                            "Ошибка при создании профиля: " + e.getMessage(),
+                                            getString(R.string.Error_creating_profile) + e.getMessage(),
                                             R.drawable.ic_error,
                                             Color.RED,
                                             Color.BLACK,
                                             Color.BLACK);
                                 });
                     } else {
-                        // Если пользователь уже существует, обновляем флаг принятия политики
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             String userKey = snapshot.getKey();
                             if (userKey != null) {
                                 usersRef.child(userKey).child("privacyAccepted").setValue(true);
                             }
                         }
-                        // Передаем флаг согласия с политикой в MainActivity
                         navigateToMainActivity(user.getEmail(), true);
                     }
                 }
@@ -429,7 +407,7 @@ public class RegActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     ToastManager.showToast(RegActivity.this,
-                            "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                            getString(R.string.User_verification_error) + databaseError.getMessage(),
                             R.drawable.ic_error,
                             Color.RED,
                             Color.BLACK,
@@ -440,12 +418,11 @@ public class RegActivity extends AppCompatActivity {
 
         cancelButton.setOnClickListener(v -> {
             dialog.dismiss();
-            // Отменяем регистрацию и удаляем пользователя
             user.delete().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     FirebaseAuth.getInstance().signOut();
                     ToastManager.showToast(RegActivity.this,
-                            "Регистрация отменена",
+                            getString(R.string.Registration_canceled),
                             R.drawable.ic_error,
                             Color.RED,
                             Color.BLACK,
@@ -468,62 +445,7 @@ public class RegActivity extends AppCompatActivity {
     }
 
     private void signInWithVK() {
-        OAuthProvider.Builder provider = OAuthProvider.newBuilder("oidc.vk.com");
-
-        FirebaseAuth.getInstance()
-                .startActivityForSignInWithProvider(this, provider.build())
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null) {
-                        // Проверяем, есть ли пользователь в базе и принял ли он политику
-                        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
-                        Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
-
-                        query.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    // Проверяем, принял ли пользователь политику
-                                    boolean privacyAccepted = false;
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        User existingUser = snapshot.getValue(User.class);
-                                        if (existingUser != null && existingUser.isPrivacyAccepted()) {
-                                            privacyAccepted = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (privacyAccepted) {
-                                        // Если пользователь уже принял политику, сразу переходим в MainActivity
-                                        navigateToMainActivity(user.getEmail(), true);
-                                    } else {
-                                        // Если пользователь есть, но не принял политику
-                                        showPrivacyTermsDialogForService(user, "vk");
-                                    }
-                                } else {
-                                    // Если пользователь новый, показываем диалог
-                                    showPrivacyTermsDialogForService(user, "vk");
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.e("VK_AUTH", "Ошибка проверки пользователя: " + databaseError.getMessage());
-                                ToastManager.showToast(RegActivity.this,
-                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
-                                        R.drawable.ic_error,
-                                        Color.RED,
-                                        Color.BLACK,
-                                        Color.BLACK);
-                            }
-                        });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("VK_AUTH", "Ошибка аутентификации: " + e.getMessage());
-                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
-                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
-                });
+        ToastManager.showToast(RegActivity.this, getString(R.string.In_development), R.drawable.ic_settings, Color.YELLOW, Color.BLACK, Color.BLACK);
     }
 
 }

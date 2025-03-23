@@ -26,7 +26,6 @@ public class PasswordDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
-            // Миграция с числовых ID на строковые
             db.execSQL("ALTER TABLE passwords RENAME TO passwords_old");
             db.execSQL("CREATE TABLE passwords ("
                     + "id TEXT PRIMARY KEY, "
@@ -38,7 +37,6 @@ public class PasswordDatabaseHelper extends SQLiteOpenHelper {
                     + "SELECT CAST(id AS TEXT), title, username, password, '' FROM passwords_old");
             db.execSQL("DROP TABLE passwords_old");
         } else if (oldVersion < 3) {
-            // Добавление поля userId
             db.execSQL("ALTER TABLE passwords ADD COLUMN userId TEXT DEFAULT ''");
         }
     }

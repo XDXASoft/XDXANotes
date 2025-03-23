@@ -12,8 +12,8 @@
       "filters": [],
       "attributes": [],
       "versionCode": 1,
-      "versionName": "TEST_DEBUG",
-      "outputFile": "XDXANotes_TEST_DEBUG_release.apk"
+      "versionName": "0.0.1",
+      "outputFile": "XDXANotes_0.0.1.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/XDXANotes_TEST_DEBUG_release.dm"
+        "baselineProfiles/1/XDXANotes_0.0.1.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/XDXANotes_TEST_DEBUG_release.dm"
+        "baselineProfiles/0/XDXANotes_0.0.1.dm"
       ]
     }
   ],

@@ -33,17 +33,14 @@ public class LocaleHelper {
         try {
             Log.d(TAG, "Установка языка: " + languageCode);
 
-            // Сохраняем настройки языка в SharedPreferences
             SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(KEY_LANGUAGE, languageCode);
             editor.apply();
 
-            // Создаем локаль
             Locale locale = new Locale(languageCode);
             Locale.setDefault(locale);
 
-            // Обновляем конфигурацию
             Resources resources = context.getResources();
             Configuration config = new Configuration(resources.getConfiguration());
 
@@ -72,22 +69,20 @@ public class LocaleHelper {
     public static String getLanguage(Context context) {
         try {
             SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-            boolean useSystemLanguage = prefs.getBoolean(KEY_USE_SYSTEM_LANGUAGE, true); // По умолчанию используем язык системы
+            boolean useSystemLanguage = prefs.getBoolean(KEY_USE_SYSTEM_LANGUAGE, true);
 
-            // Если выбрано использование языка системы, возвращаем язык системы
             if (useSystemLanguage) {
                 String systemLanguage = getSystemLanguage();
                 Log.d(TAG, "Используется язык системы: " + systemLanguage);
                 return systemLanguage;
             }
 
-            // Иначе возвращаем сохраненный язык
             String savedLanguage = prefs.getString(KEY_LANGUAGE, getSystemLanguage());
             Log.d(TAG, "Используется сохраненный язык: " + savedLanguage);
             return savedLanguage;
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при получении языка: " + e.getMessage(), e);
-            return "ru"; // По умолчанию русский
+            return "ru";
         }
     }
 
@@ -103,7 +98,7 @@ public class LocaleHelper {
             return prefs.getBoolean(KEY_USE_SYSTEM_LANGUAGE, true);
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при проверке использования языка системы: " + e.getMessage(), e);
-            return true; // По умолчанию используем язык системы
+            return true;
         }
     }
 
@@ -117,11 +112,10 @@ public class LocaleHelper {
             String systemLanguage = Locale.getDefault().getLanguage();
             Log.d(TAG, "Язык системы: " + systemLanguage);
 
-            // Если язык системы русский, возвращаем "ru", иначе "en"
             return systemLanguage.equals("ru") ? "ru" : "en";
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при определении языка системы: " + e.getMessage(), e);
-            return "ru"; // По умолчанию русский
+            return "ru";
         }
     }
 
@@ -157,10 +151,8 @@ public class LocaleHelper {
             String language = getLanguage(activity);
             Log.d(TAG, "Перезапуск активности с языком: " + language);
 
-            // Применяем язык
             setLocale(activity, language);
 
-            // Перезапускаем активность
             Intent intent = activity.getIntent();
             activity.finish();
             activity.overridePendingTransition(0, 0);
@@ -184,18 +176,16 @@ public class LocaleHelper {
             }
 
             String currentLanguage = getLanguage(activity);
-            String newLanguage = currentLanguage.equals("en") ? "ru" : "en"; // меняем язык
+            String newLanguage = currentLanguage.equals("en") ? "ru" : "en";
 
             Log.d(TAG, "Переключение языка с " + currentLanguage + " на " + newLanguage);
 
-            // Сохраняем новый язык и отключаем использование языка системы
             SharedPreferences prefs = activity.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(KEY_LANGUAGE, newLanguage);
             editor.putBoolean(KEY_USE_SYSTEM_LANGUAGE, false); // Отключаем использование языка системы
             editor.apply();
 
-            // Перезапускаем активность с небольшой задержкой
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Intent intent = new Intent(activity, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -219,17 +209,14 @@ public class LocaleHelper {
                 return;
             }
 
-            // Включаем использование языка системы
             SharedPreferences prefs = activity.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(KEY_USE_SYSTEM_LANGUAGE, true);
             editor.apply();
 
-            // Определяем язык системы
             String systemLanguage = getSystemLanguage();
             Log.d(TAG, "Установка языка системы: " + systemLanguage);
 
-            // Перезапускаем активность
             restartActivity(activity);
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при установке языка системы: " + e.getMessage(), e);

@@ -40,7 +40,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
             return new NotesViewHolder(view);
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreateViewHolder", e);
-            // Fallback для предотвращения краша
             View view = new View(context);
             return new NotesViewHolder(view);
         }
@@ -52,7 +51,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
             if (position >= 0 && position < list.size()) {
                 Notes note = list.get(position);
 
-                // Устанавливаем текст
                 if (holder.textView_title != null) {
                     holder.textView_title.setText(note.getTitle());
                     holder.textView_title.setSelected(true);
@@ -67,7 +65,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
                     holder.textView_date.setSelected(true);
                 }
 
-                // Устанавливаем иконку закрепления
                 if (holder.imageView_pin != null) {
                     if (note.isPinned()) {
                         holder.imageView_pin.setImageResource(R.drawable.pin_icon);
@@ -76,7 +73,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
                     }
                 }
 
-                // Устанавливаем обработчики кликов
                 if (holder.itemView != null) {
                     holder.itemView.setOnClickListener(v -> {
                         if (listener != null) {
@@ -122,7 +118,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
             super(itemView);
 
             try {
-                // Находим все view
                 notes_container = itemView.findViewById(R.id.notes_container);
                 if (notes_container == null) {
                     notes_container = itemView.findViewById(R.id.contentFragment);

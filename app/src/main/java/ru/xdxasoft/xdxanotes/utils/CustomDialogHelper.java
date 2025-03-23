@@ -13,9 +13,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import ru.xdxasoft.xdxanotes.R;
 
-/**
- * Вспомогательный класс для создания и настройки кастомных диалогов
- */
 public class CustomDialogHelper {
 
     /**
@@ -149,17 +146,11 @@ public class CustomDialogHelper {
         return dialog;
     }
 
-    /**
-     * Интерфейс обратного вызова для диалога с вводом
-     */
     public interface InputDialogCallback {
 
         void onInputReceived(String input);
     }
 
-    /**
-     * Интерфейс обратного вызова для настраиваемого диалога
-     */
     public interface CustomDialogCallback {
 
         void onDialogCreated(Dialog dialog, View dialogView);

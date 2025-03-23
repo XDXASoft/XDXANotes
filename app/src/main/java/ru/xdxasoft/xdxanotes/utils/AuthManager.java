@@ -22,9 +22,7 @@ public class AuthManager {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    // Время последней отправки верификационного письма
     private static long lastVerificationEmailSentTime = 0;
-    // Минимальный интервал между отправками писем (в минутах)
     private static final long MIN_INTERVAL_MINUTES = 2;
 
     public AuthManager() {
@@ -44,10 +42,8 @@ public class AuthManager {
             if (task.isSuccessful()) {
                 List<String> signInMethods = task.getResult().getSignInMethods();
                 if (signInMethods != null && !signInMethods.isEmpty()) {
-                    // Если email существует, удаляем старый аккаунт
                     deleteExistingAccountAndRegister(email, password, listener);
                 } else {
-                    // Если email новый, регистрируем
                     createNewAccount(email, password, listener);
                 }
             } else {
@@ -82,18 +78,13 @@ public class AuthManager {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Проверяем, не слишком ли часто отправляются письма
                             if (canSendVerificationEmail()) {
-                                // Отправляем письмо для верификации
                                 user.sendEmailVerification()
                                         .addOnCompleteListener(verificationTask -> {
                                             if (verificationTask.isSuccessful()) {
-                                                // Сохраняем время отправки
                                                 lastVerificationEmailSentTime = System.currentTimeMillis();
 
-                                                // Сохраняем информацию о пользователе
                                                 User newUser = new User(email);
-                                                // При регистрации через email автоматически устанавливаем флаг принятия политики
                                                 newUser.setPrivacyAccepted(true);
                                                 mDatabase.child("Users").child(user.getUid()).setValue(newUser)
                                                         .addOnCompleteListener(databaseTask -> {
@@ -114,7 +105,6 @@ public class AuthManager {
                                             }
                                         });
                             } else {
-                                // Если письма отправляются слишком часто
                                 long timeToWait = MIN_INTERVAL_MINUTES - getMinutesSinceLastEmail();
                                 listener.onFailure("Слишком много запросов. Пожалуйста, подождите " + timeToWait + " мин.");
                             }
@@ -128,12 +118,10 @@ public class AuthManager {
     public void resendVerificationEmail(OnRegistrationListener listener) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            // Проверяем, можно ли отправить письмо
             if (canSendVerificationEmail()) {
                 user.sendEmailVerification()
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                // Обновляем время последней отправки
                                 lastVerificationEmailSentTime = System.currentTimeMillis();
                                 listener.onSuccess("Письмо подтверждения отправлено повторно");
                             } else {
@@ -146,7 +134,6 @@ public class AuthManager {
                             }
                         });
             } else {
-                // Если отправка слишком частая
                 long timeToWait = MIN_INTERVAL_MINUTES - getMinutesSinceLastEmail();
                 listener.onFailure("Слишком много запросов. Пожалуйста, подождите " + timeToWait + " мин.");
             }
@@ -156,21 +143,19 @@ public class AuthManager {
     public void sendVerificationEmail(Context context) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            // Проверяем, можно ли отправить письмо
             if (canSendVerificationEmail()) {
                 user.sendEmailVerification()
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                // Обновляем время последней отправки
                                 lastVerificationEmailSentTime = System.currentTimeMillis();
                                 ToastManager.showToast(context,
-                                        "Письмо подтверждения отправлено на " + user.getEmail(),
+                                        R.string.Confirmation_email_sent_to + user.getEmail(),
                                         R.drawable.ic_galohca_black,
                                         Color.GREEN,
                                         Color.BLACK,
                                         Color.BLACK);
                             } else {
-                                String errorMessage = "Ошибка отправки письма";
+                                String errorMessage = context.getResources().getString(R.string.Error_sending_email);
                                 if (task.getException() != null) {
                                     errorMessage = handleVerificationError(task.getException().getMessage());
                                 }
@@ -183,10 +168,9 @@ public class AuthManager {
                             }
                         });
             } else {
-                // Если отправка слишком частая
                 long timeToWait = MIN_INTERVAL_MINUTES - getMinutesSinceLastEmail();
                 ToastManager.showToast(context,
-                        "Слишком много запросов. Пожалуйста, подождите " + timeToWait + " мин.",
+                        context.getResources().getString(R.string.Too_many_requests_Please_wait) + timeToWait + " мин.",
                         R.drawable.ic_error,
                         Color.RED,
                         Color.BLACK,
@@ -200,15 +184,15 @@ public class AuthManager {
             if (!user.isEmailVerified()) {
                 CustomDialogHelper.showSimpleDialog(
                         context,
-                        "Подтверждение email",
-                        "Ваш email не подтвержден. Хотите получить письмо с подтверждением повторно?",
-                        "Да",
+                        context.getResources().getString(R.string.Confirmation_email),
+                        context.getResources().getString(R.string.Your_email_is_not_confirmed_Do_you_want_to_receive_the_confirmation_email_again),
+                        context.getResources().getString(R.string.Yes),
                         Color.parseColor("#727272"),
                         (dialog, which) -> {
                             sendVerificationEmail(context);
                             dialog.dismiss();
                         },
-                        "Отмена",
+                        context.getResources().getString(R.string.Cancel),
                         Color.RED,
                         (dialog, which) -> {
                             mAuth.signOut();
@@ -219,21 +203,17 @@ public class AuthManager {
         }
     }
 
-    // Проверяет, можно ли отправить верификационное письмо
     private boolean canSendVerificationEmail() {
-        // Если письмо никогда не отправлялось или прошло достаточно времени
         return lastVerificationEmailSentTime == 0
                 || getMinutesSinceLastEmail() >= MIN_INTERVAL_MINUTES;
     }
 
-    // Вычисляет, сколько минут прошло с момента последней отправки
     private long getMinutesSinceLastEmail() {
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - lastVerificationEmailSentTime;
         return TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
     }
 
-    // Обрабатывает сообщения об ошибках Firebase и возвращает понятное сообщение
     private String handleVerificationError(String errorMessage) {
         if (errorMessage.contains("blocked all requests")
                 || errorMessage.contains("unusual activity")) {

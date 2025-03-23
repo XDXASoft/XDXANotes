@@ -15,19 +15,16 @@ public class ThemeManager {
     public static final int THEME_DARK = 1;
     public static final int THEME_SYSTEM = 2;
 
-    // Сохраняем выбранную тему
     public static void saveTheme(Context context, int theme) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         preferences.edit().putInt(KEY_THEME, theme).apply();
     }
 
-    // Получаем сохранённую тему
     public static int getTheme(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return preferences.getInt(KEY_THEME, THEME_SYSTEM); // По умолчанию - системная тема
+        return preferences.getInt(KEY_THEME, THEME_SYSTEM);
     }
 
-    // Применяем тему
     public static void applyTheme(Context context) {
 
         int theme = getTheme(context);

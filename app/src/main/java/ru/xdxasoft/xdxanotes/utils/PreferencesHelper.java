@@ -11,13 +11,11 @@ public class PreferencesHelper {
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_THEME = "theme";
 
-    // Возвращает выбранный язык
     public static String getLanguage(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(KEY_LANGUAGE, "en"); // по умолчанию - английский
+        return preferences.getString(KEY_LANGUAGE, "en");
     }
 
-    // Сохраняет выбранный язык
     public static void setLanguage(Context context, String language) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -25,13 +23,11 @@ public class PreferencesHelper {
         editor.apply();
     }
 
-    // Возвращает выбранную тему
     public static String getTheme(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(KEY_THEME, "light"); // по умолчанию - светлая тема
+        return preferences.getString(KEY_THEME, "light");
     }
 
-    // Сохраняет выбранную тему
     public static void setTheme(Context context, String theme) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();

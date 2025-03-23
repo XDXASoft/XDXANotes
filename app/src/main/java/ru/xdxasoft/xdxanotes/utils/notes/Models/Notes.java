@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 import ru.xdxasoft.xdxanotes.utils.IdGenerator;
 
-@Keep // Аннотация для ProGuard, чтобы не удалял этот класс
+@Keep
 @Entity(tableName = "notes")
 public class Notes implements Serializable {
 
@@ -31,9 +31,7 @@ public class Notes implements Serializable {
     @ColumnInfo(name = "userId")
     String userId = "";
 
-    // Пустой конструктор для Firebase
     public Notes() {
-        // Пустой конструктор
     }
 
     public int getID() {

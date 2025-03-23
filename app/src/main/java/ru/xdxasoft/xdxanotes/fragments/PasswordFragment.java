@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.activity.MainActivity;
 import ru.xdxasoft.xdxanotes.adapters.PasswordAdapter;
 import ru.xdxasoft.xdxanotes.models.Password;
 import ru.xdxasoft.xdxanotes.utils.IdGenerator;
@@ -106,14 +108,12 @@ public class PasswordFragment extends Fragment {
 
             firebaseManager = FirebaseManager.getInstance(requireContext());
 
-            // Загружаем локальные пароли
             loadPasswords();
 
             // Синхронизируем с Firebase
             if (firebaseManager.isUserLoggedIn()) {
                 firebaseManager.syncPasswordsWithFirebase(success -> {
                     if (success) {
-                        // Обновляем список паролей после синхронизации
                         loadPasswords();
                     }
                 });
@@ -122,7 +122,17 @@ public class PasswordFragment extends Fragment {
             fabAdd.setOnClickListener(v -> showBottomSheet(null));
         } catch (Exception e) {
             Log.e("PasswordFragment", "Error in onCreateView", e);
-            Toast.makeText(requireContext(), "Ошибка инициализации: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.showCustomToast(
+                        getString(R.string.Initialization_error) + e.getMessage(),
+                        R.drawable.ic_error_black,
+                        Color.RED,
+                        Color.BLACK,
+                        Color.BLACK,
+                        false
+                );
+            }
         }
 
         return view;
@@ -206,7 +216,18 @@ public class PasswordFragment extends Fragment {
         String password = etPassword.getText().toString().trim();
 
         if (title.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(getContext(), "Пожалуйста, заполните все поля", Toast.LENGTH_SHORT).show();
+
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.showCustomToast(
+                        getString(R.string.Please_fill_in_all_fields),
+                        R.drawable.warning_black,
+                        Color.YELLOW,
+                        Color.BLACK,
+                        Color.BLACK,
+                        false
+                );
+            }
             return;
         }
 
@@ -220,10 +241,8 @@ public class PasswordFragment extends Fragment {
             newPassword = new Password(title, username, password, firebaseManager.getUserId());
         }
 
-        // Сохраняем в Firebase
         firebaseManager.savePasswordToFirebase(newPassword, success -> {
             if (success) {
-                // Сохраняем локально
                 ContentValues values = new ContentValues();
                 values.put("id", newPassword.getId());
                 values.put("title", newPassword.getTitle());
@@ -240,9 +259,30 @@ public class PasswordFragment extends Fragment {
 
                 loadPasswords();
                 bottomSheetDialog.dismiss();
-                Toast.makeText(getContext(), "Пароль сохранен", Toast.LENGTH_SHORT).show();
+
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity != null) {
+                    mainActivity.showCustomToast(
+                            getString(R.string.Password_saved),
+                            R.drawable.ic_galohca_black,
+                            Color.GREEN,
+                            Color.BLACK,
+                            Color.BLACK,
+                            false
+                    );
+                }
             } else {
-                Toast.makeText(getContext(), "Ошибка при сохранении пароля", Toast.LENGTH_SHORT).show();
+                 MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity != null) {
+                    mainActivity.showCustomToast(
+                            getString(R.string.Error_saving_password),
+                            R.drawable.ic_error_black,
+                            Color.RED,
+                            Color.BLACK,
+                            Color.BLACK,
+                            false
+                    );
+                }
             }
         });
     }
@@ -251,16 +291,24 @@ public class PasswordFragment extends Fragment {
         ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("password", text);
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(requireContext(), "Скопировано", Toast.LENGTH_SHORT).show();
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            mainActivity.showCustomToast(
+                    getString(R.string.Copied),
+                    R.drawable.ic_galohca_black,
+                    Color.GREEN,
+                    Color.BLACK,
+                    Color.BLACK,
+                    false
+            );
+        }
     }
 
     private void deletePassword(String id) {
-        // Удаляем пароль из Firebase перед удалением из локальной БД
         if (firebaseManager.isUserLoggedIn()) {
             firebaseManager.deletePasswordFromFirebase(id, null);
         }
 
-        // Удаляем из локальной БД
         database.delete("passwords", "id = ?", new String[]{id});
         loadPasswords();
     }

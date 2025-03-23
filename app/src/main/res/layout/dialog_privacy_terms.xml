@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Политика конфиденциальности и условия использования"
+        android:text="@string/Privacy_Policy_and_Terms_of_Use"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -24,7 +24,7 @@
             android:id="@+id/privacy_policy_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Политика конфиденциальности:"
+            android:text="@string/Privacy_Policy"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Посмотреть"
+            android:text="@string/Look"
             android:textColor="@color/blue"
             android:textSize="16sp"
             android:clickable="true"
@@ -45,7 +45,7 @@
             android:id="@+id/terms_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Условия использования:"
+            android:text="@string/Terms_of_use"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Посмотреть"
+            android:text="@string/Look"
             android:textColor="@color/blue"
             android:textSize="16sp"
             android:clickable="true"
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         style="@style/MyMaterialCheckBox"
         android:layout_marginBottom="16dp"
-        android:text="Я согласен с политикой конфиденциальности и условиями использования"
+        android:text="@string/I_agree_to_the_privacy_policy_and_terms_of_use"
         android:textColor="@color/white" />
 
     <LinearLayout
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Отмена"
+            android:text="@string/Cancel"
             android:textColor="#727272" />
 
         <Button
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="Продолжить"
+            android:text="@string/Continue"
             android:textColor="#727272" />
     </LinearLayout>
 </LinearLayout> 

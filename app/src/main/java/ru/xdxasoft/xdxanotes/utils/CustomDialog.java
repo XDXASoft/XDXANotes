@@ -16,20 +16,16 @@ import ru.xdxasoft.xdxanotes.R;
 
 public class CustomDialog {
 
-    // Метод для отображения кастомного диалога
     public static void showCustomDialog(Context context, String dialogType, String message) {
 
-        // Инфлейтим выбранный макет диалога
         LayoutInflater inflater = LayoutInflater.from(context);
-        int layoutId = getLayoutId(dialogType); // Получаем ID макета в зависимости от типа
-        View dialogView = inflater.inflate(layoutId, null); // Инфлейтим макет
+        int layoutId = getLayoutId(dialogType);
+        View dialogView = inflater.inflate(layoutId, null);
 
-        // Настройка текста сообщения
         TextView messageText = dialogView.findViewById(R.id.messageText);
         messageText.setTextColor(Color.WHITE);
         messageText.setText(message);
 
-        // Создание и показ диалога с использованием Material Design и кастомного стиля
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.CustomDialogStyle);
 
         builder.setView(dialogView)
@@ -37,7 +33,6 @@ public class CustomDialog {
                 .show();
     }
 
-    // Метод для выбора макета в зависимости от типа диалога
     private static int getLayoutId(String dialogType) {
         switch (dialogType) {
             case "custom_dialog":

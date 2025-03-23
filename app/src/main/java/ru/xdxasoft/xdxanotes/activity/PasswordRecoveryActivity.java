@@ -47,17 +47,17 @@ public class PasswordRecoveryActivity extends AppCompatActivity {
             String email = mail.getText().toString();
 
             if (email == null || email.isEmpty()) {
-                ToastManager.showToast(this, "Введите адрес электронной почты", R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
+                ToastManager.showToast(this, getString(R.string.Enter_your_email_address), R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
                 return;
             }
 
             mAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            ToastManager.showToast(this, "Ссылка для сброса пароля отправлена на почту", R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
+                            ToastManager.showToast(this, getString(R.string.Password_reset_link_sent_to_email), R.drawable.ic_galohca_black, Color.GREEN, Color.BLACK, Color.BLACK);
 
                         } else {
-                            ToastManager.showToast(this, "Ошибка при отправке ссылки", R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
+                            ToastManager.showToast(this, getString(R.string.Error_sending_link), R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
                         }
                     });
         });

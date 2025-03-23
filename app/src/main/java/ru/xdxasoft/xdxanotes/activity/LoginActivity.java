@@ -85,14 +85,14 @@ public class LoginActivity extends AppCompatActivity {
 
         if (privacyNotAccepted) {
             ToastManager.showToast(this,
-                    "Для использования приложения необходимо принять политику конфиденциальности",
+                    getString(R.string.To_use_the_application_you_must_accept_the_privacy_policy),
                     R.drawable.ic_error,
                     Color.RED,
                     Color.BLACK,
                     Color.BLACK);
         } else if (isVerificationSent && emailFromIntent != null) {
             ToastManager.showToast(this,
-                    "Письмо с подтверждением отправлено на " + emailFromIntent,
+                    getString(R.string.Confirmation_email_sent_to) + emailFromIntent,
                     R.drawable.ic_galohca_black,
                     Color.GREEN,
                     Color.BLACK,
@@ -100,7 +100,6 @@ public class LoginActivity extends AppCompatActivity {
             mail.setText(emailFromIntent);
         }
 
-        // Инициализация сервисов
         passwordValidationService = new PasswordValidationService();
         sessionManager = new SessionManager(this);
         authManager = new AuthManager();
@@ -130,27 +129,7 @@ public class LoginActivity extends AppCompatActivity {
         vk_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                OAuthProvider.Builder provider = OAuthProvider.newBuilder("oidc.yandex");
-
-                auth.startActivityForSignInWithProvider(LoginActivity.this, provider.build())
-                        .addOnSuccessListener(authResult -> {
-                            Log.d("YAauth", "Authentication successful");
-                            FirebaseUser user = authResult.getUser();
-                            if (user != null) {
-                                Log.d("YAauth", "User UID: " + user.getUid());
-                                Log.d("YAauth", "User Name: " + user.getDisplayName());
-                                Log.d("YAauth", "User Email: " + user.getEmail());
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e("YAauth", "Authentication failed: " + e.getMessage());
-                            if (e instanceof FirebaseAuthException) {
-                                FirebaseAuthException authException = (FirebaseAuthException) e;
-                                Log.e("YAauth", "Error code: " + authException.getErrorCode());
-                                Log.e("YAauth", "Error message: " + authException.getMessage());
-                            }
-                        });
+                signInWithVK();
             }
         });
 
@@ -196,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (email.isEmpty() || password.isEmpty()) {
                 ToastManager.showToast(this,
-                        "Введите логин и пароль!",
+                        getString(R.string.Enter_your_login_and_password),
                         R.drawable.ic_error,
                         Color.RED,
                         Color.BLACK,
@@ -204,19 +183,16 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // Вход пользователя
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             FirebaseUser user = auth.getCurrentUser();
                             if (user != null) {
                                 if (user.isEmailVerified()) {
-                                    // Email подтвержден, разрешаем вход
                                     Intent intent = new Intent(this, MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.putExtra("ACCOUNT_MAIL", email);
 
-                                    // Сохраняем хэш пароля
                                     String hashedPassword = passwordValidationService.hashPassword(password);
                                     sessionManager.savePasswordHash(hashedPassword);
                                     passwordValidationService.saveLocalPasswordHash(password);
@@ -224,16 +200,14 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    // Email не подтвержден
                                     auth.signOut();
 
-                                    // Показываем диалог с предложением отправить письмо повторно
                                     showVerificationDialog(user, email);
                                 }
                             }
                         } else {
                             ToastManager.showToast(this,
-                                    "Неверный логин или пароль!",
+                                    getString(R.string.Incorrect_login_or_password),
                                     R.drawable.ic_error,
                                     Color.RED,
                                     Color.BLACK,
@@ -273,7 +247,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        // Проверяем, есть ли пользователь в базе и принял ли он политику
                         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
                         Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
@@ -281,7 +254,6 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    // Проверяем, принял ли пользователь политику
                                     boolean privacyAccepted = false;
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         User existingUser = snapshot.getValue(User.class);
@@ -292,14 +264,11 @@ public class LoginActivity extends AppCompatActivity {
                                     }
 
                                     if (privacyAccepted) {
-                                        // Если пользователь уже принял политику, сразу переходим в MainActivity
                                         navigateToMainActivity(user.getEmail(), true);
                                     } else {
-                                        // Если пользователь есть, но не принял политику
                                         showPrivacyTermsDialogForService(user, "github");
                                     }
                                 } else {
-                                    // Если пользователь новый, показываем диалог
                                     showPrivacyTermsDialogForService(user, "github");
                                 }
                             }
@@ -308,7 +277,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.e("GITHUB_AUTH", "Ошибка проверки пользователя: " + databaseError.getMessage());
                                 ToastManager.showToast(LoginActivity.this,
-                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                                        getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
                                         Color.RED,
                                         Color.BLACK,
@@ -319,7 +288,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGITHUBAUTH", e.getMessage());
-                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
+                    ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
                             R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                 });
     }
@@ -337,7 +306,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        // Проверяем, есть ли пользователь в базе и принял ли он политику
                         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
                         Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
@@ -345,7 +313,6 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    // Проверяем, принял ли пользователь политику
                                     boolean privacyAccepted = false;
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         User existingUser = snapshot.getValue(User.class);
@@ -356,14 +323,12 @@ public class LoginActivity extends AppCompatActivity {
                                     }
 
                                     if (privacyAccepted) {
-                                        // Если пользователь уже принял политику, сразу переходим в MainActivity
                                         navigateToMainActivity(user.getEmail(), true);
                                     } else {
-                                        // Если пользователь есть, но не принял политику
                                         showPrivacyTermsDialogForService(user, "google");
                                     }
                                 } else {
-                                    // Если пользователь новый, показываем диалог
+
                                     showPrivacyTermsDialogForService(user, "google");
                                 }
                             }
@@ -372,7 +337,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.e("GOOGLE_AUTH", "Ошибка проверки пользователя: " + databaseError.getMessage());
                                 ToastManager.showToast(LoginActivity.this,
-                                        "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                                        getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
                                         Color.RED,
                                         Color.BLACK,
@@ -383,7 +348,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGOOGLEAUTH", e.getMessage());
-                    ToastManager.showToast(this, "Ошибка аутентификации: " + e.getMessage(),
+                    ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
                             R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
                 });
     }
@@ -425,7 +390,6 @@ public class LoginActivity extends AppCompatActivity {
 
         continueButton.setOnClickListener(v -> {
             dialog.dismiss();
-            // Создаем запись в базе данных только после принятия условий
             DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
             Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
 
@@ -433,36 +397,32 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.exists()) {
-                        // Если пользователь новый, создаем запись в базе данных с флагом принятия политики
                         User newUser = new User(user.getEmail(), service, true);
                         usersRef.push().setValue(newUser)
                                 .addOnSuccessListener(aVoid -> {
                                     ToastManager.showToast(LoginActivity.this,
-                                            "Регистрация успешна!",
+                                            getString(R.string.Registration_successful),
                                             R.drawable.ic_galohca_black,
                                             Color.GREEN,
                                             Color.BLACK,
                                             Color.BLACK);
-                                    // Передаем флаг согласия с политикой в MainActivity
                                     navigateToMainActivity(user.getEmail(), true);
                                 })
                                 .addOnFailureListener(e -> {
                                     ToastManager.showToast(LoginActivity.this,
-                                            "Ошибка при создании профиля: " + e.getMessage(),
+                                            getString(R.string.Error_creating_profile) + e.getMessage(),
                                             R.drawable.ic_error,
                                             Color.RED,
                                             Color.BLACK,
                                             Color.BLACK);
                                 });
                     } else {
-                        // Если пользователь уже существует, обновляем флаг принятия политики
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             String userKey = snapshot.getKey();
                             if (userKey != null) {
                                 usersRef.child(userKey).child("privacyAccepted").setValue(true);
                             }
                         }
-                        // Передаем флаг согласия с политикой в MainActivity
                         navigateToMainActivity(user.getEmail(), true);
                     }
                 }
@@ -470,7 +430,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     ToastManager.showToast(LoginActivity.this,
-                            "Ошибка проверки пользователя: " + databaseError.getMessage(),
+                            getString(R.string.User_verification_error) + databaseError.getMessage(),
                             R.drawable.ic_error,
                             Color.RED,
                             Color.BLACK,
@@ -481,12 +441,11 @@ public class LoginActivity extends AppCompatActivity {
 
         cancelButton.setOnClickListener(v -> {
             dialog.dismiss();
-            // Отменяем вход и выходим из аккаунта
             user.delete().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     FirebaseAuth.getInstance().signOut();
                     ToastManager.showToast(this,
-                            "Регистрация отменена",
+                            getString(R.string.Registration_canceled),
                             R.drawable.ic_error,
                             Color.RED,
                             Color.BLACK,
@@ -508,39 +467,18 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    public void YAauth(View v) {
-        Log.d("YAauth", "Yandex auth button clicked");
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        OAuthProvider.Builder provider = OAuthProvider.newBuilder("oidc.yandex");
-
-        auth.startActivityForSignInWithProvider(this, provider.build())
-                .addOnSuccessListener(authResult -> {
-                    Log.d("YAauth", "Authentication successful");
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        Log.d("YAauth", "User Email: " + user.getEmail());
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("YAauth", "Authentication failed: " + e.getMessage());
-                    if (e instanceof FirebaseAuthException) {
-                        FirebaseAuthException authException = (FirebaseAuthException) e;
-                        Log.e("YAauth", "Error code: " + authException.getErrorCode());
-                        Log.e("YAauth", "Error message: " + authException.getMessage());
-                    }
-                });
+    private void signInWithVK() {
+        ToastManager.showToast(LoginActivity.this, getString(R.string.In_development), R.drawable.ic_settings, Color.YELLOW, Color.BLACK, Color.BLACK);
     }
 
     private void showVerificationDialog(FirebaseUser user, String email) {
         CustomDialogHelper.showSimpleDialog(
                 this,
-                "Email не подтвержден",
-                "Ваш email не подтвержден. Хотите получить письмо с подтверждением повторно?",
-                "Да",
+                getString(R.string.Email_not_confirmed),
+                getString(R.string.Your_email_is_not_confirmed_Do_you_want_to_receive_the_confirmation_email_again),
+                getString(R.string.Yes),
                 Color.parseColor("#727272"),
                 (dialog, which) -> {
-                    // Повторная отправка письма подтверждения через AuthManager
                     authManager.resendVerificationEmail(new AuthManager.OnRegistrationListener() {
                         @Override
                         public void onSuccess(String message) {
@@ -563,7 +501,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 },
-                "Отмена",
+                getString(R.string.Cancel),
                 Color.RED,
                 (dialog, which) -> dialog.dismiss()
         );

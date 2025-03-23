@@ -16,7 +16,6 @@ public class User {
     private boolean privacyAccepted = false;
 
     public User() {
-        // Пустой конструктор нужен для Firebase
     }
 
     public User(String email) {

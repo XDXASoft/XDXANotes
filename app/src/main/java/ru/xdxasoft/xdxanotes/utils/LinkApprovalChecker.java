@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.verify.domain.DomainVerificationManager;
 import android.content.pm.verify.domain.DomainVerificationUserState;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.widget.Toast;
+
+import ru.xdxasoft.xdxanotes.R;
 
 public class LinkApprovalChecker {
 
@@ -35,7 +38,12 @@ public class LinkApprovalChecker {
     }
 
     public static void promptToEnableLinkHandling(Context context) {
-        Toast.makeText(context, "Для работы приложения включите опцию 'Открывать поддерживаемые ссылки'.", Toast.LENGTH_LONG).show();
+        ToastManager.showToast(context,
+                context.getResources().getString(R.string.To_use_the_application_enable_the_Open_supported_links_option),
+                R.drawable.warning_black,
+                Color.YELLOW,
+                Color.BLACK,
+                Color.BLACK);
 
         try {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -44,7 +52,12 @@ public class LinkApprovalChecker {
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, "Не удалось открыть настройки. Проверьте параметры вручную.", Toast.LENGTH_LONG).show();
+            ToastManager.showToast(context,
+                    context.getResources().getString(R.string.Failed_to_open_settings_Please_check_your_settings_manually),
+                    R.drawable.ic_error,
+                    Color.RED,
+                    Color.BLACK,
+                    Color.BLACK);
         }
     }
 }

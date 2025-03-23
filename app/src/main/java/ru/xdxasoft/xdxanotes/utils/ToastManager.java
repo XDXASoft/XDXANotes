@@ -30,8 +30,11 @@ public class ToastManager {
     }
 
     public static void showToast(Context context, String message, int iconResId, int backgroundColor, int textColor, int iconColor) {
-        if (toastQueue.size() >= MAX_TOASTS) {
+        showToast(context, message, iconResId, backgroundColor, textColor, iconColor, false);
+    }
 
+    public static void showToast(Context context, String message, int iconResId, int backgroundColor, int textColor, int iconColor, boolean isDebug) {
+        if (toastQueue.size() >= MAX_TOASTS) {
             View oldToast = toastQueue.poll();
             if (oldToast != null) {
                 animateToastOut(oldToast);
@@ -46,13 +49,18 @@ public class ToastManager {
 
         ImageView toastIcon = toastView.findViewById(R.id.toastIcon);
         toastIcon.setImageResource(iconResId);
-
         toastIcon.setColorFilter(iconColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
+        TextView debugLabel = toastView.findViewById(R.id.debugLabel);
+        if (isDebug) {
+            debugLabel.setVisibility(View.VISIBLE);
+        } else {
+            debugLabel.setVisibility(View.GONE);
+        }
 
         GradientDrawable background = new GradientDrawable();
         background.setColor(backgroundColor);
         background.setCornerRadius(24f);
-
         toastView.setBackground(background);
 
         toastContainer.addView(toastView, 0);
@@ -70,9 +78,6 @@ public class ToastManager {
             animateToastOut(toastView);
         }, 3500);
     }
-
-
-
 
     private static void setMargins(View view, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
@@ -105,10 +110,8 @@ public class ToastManager {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
         toastView.startAnimation(animation);
     }
 }
-

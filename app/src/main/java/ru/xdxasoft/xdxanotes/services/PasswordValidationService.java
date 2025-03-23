@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class PasswordValidationService {
 
-    // Хэширование пароля с использованием SHA-256
     public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -19,8 +18,6 @@ public class PasswordValidationService {
         }
     }
 
-    // Сохранение хэшированного пароля локально (например, в SharedPreferences)
     public void saveLocalPasswordHash(String password) {
-        // Логика сохранения пароля, например, в SharedPreferences
     }
 }
