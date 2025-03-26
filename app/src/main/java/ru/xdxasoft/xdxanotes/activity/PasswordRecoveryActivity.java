@@ -1,5 +1,6 @@
 package ru.xdxasoft.xdxanotes.activity;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 
 public class PasswordRecoveryActivity extends AppCompatActivity {
@@ -25,9 +27,15 @@ public class PasswordRecoveryActivity extends AppCompatActivity {
     EditText mail;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_password_recovery);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

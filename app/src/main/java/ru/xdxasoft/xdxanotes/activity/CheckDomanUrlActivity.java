@@ -1,5 +1,6 @@
 package ru.xdxasoft.xdxanotes.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LinkApprovalChecker;
+import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 
 public class CheckDomanUrlActivity extends AppCompatActivity {
 
@@ -30,9 +32,15 @@ public class CheckDomanUrlActivity extends AppCompatActivity {
     private boolean isChecking = false;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_check_doman_url);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

@@ -54,6 +54,7 @@ import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.services.PasswordValidationService;
 import ru.xdxasoft.xdxanotes.utils.AuthManager;
 import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
+import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.SessionManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
@@ -70,11 +71,18 @@ public class LoginActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private AuthManager authManager;
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        LocaleHelper.applyLanguage(this);
 
         LinearLayout toastContainer = findViewById(R.id.toastContainer);
         ToastManager.init(toastContainer);

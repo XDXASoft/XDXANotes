@@ -4,17 +4,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
-import java.util.concurrent.TimeUnit;
 
 import ru.xdxasoft.xdxanotes.R;
 
@@ -31,9 +29,7 @@ public class AuthManager {
     }
 
     public interface OnRegistrationListener {
-
         void onSuccess(String message);
-
         void onFailure(String error);
     }
 
@@ -141,6 +137,9 @@ public class AuthManager {
     }
 
     public void sendVerificationEmail(Context context) {
+        // Обновляем контекст с нужной локалью
+        Context localizedContext = LocaleHelper.applyLanguage(context);
+
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             if (canSendVerificationEmail()) {
@@ -148,18 +147,18 @@ public class AuthManager {
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 lastVerificationEmailSentTime = System.currentTimeMillis();
-                                ToastManager.showToast(context,
-                                        R.string.Confirmation_email_sent_to + user.getEmail(),
+                                ToastManager.showToast(localizedContext,
+                                        localizedContext.getString(R.string.Confirmation_email_sent_to) + user.getEmail(),
                                         R.drawable.ic_galohca_black,
                                         Color.GREEN,
                                         Color.BLACK,
                                         Color.BLACK);
                             } else {
-                                String errorMessage = context.getResources().getString(R.string.Error_sending_email);
+                                String errorMessage = localizedContext.getString(R.string.Error_sending_email);
                                 if (task.getException() != null) {
                                     errorMessage = handleVerificationError(task.getException().getMessage());
                                 }
-                                ToastManager.showToast(context,
+                                ToastManager.showToast(localizedContext,
                                         errorMessage,
                                         R.drawable.ic_error,
                                         Color.RED,
@@ -169,8 +168,8 @@ public class AuthManager {
                         });
             } else {
                 long timeToWait = MIN_INTERVAL_MINUTES - getMinutesSinceLastEmail();
-                ToastManager.showToast(context,
-                        context.getResources().getString(R.string.Too_many_requests_Please_wait) + timeToWait + " мин.",
+                ToastManager.showToast(localizedContext,
+                        localizedContext.getString(R.string.Too_many_requests_Please_wait) + timeToWait + " мин.",
                         R.drawable.ic_error,
                         Color.RED,
                         Color.BLACK,
@@ -180,19 +179,22 @@ public class AuthManager {
     }
 
     public void checkEmailVerification(Context context, FirebaseUser user) {
+        // Обновляем контекст с нужной локалью
+        Context localizedContext = LocaleHelper.applyLanguage(context);
+
         if (user != null) {
             if (!user.isEmailVerified()) {
                 CustomDialogHelper.showSimpleDialog(
-                        context,
-                        context.getResources().getString(R.string.Confirmation_email),
-                        context.getResources().getString(R.string.Your_email_is_not_confirmed_Do_you_want_to_receive_the_confirmation_email_again),
-                        context.getResources().getString(R.string.Yes),
+                        localizedContext,
+                        localizedContext.getString(R.string.Confirmation_email),
+                        localizedContext.getString(R.string.Your_email_is_not_confirmed_Do_you_want_to_receive_the_confirmation_email_again),
+                        localizedContext.getString(R.string.Yes),
                         Color.parseColor("#727272"),
                         (dialog, which) -> {
-                            sendVerificationEmail(context);
+                            sendVerificationEmail(localizedContext); // Передаём обновлённый контекст
                             dialog.dismiss();
                         },
-                        context.getResources().getString(R.string.Cancel),
+                        localizedContext.getString(R.string.Cancel),
                         Color.RED,
                         (dialog, which) -> {
                             mAuth.signOut();

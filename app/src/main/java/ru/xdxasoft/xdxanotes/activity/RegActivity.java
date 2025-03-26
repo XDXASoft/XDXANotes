@@ -1,5 +1,6 @@
 package ru.xdxasoft.xdxanotes.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.AuthManager;
@@ -56,8 +58,14 @@ public class RegActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_reg);
 
         LinearLayout toastContainer = findViewById(R.id.toastContainer);

@@ -1,5 +1,6 @@
 package ru.xdxasoft.xdxanotes.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,7 +23,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.User;
+
+
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -30,8 +34,14 @@ public class SplashActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_splash);
 
         FirebaseApp.initializeApp(this);

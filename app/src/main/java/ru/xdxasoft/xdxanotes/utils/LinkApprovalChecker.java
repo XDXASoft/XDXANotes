@@ -9,22 +9,24 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.widget.Toast;
 
 import ru.xdxasoft.xdxanotes.R;
 
 public class LinkApprovalChecker {
 
     public static boolean isLinkSwitchEnabled(Context context) {
+        // Обновляем контекст с нужной локалью
+        Context localizedContext = LocaleHelper.applyLanguage(context);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try {
                 @SuppressLint("WrongConstant")
                 DomainVerificationManager domainVerificationManager =
-                        (DomainVerificationManager) context.getSystemService(Context.DOMAIN_VERIFICATION_SERVICE);
+                        (DomainVerificationManager) localizedContext.getSystemService(Context.DOMAIN_VERIFICATION_SERVICE);
 
                 if (domainVerificationManager != null) {
                     DomainVerificationUserState userState =
-                            domainVerificationManager.getDomainVerificationUserState(context.getPackageName());
+                            domainVerificationManager.getDomainVerificationUserState(localizedContext.getPackageName());
 
                     if (userState != null) {
                         return userState.isLinkHandlingAllowed();
@@ -38,8 +40,11 @@ public class LinkApprovalChecker {
     }
 
     public static void promptToEnableLinkHandling(Context context) {
-        ToastManager.showToast(context,
-                context.getResources().getString(R.string.To_use_the_application_enable_the_Open_supported_links_option),
+        // Обновляем контекст с нужной локалью
+        Context localizedContext = LocaleHelper.applyLanguage(context);
+
+        ToastManager.showToast(localizedContext,
+                localizedContext.getResources().getString(R.string.To_use_the_application_enable_the_Open_supported_links_option),
                 R.drawable.warning_black,
                 Color.YELLOW,
                 Color.BLACK,
@@ -47,13 +52,13 @@ public class LinkApprovalChecker {
 
         try {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            intent.setData(Uri.parse("package:" + localizedContext.getPackageName()));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Добавляем флаг для перехода
-            context.startActivity(intent);
+            localizedContext.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            ToastManager.showToast(context,
-                    context.getResources().getString(R.string.Failed_to_open_settings_Please_check_your_settings_manually),
+            ToastManager.showToast(localizedContext,
+                    localizedContext.getResources().getString(R.string.Failed_to_open_settings_Please_check_your_settings_manually),
                     R.drawable.ic_error,
                     Color.RED,
                     Color.BLACK,

@@ -37,9 +37,16 @@ public class NotesTakerActivity extends AppCompatActivity {
     boolean isOldNote = false;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_notes_taker);
+
 
         try {
             editText_title = findViewById(R.id.editText_title);

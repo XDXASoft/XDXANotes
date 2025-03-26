@@ -17,6 +17,7 @@ public class SimpleDialogExampleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_simple_dialog_example);
 
         // Кнопка для показа простого диалога
