@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Сообщение"
         android:textSize="16sp"
-        android:textColor="#000000"
+        android:textColor="@color/black"
         android:paddingBottom="10dp" />
 
     <Button
@@ -21,6 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Закрыть"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:background="@color/switchThumbColorDark" />
 </LinearLayout>

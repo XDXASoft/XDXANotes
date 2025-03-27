@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             app:queryBackground="@drawable/rounded_search_background"
-        />
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_home"
@@ -40,10 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            app:backgroundTint="#484848"
+            app:backgroundTint="@color/toolbar_background"
             app:tint="@color/white"
             android:src="@drawable/ic_plus_icon"
             />
-
-
 </RelativeLayout>

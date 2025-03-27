@@ -1,8 +1,9 @@
 package ru.xdxasoft.xdxanotes.utils;
 
 import android.app.Application;
-import android.graphics.Color;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -13,7 +14,6 @@ public class FirebaseInitializer {
     private static final String TAG = "FCM_INIT";
 
     public static void initialize(Application application) {
-        // Обновляем контекст с нужной локалью
         Application localizedApplication = (Application) LocaleHelper.applyLanguage(application);
 
         FirebaseApp.initializeApp(localizedApplication);
@@ -26,18 +26,18 @@ public class FirebaseInitializer {
                         ToastManager.showToast(localizedApplication,
                                 "TOKEN: " + token,
                                 R.drawable.ic_galohca_black,
-                                Color.GREEN,
-                                Color.BLACK,
-                                Color.BLACK,
+                                ContextCompat.getColor(localizedApplication, R.color.success_green),
+                                ContextCompat.getColor(localizedApplication, R.color.black),
+                                ContextCompat.getColor(localizedApplication, R.color.black),
                                 true);
                     } else {
                         Log.e(TAG, "Ошибка получения токена", task.getException());
                         ToastManager.showToast(localizedApplication,
                                 "Ошибка получения токена",
                                 R.drawable.ic_error,
-                                Color.RED,
-                                Color.BLACK,
-                                Color.BLACK,
+                                ContextCompat.getColor(localizedApplication, R.color.error_red),
+                                ContextCompat.getColor(localizedApplication, R.color.black),
+                                ContextCompat.getColor(localizedApplication, R.color.black),
                                 true);
                     }
                 });

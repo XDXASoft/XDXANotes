@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -117,7 +118,12 @@ public class RegActivity extends AppCompatActivity {
             String password = passreg.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                ToastManager.showToast(this, getString(R.string.Enter_your_login_and_password), R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                ToastManager.showToast(this,
+                        getString(R.string.Enter_your_login_and_password),
+                        R.drawable.ic_error,
+                        ContextCompat.getColor(this, R.color.error_red),
+                        ContextCompat.getColor(this, R.color.black),
+                        ContextCompat.getColor(this, R.color.black));
             } else {
                 showPrivacyTermsDialog(email, password);
             }
@@ -187,9 +193,9 @@ public class RegActivity extends AppCompatActivity {
                             RegActivity.this,
                             getString(R.string.To_use_the_application_you_must_accept_the_terms_of_use),
                             R.drawable.ic_galohca_black,
-                            Color.GREEN,
-                            Color.BLACK,
-                            Color.BLACK
+                            ContextCompat.getColor(RegActivity.this, R.color.success_green),
+                            ContextCompat.getColor(RegActivity.this, R.color.black),
+                            ContextCompat.getColor(RegActivity.this, R.color.black)
                     );
                     showPrivacyTermsDialogForService(user, "email");
                 }
@@ -202,9 +208,9 @@ public class RegActivity extends AppCompatActivity {
                         RegActivity.this,
                         error,
                         R.drawable.ic_error,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK
+                        ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                        ContextCompat.getColor(RegActivity.this, R.color.black),
+                        ContextCompat.getColor(RegActivity.this, R.color.black)
                 );
             }
         });
@@ -214,8 +220,6 @@ public class RegActivity extends AppCompatActivity {
         progressBar.setVisibility(show ? ProgressBar.VISIBLE : ProgressBar.GONE);
         regbtn.setEnabled(!show);
     }
-
-
 
     public void LoginActivity(View v) {
         Intent intent = new Intent(RegActivity.this, LoginActivity.class);
@@ -266,17 +270,21 @@ public class RegActivity extends AppCompatActivity {
                                 ToastManager.showToast(RegActivity.this,
                                         getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
-                                        Color.RED,
-                                        Color.BLACK,
-                                        Color.BLACK);
+                                        ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                                        ContextCompat.getColor(RegActivity.this, R.color.black),
+                                        ContextCompat.getColor(RegActivity.this, R.color.black));
                             }
                         });
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGITHUBAUTH", e.getMessage());
-                    ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
-                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                    ToastManager.showToast(this,
+                            getString(R.string.Authentication_error) + e.getMessage(),
+                            R.drawable.ic_error,
+                            ContextCompat.getColor(this, R.color.error_red),
+                            ContextCompat.getColor(this, R.color.black),
+                            ContextCompat.getColor(this, R.color.black));
                 });
     }
 
@@ -324,17 +332,21 @@ public class RegActivity extends AppCompatActivity {
                                 ToastManager.showToast(RegActivity.this,
                                         getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
-                                        Color.RED,
-                                        Color.BLACK,
-                                        Color.BLACK);
+                                        ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                                        ContextCompat.getColor(RegActivity.this, R.color.black),
+                                        ContextCompat.getColor(RegActivity.this, R.color.black));
                             }
                         });
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ERRGOOGLEAUTH", e.getMessage());
-                    ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
-                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                    ToastManager.showToast(this,
+                            getString(R.string.Authentication_error) + e.getMessage(),
+                            R.drawable.ic_error,
+                            ContextCompat.getColor(this, R.color.error_red),
+                            ContextCompat.getColor(this, R.color.black),
+                            ContextCompat.getColor(this, R.color.black));
                 });
     }
 
@@ -388,18 +400,18 @@ public class RegActivity extends AppCompatActivity {
                                     ToastManager.showToast(RegActivity.this,
                                             getString(R.string.Registration_successful),
                                             R.drawable.ic_galohca_black,
-                                            Color.GREEN,
-                                            Color.BLACK,
-                                            Color.BLACK);
+                                            ContextCompat.getColor(RegActivity.this, R.color.success_green),
+                                            ContextCompat.getColor(RegActivity.this, R.color.black),
+                                            ContextCompat.getColor(RegActivity.this, R.color.black));
                                     navigateToMainActivity(user.getEmail(), true);
                                 })
                                 .addOnFailureListener(e -> {
                                     ToastManager.showToast(RegActivity.this,
                                             getString(R.string.Error_creating_profile) + e.getMessage(),
                                             R.drawable.ic_error,
-                                            Color.RED,
-                                            Color.BLACK,
-                                            Color.BLACK);
+                                            ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                                            ContextCompat.getColor(RegActivity.this, R.color.black),
+                                            ContextCompat.getColor(RegActivity.this, R.color.black));
                                 });
                     } else {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -417,9 +429,9 @@ public class RegActivity extends AppCompatActivity {
                     ToastManager.showToast(RegActivity.this,
                             getString(R.string.User_verification_error) + databaseError.getMessage(),
                             R.drawable.ic_error,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK);
+                            ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                            ContextCompat.getColor(RegActivity.this, R.color.black),
+                            ContextCompat.getColor(RegActivity.this, R.color.black));
                 }
             });
         });
@@ -432,9 +444,9 @@ public class RegActivity extends AppCompatActivity {
                     ToastManager.showToast(RegActivity.this,
                             getString(R.string.Registration_canceled),
                             R.drawable.ic_error,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK);
+                            ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                            ContextCompat.getColor(RegActivity.this, R.color.black),
+                            ContextCompat.getColor(RegActivity.this, R.color.black));
                 }
             });
         });
@@ -453,7 +465,12 @@ public class RegActivity extends AppCompatActivity {
     }
 
     private void signInWithVK() {
-        ToastManager.showToast(RegActivity.this, getString(R.string.In_development), R.drawable.ic_settings, Color.YELLOW, Color.BLACK, Color.BLACK);
+        ToastManager.showToast(RegActivity.this,
+                getString(R.string.In_development),
+                R.drawable.ic_settings,
+                ContextCompat.getColor(this, R.color.warning_yellow),
+                ContextCompat.getColor(this, R.color.black),
+                ContextCompat.getColor(this, R.color.black));
     }
 
 }

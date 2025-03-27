@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.color.ColorRoles;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -64,9 +65,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             mainActivity.showCustomToast(
                     "TEST из фрагмента",
                     R.drawable.ic_settings,
-                    -5592406,
-                    Color.BLACK,
-                    Color.BLACK,
+                    ContextCompat.getColor(requireContext(), R.color.test_gray),
+                    ContextCompat.getColor(requireContext(), R.color.black),
+                    ContextCompat.getColor(requireContext(), R.color.black),
                     true
             );
         }
@@ -103,9 +104,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 mainActivity.showCustomToast(
                         getString(R.string.Initialization_error) + e.getMessage(),
                         R.drawable.ic_error_black,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK,
+                        ContextCompat.getColor(requireContext(), R.color.error_red),
+                        ContextCompat.getColor(requireContext(), R.color.black),
+                        ContextCompat.getColor(requireContext(), R.color.black),
                         false
                 );
             }
@@ -207,9 +208,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 mainActivity.showCustomToast(
                         getString(R.string.Error_saving_note) + e.getMessage(),
                         R.drawable.ic_error_black,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK,
+                        ContextCompat.getColor(requireContext(), R.color.error_red),
+                        ContextCompat.getColor(requireContext(), R.color.black),
+                        ContextCompat.getColor(requireContext(), R.color.black),
                         false
                 );
             }
@@ -275,9 +276,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         mainActivity.showCustomToast(
                                 getString(R.string.Unpinned),
                                 R.drawable.ic_galohca_black,
-                                Color.GREEN,
-                                Color.BLACK,
-                                Color.BLACK,
+                                ContextCompat.getColor(requireContext(), R.color.success_green),
+                                ContextCompat.getColor(requireContext(), R.color.black),
+                                ContextCompat.getColor(requireContext(), R.color.black),
                                 false
                         );
                     }
@@ -289,9 +290,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         mainActivity.showCustomToast(
                                 getString(R.string.Pinned),
                                 R.drawable.ic_galohca_black,
-                                Color.GREEN,
-                                Color.BLACK,
-                                Color.BLACK,
+                                ContextCompat.getColor(requireContext(), R.color.success_green),
+                                ContextCompat.getColor(requireContext(), R.color.black),
+                                ContextCompat.getColor(requireContext(), R.color.black),
                                 false
                         );
                     }
@@ -328,9 +329,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     mainActivity.showCustomToast(
                             getString(R.string.Note_removed),
                             R.drawable.ic_galohca_black,
-                            Color.GREEN,
-                            Color.BLACK,
-                            Color.BLACK,
+                            ContextCompat.getColor(requireContext(), R.color.success_green),
+                            ContextCompat.getColor(requireContext(), R.color.black),
+                            ContextCompat.getColor(requireContext(), R.color.black),
                             false
                     );
                 }

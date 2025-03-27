@@ -1,12 +1,12 @@
 package ru.xdxasoft.xdxanotes.utils;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.shape.CornerFamily;
@@ -23,7 +23,7 @@ public class CustomDialog {
         View dialogView = inflater.inflate(layoutId, null);
 
         TextView messageText = dialogView.findViewById(R.id.messageText);
-        messageText.setTextColor(Color.WHITE);
+        messageText.setTextColor(ContextCompat.getColor(context, R.color.white));
         messageText.setText(message);
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.CustomDialogStyle);

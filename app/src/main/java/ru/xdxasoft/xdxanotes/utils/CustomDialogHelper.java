@@ -10,25 +10,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import ru.xdxasoft.xdxanotes.R;
 
 public class CustomDialogHelper {
 
-    /**
-     * Создает и показывает простой диалог с заголовком и сообщением
-     *
-     * @param context Контекст
-     * @param title Заголовок диалога
-     * @param message Сообщение диалога
-     * @param positiveText Текст положительной кнопки
-     * @param positiveColor Цвет положительной кнопки
-     * @param positiveClick Обработчик нажатия положительной кнопки
-     * @param negativeText Текст отрицательной кнопки
-     * @param negativeColor Цвет отрицательной кнопки
-     * @param negativeClick Обработчик нажатия отрицательной кнопки
-     * @return Созданный диалог
-     */
     public static AlertDialog showSimpleDialog(
             Context context,
             String title,
@@ -63,18 +50,6 @@ public class CustomDialogHelper {
         return dialog;
     }
 
-    /**
-     * Создает и показывает диалог с полем ввода
-     *
-     * @param context Контекст
-     * @param title Заголовок диалога
-     * @param hint Подсказка для поля ввода
-     * @param defaultText Текст по умолчанию в поле ввода
-     * @param positiveText Текст положительной кнопки
-     * @param negativeText Текст отрицательной кнопки
-     * @param callback Обработчик результата ввода
-     * @return Созданный диалог
-     */
     public static Dialog showInputDialog(
             Context context,
             String title,
@@ -123,13 +98,6 @@ public class CustomDialogHelper {
         return dialog;
     }
 
-    /**
-     * Создает и показывает полностью настраиваемый диалог
-     *
-     * @param context Контекст
-     * @param callback Обработчик для настройки диалога
-     * @return Созданный диалог
-     */
     public static Dialog showCustomDialog(Context context, CustomDialogCallback callback) {
         View dialogView = LayoutInflater.from(context).inflate(R.layout.custom_dialog_layout, null);
 
@@ -147,26 +115,13 @@ public class CustomDialogHelper {
     }
 
     public interface InputDialogCallback {
-
         void onInputReceived(String input);
     }
 
     public interface CustomDialogCallback {
-
         void onDialogCreated(Dialog dialog, View dialogView);
     }
 
-    /**
-     * Перегруженный метод для обратной совместимости
-     *
-     * @param context Контекст
-     * @param title Заголовок диалога
-     * @param message Сообщение диалога
-     * @param positiveButtonText Текст положительной кнопки
-     * @param positiveClickListener Обработчик нажатия положительной кнопки
-     * @param negativeButtonText Текст отрицательной кнопки
-     * @param negativeClickListener Обработчик нажатия отрицательной кнопки
-     */
     public static void showSimpleDialog(
             Context context,
             String title,
@@ -181,10 +136,10 @@ public class CustomDialogHelper {
                 title,
                 message,
                 positiveButtonText,
-                context.getResources().getColor(R.color.primary),
+                ContextCompat.getColor(context, R.color.primary),
                 positiveClickListener,
                 negativeButtonText,
-                context.getResources().getColor(R.color.secondary),
+                ContextCompat.getColor(context, R.color.secondary),
                 negativeClickListener
         );
     }

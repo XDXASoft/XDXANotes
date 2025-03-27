@@ -3,18 +3,15 @@ package ru.xdxasoft.xdxanotes.utils.notes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +43,6 @@ public class NotesTakerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_notes_taker);
-
 
         try {
             editText_title = findViewById(R.id.editText_title);
@@ -80,9 +76,9 @@ public class NotesTakerActivity extends AppCompatActivity {
                             ToastManager.showToast(NotesTakerActivity.this,
                                     getString(R.string.Please_add_some_notes),
                                     R.drawable.warning_black,
-                                    Color.YELLOW,
-                                    Color.BLACK,
-                                    Color.BLACK);
+                                    ContextCompat.getColor(NotesTakerActivity.this, R.color.warning_yellow),
+                                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black),
+                                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black));
                             return;
                         }
 
@@ -113,10 +109,10 @@ public class NotesTakerActivity extends AppCompatActivity {
                         ToastManager.showToast(NotesTakerActivity.this,
                                 getString(R.string.Error_while_saving) + e.getMessage(),
                                 R.drawable.ic_error,
-                                Color.RED,
-                                Color.BLACK,
-                                Color.BLACK);
-                        }
+                                ContextCompat.getColor(NotesTakerActivity.this, R.color.error_red),
+                                ContextCompat.getColor(NotesTakerActivity.this, R.color.black),
+                                ContextCompat.getColor(NotesTakerActivity.this, R.color.black));
+                    }
                 }
             });
         } catch (Exception e) {
@@ -124,8 +120,9 @@ public class NotesTakerActivity extends AppCompatActivity {
             ToastManager.showToast(NotesTakerActivity.this,
                     getString(R.string.Initialization_error) + e.getMessage(),
                     R.drawable.ic_error,
-                    Color.RED,
-                    Color.BLACK,
-                    Color.BLACK);}
+                    ContextCompat.getColor(NotesTakerActivity.this, R.color.error_red),
+                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black),
+                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black));
+        }
     }
 }

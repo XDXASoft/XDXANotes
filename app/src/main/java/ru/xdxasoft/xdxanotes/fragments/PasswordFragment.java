@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -35,19 +35,11 @@ import ru.xdxasoft.xdxanotes.utils.IdGenerator;
 import ru.xdxasoft.xdxanotes.utils.PasswordDatabaseHelper;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 
-/**
- * A simple {@link Fragment} subclass. Use the
- * {@link PasswordFragment#newInstance} factory method to create an instance of
- * this fragment.
- */
 public class PasswordFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -65,18 +57,8 @@ public class PasswordFragment extends Fragment {
     private FirebaseManager firebaseManager;
 
     public PasswordFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of this fragment using
-     * the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AccountFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static PasswordFragment newInstance(String param1, String param2) {
         PasswordFragment fragment = new PasswordFragment();
         Bundle args = new Bundle();
@@ -97,7 +79,7 @@ public class PasswordFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password, container, false);
 
         try {
@@ -110,7 +92,6 @@ public class PasswordFragment extends Fragment {
 
             loadPasswords();
 
-            // Синхронизируем с Firebase
             if (firebaseManager.isUserLoggedIn()) {
                 firebaseManager.syncPasswordsWithFirebase(success -> {
                     if (success) {
@@ -122,17 +103,7 @@ public class PasswordFragment extends Fragment {
             fabAdd.setOnClickListener(v -> showBottomSheet(null));
         } catch (Exception e) {
             Log.e("PasswordFragment", "Error in onCreateView", e);
-            MainActivity mainActivity = (MainActivity) getActivity();
-            if (mainActivity != null) {
-                mainActivity.showCustomToast(
-                        getString(R.string.Initialization_error) + e.getMessage(),
-                        R.drawable.ic_error_black,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK,
-                        false
-                );
-            }
+            showToast(getString(R.string.Initialization_error) + e.getMessage(), true);
         }
 
         return view;
@@ -185,7 +156,8 @@ public class PasswordFragment extends Fragment {
                 passwords,
                 this::copyToClipboard,
                 this::deletePassword,
-                this::showBottomSheet
+                this::showBottomSheet,
+                this::togglePasswordVisibility
         );
         rvPasswords.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvPasswords.setAdapter(adapter);
@@ -216,18 +188,7 @@ public class PasswordFragment extends Fragment {
         String password = etPassword.getText().toString().trim();
 
         if (title.isEmpty() || username.isEmpty() || password.isEmpty()) {
-
-            MainActivity mainActivity = (MainActivity) getActivity();
-            if (mainActivity != null) {
-                mainActivity.showCustomToast(
-                        getString(R.string.Please_fill_in_all_fields),
-                        R.drawable.warning_black,
-                        Color.YELLOW,
-                        Color.BLACK,
-                        Color.BLACK,
-                        false
-                );
-            }
+            showToast(getString(R.string.Please_fill_in_all_fields), true);
             return;
         }
 
@@ -259,30 +220,9 @@ public class PasswordFragment extends Fragment {
 
                 loadPasswords();
                 bottomSheetDialog.dismiss();
-
-                MainActivity mainActivity = (MainActivity) getActivity();
-                if (mainActivity != null) {
-                    mainActivity.showCustomToast(
-                            getString(R.string.Password_saved),
-                            R.drawable.ic_galohca_black,
-                            Color.GREEN,
-                            Color.BLACK,
-                            Color.BLACK,
-                            false
-                    );
-                }
+                showToast(getString(R.string.Password_saved), false);
             } else {
-                 MainActivity mainActivity = (MainActivity) getActivity();
-                if (mainActivity != null) {
-                    mainActivity.showCustomToast(
-                            getString(R.string.Error_saving_password),
-                            R.drawable.ic_error_black,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK,
-                            false
-                    );
-                }
+                showToast(getString(R.string.Error_saving_password), true);
             }
         });
     }
@@ -291,17 +231,7 @@ public class PasswordFragment extends Fragment {
         ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("password", text);
         clipboard.setPrimaryClip(clip);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-            mainActivity.showCustomToast(
-                    getString(R.string.Copied),
-                    R.drawable.ic_galohca_black,
-                    Color.GREEN,
-                    Color.BLACK,
-                    Color.BLACK,
-                    false
-            );
-        }
+        showToast(getString(R.string.Copied), false);
     }
 
     private void deletePassword(String id) {
@@ -311,5 +241,29 @@ public class PasswordFragment extends Fragment {
 
         database.delete("passwords", "id = ?", new String[]{id});
         loadPasswords();
+        showToast("DELLPASS", false);
+    }
+
+    private void togglePasswordVisibility(Password password, TextView tvPassword) {
+        if (tvPassword.getText().toString().equals("••••••••")) {
+            tvPassword.setText(password.getPassword());
+        } else {
+            tvPassword.setText("••••••••");
+        }
+    }
+
+    private void showToast(String message, boolean isError) {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            mainActivity.showCustomToast(
+                    message,
+                    isError ? R.drawable.ic_error_black : R.drawable.ic_galohca_black,
+                    ContextCompat.getColor(requireContext(),
+                            isError ? R.color.error_red : R.color.success_green),
+                    ContextCompat.getColor(requireContext(), R.color.black),
+                    ContextCompat.getColor(requireContext(), R.color.black),
+                    false
+            );
+        }
     }
 }

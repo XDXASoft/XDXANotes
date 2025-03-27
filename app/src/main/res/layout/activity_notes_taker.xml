@@ -13,7 +13,7 @@
         android:id="@+id/toolbar_notes"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#484848"
+        android:background="@color/toolbar_background"
         app:title="@string/note_editor"
         app:titleTextColor="@color/white">
 
@@ -27,12 +27,10 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
-        
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
 
             <ImageView
                 android:id="@+id/imageView_save"
@@ -64,7 +62,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/rounded_search_background"
-
                 android:hint="@string/note_title"
                 android:importantForAutofill="no"
                 android:inputType="textCapSentences"
@@ -78,7 +75,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_search_background"
-
                 android:gravity="top"
                 android:hint="@string/note_content"
                 android:importantForAutofill="no"

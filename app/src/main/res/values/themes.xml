@@ -1,28 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.XDXANotes" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-
+    <style name="Base.Theme.XDXANotes" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryLightTheme</item>
         <item name="android:windowBackground">@color/white</item>
-        <item name="android:colorPrimaryDark">@color/white</item>
+        <item name="android:colorPrimaryDark">@color/gray_light</item>
         <item name="android:textColor">@color/black</item>
         <item name="materialButtonStyle">@style/TextBut</item>
         <item name="iconTint">@color/black</item>
-
     </style>
 
     <style name="TextBut" parent="Widget.MaterialComponents.Button">
-
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/black</item>
         <item name="shapeAppearance">@style/CustomShapeAppearance</item>
-
-    </style>
-
-    <style name="MyMaterialSwitch" parent="Theme.MaterialComponents.Light">
-        <item name="trackTint">@color/trackTint</item>
-        <item name="thumbTint">@color/colorPrimaryLightTheme</item>
     </style>
 
     <style name="CustomShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
@@ -30,25 +19,45 @@
         <item name="cornerSize">10dp</item>
     </style>
 
+    <style name="MyMaterialSwitch" parent="Theme.MaterialComponents.Light">
+        <item name="trackTint">@color/gray_light</item>
+        <item name="thumbTint">@color/swichtruecolorLight</item>
+    </style>
+
+    <style name="MyMaterialCheckBox" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/blue</item>
+    </style>
+
     <style name="MySwitch" parent="Theme.AppCompat.Light">
-        <item name="trackTint">@color/trackTint</item>
-        <item name="colorControlActivated">@color/colorPrimaryLightTheme</item>
+        <item name="trackTint">@color/gray_light</item>
+        <item name="colorControlActivated">@color/swichtruecolorLight</item>
     </style>
 
-    <style name="Theme.XDXANotes" parent="Base.Theme.XDXANotes" />
-
-    <style name="CustomDialogStyle" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <item name="cornerRadius">16dp</item>  <!-- Отключаем скругление углов -->
-        <item name="backgroundColor">@color/gray</item>  <!-- Устанавливаем цвет фона -->
+    <style name="CustomDialogStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundColor">@color/gray_light</item>
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+        <item name="colorAccent">@color/colorPrimaryLightTheme</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/DialogButtonStyle</item>
     </style>
 
-    <style name="Theme.YourApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryLightTheme</item>
+        <item name="rippleColor">@color/colorPrimaryLightTheme</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Theme.YourApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
         <item name="colorSecondary">@color/secondary</item>
         <item name="colorSecondaryVariant">@color/secondary_dark</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
     </style>
-
 </resources>

@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:text="Сообщение"
         android:textSize="16sp"
-        android:textColor="#ffff"
+        android:textColor="@color/white"
         android:paddingBottom="16dp" />
 </LinearLayout>

@@ -47,7 +47,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ru.xdxasoft.xdxanotes.R;
@@ -95,16 +94,16 @@ public class LoginActivity extends AppCompatActivity {
             ToastManager.showToast(this,
                     getString(R.string.To_use_the_application_you_must_accept_the_privacy_policy),
                     R.drawable.ic_error,
-                    Color.RED,
-                    Color.BLACK,
-                    Color.BLACK);
+                    ContextCompat.getColor(this, R.color.error_red),
+                    ContextCompat.getColor(this, R.color.black),
+                    ContextCompat.getColor(this, R.color.black));
         } else if (isVerificationSent && emailFromIntent != null) {
             ToastManager.showToast(this,
                     getString(R.string.Confirmation_email_sent_to) + emailFromIntent,
                     R.drawable.ic_galohca_black,
-                    Color.GREEN,
-                    Color.BLACK,
-                    Color.BLACK);
+                    ContextCompat.getColor(this, R.color.success_green),
+                    ContextCompat.getColor(this, R.color.black),
+                    ContextCompat.getColor(this, R.color.black));
             mail.setText(emailFromIntent);
         }
 
@@ -185,9 +184,9 @@ public class LoginActivity extends AppCompatActivity {
                 ToastManager.showToast(this,
                         getString(R.string.Enter_your_login_and_password),
                         R.drawable.ic_error,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK);
+                        ContextCompat.getColor(this, R.color.error_red),
+                        ContextCompat.getColor(this, R.color.black),
+                        ContextCompat.getColor(this, R.color.black));
                 return;
             }
 
@@ -217,9 +216,9 @@ public class LoginActivity extends AppCompatActivity {
                             ToastManager.showToast(this,
                                     getString(R.string.Incorrect_login_or_password),
                                     R.drawable.ic_error,
-                                    Color.RED,
-                                    Color.BLACK,
-                                    Color.BLACK);
+                                    ContextCompat.getColor(this, R.color.error_red),
+                                    ContextCompat.getColor(this, R.color.black),
+                                    ContextCompat.getColor(this, R.color.black));
                         }
                     });
         });
@@ -287,9 +286,9 @@ public class LoginActivity extends AppCompatActivity {
                                 ToastManager.showToast(LoginActivity.this,
                                         getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
-                                        Color.RED,
-                                        Color.BLACK,
-                                        Color.BLACK);
+                                        ContextCompat.getColor(LoginActivity.this, R.color.error_red),
+                                        ContextCompat.getColor(LoginActivity.this, R.color.black),
+                                        ContextCompat.getColor(LoginActivity.this, R.color.black));
                             }
                         });
                     }
@@ -297,7 +296,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.e("ERRGITHUBAUTH", e.getMessage());
                     ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
-                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                            R.drawable.ic_error, ContextCompat.getColor(this, R.color.error_red), ContextCompat.getColor(this, R.color.black), ContextCompat.getColor(this, R.color.black));
                 });
     }
 
@@ -347,9 +346,9 @@ public class LoginActivity extends AppCompatActivity {
                                 ToastManager.showToast(LoginActivity.this,
                                         getString(R.string.User_verification_error) + databaseError.getMessage(),
                                         R.drawable.ic_error,
-                                        Color.RED,
-                                        Color.BLACK,
-                                        Color.BLACK);
+                                        ContextCompat.getColor(LoginActivity.this, R.color.error_red),
+                                        ContextCompat.getColor(LoginActivity.this, R.color.black),
+                                        ContextCompat.getColor(LoginActivity.this, R.color.black));
                             }
                         });
                     }
@@ -357,7 +356,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.e("ERRGOOGLEAUTH", e.getMessage());
                     ToastManager.showToast(this, getString(R.string.Authentication_error) + e.getMessage(),
-                            R.drawable.ic_error, Color.RED, Color.BLACK, Color.BLACK);
+                            R.drawable.ic_error, ContextCompat.getColor(this, R.color.error_red), ContextCompat.getColor(this, R.color.black), ContextCompat.getColor(this, R.color.black));
                 });
     }
 
@@ -411,18 +410,18 @@ public class LoginActivity extends AppCompatActivity {
                                     ToastManager.showToast(LoginActivity.this,
                                             getString(R.string.Registration_successful),
                                             R.drawable.ic_galohca_black,
-                                            Color.GREEN,
-                                            Color.BLACK,
-                                            Color.BLACK);
+                                            ContextCompat.getColor(LoginActivity.this, R.color.success_green),
+                                            ContextCompat.getColor(LoginActivity.this, R.color.black),
+                                            ContextCompat.getColor(LoginActivity.this, R.color.black));
                                     navigateToMainActivity(user.getEmail(), true);
                                 })
                                 .addOnFailureListener(e -> {
                                     ToastManager.showToast(LoginActivity.this,
                                             getString(R.string.Error_creating_profile) + e.getMessage(),
                                             R.drawable.ic_error,
-                                            Color.RED,
-                                            Color.BLACK,
-                                            Color.BLACK);
+                                            ContextCompat.getColor(LoginActivity.this, R.color.error_red),
+                                            ContextCompat.getColor(LoginActivity.this, R.color.black),
+                                            ContextCompat.getColor(LoginActivity.this, R.color.black));
                                 });
                     } else {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -440,9 +439,9 @@ public class LoginActivity extends AppCompatActivity {
                     ToastManager.showToast(LoginActivity.this,
                             getString(R.string.User_verification_error) + databaseError.getMessage(),
                             R.drawable.ic_error,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK);
+                            ContextCompat.getColor(LoginActivity.this, R.color.error_red),
+                            ContextCompat.getColor(LoginActivity.this, R.color.black),
+                            ContextCompat.getColor(LoginActivity.this, R.color.black));
                 }
             });
         });
@@ -455,9 +454,9 @@ public class LoginActivity extends AppCompatActivity {
                     ToastManager.showToast(this,
                             getString(R.string.Registration_canceled),
                             R.drawable.ic_error,
-                            Color.RED,
-                            Color.BLACK,
-                            Color.BLACK);
+                            ContextCompat.getColor(this, R.color.error_red),
+                            ContextCompat.getColor(this, R.color.black),
+                            ContextCompat.getColor(this, R.color.black));
                 }
             });
         });
@@ -476,7 +475,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signInWithVK() {
-        ToastManager.showToast(LoginActivity.this, getString(R.string.In_development), R.drawable.ic_settings, Color.YELLOW, Color.BLACK, Color.BLACK);
+        ToastManager.showToast(LoginActivity.this,
+                getString(R.string.In_development),
+                R.drawable.ic_settings,
+                ContextCompat.getColor(this, R.color.warning_yellow),
+                ContextCompat.getColor(this, R.color.black),
+                ContextCompat.getColor(this, R.color.black));
     }
 
     private void showVerificationDialog(FirebaseUser user, String email) {
@@ -485,7 +489,7 @@ public class LoginActivity extends AppCompatActivity {
                 getString(R.string.Email_not_confirmed),
                 getString(R.string.Your_email_is_not_confirmed_Do_you_want_to_receive_the_confirmation_email_again),
                 getString(R.string.Yes),
-                Color.parseColor("#727272"),
+                ContextCompat.getColor(this, R.color.dialog_neutral_gray),
                 (dialog, which) -> {
                     authManager.resendVerificationEmail(new AuthManager.OnRegistrationListener() {
                         @Override
@@ -493,9 +497,9 @@ public class LoginActivity extends AppCompatActivity {
                             ToastManager.showToast(LoginActivity.this,
                                     message,
                                     R.drawable.ic_galohca_black,
-                                    Color.GREEN,
-                                    Color.BLACK,
-                                    Color.BLACK);
+                                    ContextCompat.getColor(LoginActivity.this, R.color.success_green),
+                                    ContextCompat.getColor(LoginActivity.this, R.color.black),
+                                    ContextCompat.getColor(LoginActivity.this, R.color.black));
                         }
 
                         @Override
@@ -503,14 +507,14 @@ public class LoginActivity extends AppCompatActivity {
                             ToastManager.showToast(LoginActivity.this,
                                     error,
                                     R.drawable.ic_error,
-                                    Color.RED,
-                                    Color.BLACK,
-                                    Color.BLACK);
+                                    ContextCompat.getColor(LoginActivity.this, R.color.error_red),
+                                    ContextCompat.getColor(LoginActivity.this, R.color.black),
+                                    ContextCompat.getColor(LoginActivity.this, R.color.black));
                         }
                     });
                 },
                 getString(R.string.Cancel),
-                Color.RED,
+                ContextCompat.getColor(this, R.color.error_red),
                 (dialog, which) -> dialog.dismiss()
         );
     }

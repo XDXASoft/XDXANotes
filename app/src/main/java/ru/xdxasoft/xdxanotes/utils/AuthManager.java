@@ -11,8 +11,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import ru.xdxasoft.xdxanotes.R;
 
@@ -137,7 +138,6 @@ public class AuthManager {
     }
 
     public void sendVerificationEmail(Context context) {
-        // Обновляем контекст с нужной локалью
         Context localizedContext = LocaleHelper.applyLanguage(context);
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -150,9 +150,9 @@ public class AuthManager {
                                 ToastManager.showToast(localizedContext,
                                         localizedContext.getString(R.string.Confirmation_email_sent_to) + user.getEmail(),
                                         R.drawable.ic_galohca_black,
-                                        Color.GREEN,
-                                        Color.BLACK,
-                                        Color.BLACK);
+                                        ContextCompat.getColor(localizedContext, R.color.success_green),
+                                        ContextCompat.getColor(localizedContext, R.color.black),
+                                        ContextCompat.getColor(localizedContext, R.color.black));
                             } else {
                                 String errorMessage = localizedContext.getString(R.string.Error_sending_email);
                                 if (task.getException() != null) {
@@ -161,9 +161,9 @@ public class AuthManager {
                                 ToastManager.showToast(localizedContext,
                                         errorMessage,
                                         R.drawable.ic_error,
-                                        Color.RED,
-                                        Color.BLACK,
-                                        Color.BLACK);
+                                        ContextCompat.getColor(localizedContext, R.color.error_red),
+                                        ContextCompat.getColor(localizedContext, R.color.black),
+                                        ContextCompat.getColor(localizedContext, R.color.black));
                             }
                         });
             } else {
@@ -171,15 +171,14 @@ public class AuthManager {
                 ToastManager.showToast(localizedContext,
                         localizedContext.getString(R.string.Too_many_requests_Please_wait) + timeToWait + " мин.",
                         R.drawable.ic_error,
-                        Color.RED,
-                        Color.BLACK,
-                        Color.BLACK);
+                        ContextCompat.getColor(localizedContext, R.color.error_red),
+                        ContextCompat.getColor(localizedContext, R.color.black),
+                        ContextCompat.getColor(localizedContext, R.color.black));
             }
         }
     }
 
     public void checkEmailVerification(Context context, FirebaseUser user) {
-        // Обновляем контекст с нужной локалью
         Context localizedContext = LocaleHelper.applyLanguage(context);
 
         if (user != null) {
@@ -189,13 +188,13 @@ public class AuthManager {
                         localizedContext.getString(R.string.Confirmation_email),
                         localizedContext.getString(R.string.Your_email_is_not_confirmed_Do_you_want_to_receive_the_confirmation_email_again),
                         localizedContext.getString(R.string.Yes),
-                        Color.parseColor("#727272"),
+                        ContextCompat.getColor(localizedContext, R.color.dialog_neutral_gray),
                         (dialog, which) -> {
-                            sendVerificationEmail(localizedContext); // Передаём обновлённый контекст
+                            sendVerificationEmail(localizedContext);
                             dialog.dismiss();
                         },
                         localizedContext.getString(R.string.Cancel),
-                        Color.RED,
+                        ContextCompat.getColor(localizedContext, R.color.error_red),
                         (dialog, which) -> {
                             mAuth.signOut();
                             dialog.dismiss();

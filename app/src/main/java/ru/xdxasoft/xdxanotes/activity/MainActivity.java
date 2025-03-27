@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -96,19 +97,18 @@ public class MainActivity extends AppCompatActivity {
             FirebaseManager.getInstance(this);
         }
 
-
         String _android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         ColorStateList colorStateList = new ColorStateList(
                 new int[][]{
-                    new int[]{android.R.attr.state_checked},
-                    new int[]{}
+                        new int[]{android.R.attr.state_checked},
+                        new int[]{}
                 },
                 new int[]{
-                    Color.parseColor("#484848"),
-                    Color.parseColor("#484848")
+                        ContextCompat.getColor(this, R.color.bottom_nav_active),
+                        ContextCompat.getColor(this, R.color.bottom_nav_inactive)
                 }
         );
 
@@ -177,7 +177,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.getData() != null && intent.getData().getPath().equals("/test")) {
             String errCode = "E100";
-            ToastManager.showToast(this, "Ошибка подключения!\nКод ошибки: " + errCode, R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
+            ToastManager.showToast(this,
+                    "Ошибка подключения!\nКод ошибки: " + errCode,
+                    R.drawable.ic_error_black,
+                    ContextCompat.getColor(this, R.color.error_red),
+                    ContextCompat.getColor(this, R.color.black),
+                    ContextCompat.getColor(this, R.color.black));
         }
 
         if (mAuth.getCurrentUser() != null) {
@@ -214,7 +219,12 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseManager.getInstance(this);
                         }
                     } else {
-                        ToastManager.showToast(this, getString(R.string.Authentication_error) + task.getException().getMessage(), R.drawable.ic_error_black, Color.RED, Color.BLACK, Color.BLACK);
+                        ToastManager.showToast(this,
+                                getString(R.string.Authentication_error) + task.getException().getMessage(),
+                                R.drawable.ic_error_black,
+                                ContextCompat.getColor(this, R.color.error_red),
+                                ContextCompat.getColor(this, R.color.black),
+                                ContextCompat.getColor(this, R.color.black));
                     }
                 });
     }
