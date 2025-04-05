@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/black">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageBackEvent"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Событие"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/buttonSaveEvent"
+        android:layout_below="@id/toolbar"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="@color/gray"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="@color/white">
+
+                <EditText
+                    android:id="@+id/editTextEventTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Название"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="@color/gray"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="@color/white">
+
+                <EditText
+                    android:id="@+id/editTextEventDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="Описание"
+                    android:inputType="textMultiLine"
+                    android:maxLines="10"
+                    android:minLines="3"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Дата"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/textViewDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_calendar"
+                    android:padding="16dp"
+                    android:text="Выберите дату"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Время"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/textViewTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_time"
+                    android:padding="16dp"
+                    android:text="Выберите время"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Тип уведомления"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupNotificationType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Настройки уведомления:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonNoNotification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Без уведомления"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonOneTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Уведомить один раз"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonAllDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Уведомлять весь день"
+                    android:textColor="@color/white" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/textViewNotificationTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_corner_background"
+                android:drawableStart="@drawable/ic_clock"
+                android:drawablePadding="8dp"
+                android:padding="12dp"
+                android:text="Напомнить за 15 минут"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/buttonSaveEvent"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_button"
+        android:text="Сохранить"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</RelativeLayout> 

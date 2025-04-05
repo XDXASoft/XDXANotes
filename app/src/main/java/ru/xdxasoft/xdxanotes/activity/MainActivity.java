@@ -51,6 +51,7 @@ import ru.xdxasoft.xdxanotes.utils.ThemeManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
+import ru.xdxasoft.xdxanotes.services.CalendarReminderService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        // Запускаем сервис напоминаний о событиях
+        startCalendarReminderService();
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             signInAnonymously();
@@ -103,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
         ColorStateList colorStateList = new ColorStateList(
                 new int[][]{
-                        new int[]{android.R.attr.state_checked},
-                        new int[]{}
+                    new int[]{android.R.attr.state_checked},
+                    new int[]{}
                 },
                 new int[]{
-                        ContextCompat.getColor(this, R.color.bottom_nav_active),
-                        ContextCompat.getColor(this, R.color.bottom_nav_inactive)
+                    ContextCompat.getColor(this, R.color.bottom_nav_active),
+                    ContextCompat.getColor(this, R.color.bottom_nav_inactive)
                 }
         );
 
@@ -266,6 +270,19 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (handler != null && runnable != null) {
             handler.removeCallbacks(runnable);
+        }
+    }
+
+    /**
+     * Запускает сервис напоминаний о событиях календаря
+     */
+    private void startCalendarReminderService() {
+        try {
+            Intent serviceIntent = new Intent(this, CalendarReminderService.class);
+            startService(serviceIntent);
+            Log.d(TAG, "Сервис календарных напоминаний запущен");
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при запуске сервиса календарных напоминаний", e);
         }
     }
 

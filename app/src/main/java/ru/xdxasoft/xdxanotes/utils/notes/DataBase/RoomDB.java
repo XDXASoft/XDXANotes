@@ -5,9 +5,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import ru.xdxasoft.xdxanotes.utils.notes.Models.CalendarEvent;
 import ru.xdxasoft.xdxanotes.utils.notes.Models.Notes;
 
-@Database(entities = {Notes.class}, version = 4, exportSchema = false)
+@Database(entities = {Notes.class, CalendarEvent.class}, version = 7, exportSchema = false)
 public abstract class RoomDB extends RoomDatabase {
 
     private static RoomDB database;
@@ -25,4 +26,6 @@ public abstract class RoomDB extends RoomDatabase {
     }
 
     public abstract MainDAO mainDao();
+
+    public abstract CalendarDao calendarDao();
 }

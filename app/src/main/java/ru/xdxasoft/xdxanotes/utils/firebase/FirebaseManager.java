@@ -24,7 +24,9 @@ import java.util.Map;
 import ru.xdxasoft.xdxanotes.models.Password;
 import ru.xdxasoft.xdxanotes.utils.PasswordDatabaseHelper;
 import ru.xdxasoft.xdxanotes.utils.notes.DataBase.RoomDB;
+import ru.xdxasoft.xdxanotes.utils.notes.Models.CalendarEvent;
 import ru.xdxasoft.xdxanotes.utils.notes.Models.Notes;
+import ru.xdxasoft.xdxanotes.utils.IdGenerator;
 
 public class FirebaseManager {
 
@@ -58,10 +60,13 @@ public class FirebaseManager {
             if (user != null) {
                 userId = user.getUid();
                 notesDatabase.mainDao().deleteAll();
+                notesDatabase.calendarDao().deleteAll();
                 syncNotesWithFirebase(null);
+                syncCalendarEventsWithFirebase(null);
             } else {
                 userId = null;
                 notesDatabase.mainDao().deleteAll();
+                notesDatabase.calendarDao().deleteAll();
             }
         });
     }
@@ -332,6 +337,205 @@ public class FirebaseManager {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error deleting password from Firebase", e);
+                    if (callback != null) {
+                        callback.onDeleteComplete(false);
+                    }
+                });
+    }
+
+    public void syncCalendarEventsWithFirebase(final SyncCallback callback) {
+        if (!isUserLoggedIn()) {
+            if (callback != null) {
+                callback.onSyncComplete(false);
+            }
+            return;
+        }
+
+        mDatabase.child("Users").child(userId).child("calendar_events").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    // События из Firebase
+                    Map<String, CalendarEvent> firebaseEvents = new HashMap<>();
+                    for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                        try {
+                            CalendarEvent event = eventSnapshot.getValue(CalendarEvent.class);
+                            // Используем eventId для идентификации события
+                            if (event != null && event.getEventId() != null && !event.getEventId().isEmpty()) {
+                                if (userId.equals(event.getUserId())) {
+                                    firebaseEvents.put(event.getEventId(), event);
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing calendar event from Firebase", e);
+                        }
+                    }
+
+                    // События из локальной БД
+                    List<CalendarEvent> localEvents = notesDatabase.calendarDao().getAll();
+                    Map<String, CalendarEvent> localEventsMap = new HashMap<>();
+
+                    // Сначала убедимся, что у всех событий есть eventId
+                    for (CalendarEvent event : localEvents) {
+                        // Проверяем, что у события есть eventId
+                        if (event.getEventId() == null || event.getEventId().isEmpty()) {
+                            // Если eventId пустой (старое событие), генерируем новый
+                            event.setEventId(IdGenerator.generateUUID());
+                            notesDatabase.calendarDao().insert(event);
+                            Log.d(TAG, "Generated new eventId for local event: " + event.getTitle());
+                        }
+                        localEventsMap.put(event.getEventId(), event);
+                    }
+
+                    // Обрабатываем события, которые есть в Firebase, но нет в локальной БД
+                    for (CalendarEvent firebaseEvent : firebaseEvents.values()) {
+                        CalendarEvent localEvent = localEventsMap.get(firebaseEvent.getEventId());
+
+                        if (localEvent == null) {
+                            // Добавляем новое событие из Firebase в локальную БД
+                            notesDatabase.calendarDao().insert(firebaseEvent);
+                            Log.d(TAG, "Inserted firebase event to local DB: " + firebaseEvent.getTitle());
+                        } else {
+                            // Если событие новее в Firebase, обновляем локальное
+                            if (firebaseEvent.getLastModified() > localEvent.getLastModified()) {
+                                // Используем eventId для обновления, чтобы исправить проблему с ID=0
+                                notesDatabase.calendarDao().updateByEventId(
+                                        firebaseEvent.getEventId(),
+                                        firebaseEvent.getTitle(),
+                                        firebaseEvent.getDescription(),
+                                        firebaseEvent.getDate(),
+                                        firebaseEvent.getTime()
+                                );
+                                notesDatabase.calendarDao().updateCompletionStatusByEventId(
+                                        firebaseEvent.getEventId(),
+                                        firebaseEvent.isCompleted()
+                                );
+                                Log.d(TAG, "Updated local event from Firebase by eventId: " + firebaseEvent.getTitle());
+                            }
+                        }
+                    }
+
+                    // Обрабатываем события, которые есть в локальной БД, но нет в Firebase
+                    for (CalendarEvent localEvent : localEvents) {
+                        // Убедитесь, что событие принадлежит текущему пользователю
+                        if (userId.equals(localEvent.getUserId())) {
+                            if (!firebaseEvents.containsKey(localEvent.getEventId())) {
+                                // Добавляем событие в Firebase
+                                saveCalendarEventToFirebase(localEvent, null);
+                                Log.d(TAG, "Added local event to Firebase: " + localEvent.getTitle());
+                            } else {
+                                // Если событие новее в локальной БД, обновляем в Firebase
+                                CalendarEvent firebaseEvent = firebaseEvents.get(localEvent.getEventId());
+                                if (localEvent.getLastModified() > firebaseEvent.getLastModified()) {
+                                    saveCalendarEventToFirebase(localEvent, null);
+                                    Log.d(TAG, "Updated event in Firebase: " + localEvent.getTitle());
+                                }
+                            }
+                        }
+                    }
+
+                    if (callback != null) {
+                        callback.onSyncComplete(true);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error syncing calendar events", e);
+                    if (callback != null) {
+                        callback.onSyncComplete(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Firebase calendar events sync cancelled", databaseError.toException());
+                if (callback != null) {
+                    callback.onSyncComplete(false);
+                }
+            }
+        });
+    }
+
+    public void saveCalendarEventToFirebase(CalendarEvent event, final SaveCallback callback) {
+        if (!isUserLoggedIn() || event == null) {
+            if (callback != null) {
+                callback.onSaveComplete(false);
+            }
+            return;
+        }
+
+        try {
+            // Проверяем, есть ли у события eventId
+            if (event.getEventId() == null || event.getEventId().isEmpty()) {
+                event.setEventId(IdGenerator.generateComplexId());
+            }
+
+            // Очистка eventId от запрещенных в Firebase символов (., #, $, [, ])
+            String safeEventId = event.getEventId().replace(".", "-")
+                    .replace("#", "-")
+                    .replace("$", "-")
+                    .replace("[", "-")
+                    .replace("]", "-")
+                    .replace("|", "-");
+            event.setEventId(safeEventId);
+
+            Map<String, Object> eventValues = new HashMap<>();
+            eventValues.put("ID", event.getID());
+            eventValues.put("eventId", event.getEventId());
+            eventValues.put("title", event.getTitle());
+            eventValues.put("description", event.getDescription());
+            eventValues.put("date", event.getDate());
+            eventValues.put("time", event.getTime());
+            eventValues.put("completed", event.isCompleted());
+            eventValues.put("userId", userId);
+            eventValues.put("lastModified", event.getLastModified());
+            eventValues.put("notificationType", event.getNotificationType());
+            eventValues.put("notificationTime", event.getNotificationTime());
+
+            // Используем eventId как ключ для хранения в Firebase
+            mDatabase.child("Users").child(userId).child("calendar_events").child(event.getEventId())
+                    .setValue(eventValues)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Calendar event saved to Firebase: " + event.getTitle());
+                        if (callback != null) {
+                            callback.onSaveComplete(true);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Error saving calendar event to Firebase", e);
+                        if (callback != null) {
+                            callback.onSaveComplete(false);
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, "Error preparing calendar event for Firebase", e);
+            if (callback != null) {
+                callback.onSaveComplete(false);
+            }
+        }
+    }
+
+    public void deleteCalendarEventFromFirebase(CalendarEvent event, final DeleteCallback callback) {
+        if (!isUserLoggedIn() || event == null) {
+            if (callback != null) {
+                callback.onDeleteComplete(false);
+            }
+            return;
+        }
+
+        // Используем eventId для удаления из Firebase
+        String eventIdToDelete = event.getEventId() != null && !event.getEventId().isEmpty()
+                ? event.getEventId()
+                : String.valueOf(event.getID());
+
+        mDatabase.child("Users").child(userId).child("calendar_events").child(eventIdToDelete).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Calendar event deleted from Firebase: " + event.getTitle());
+                    if (callback != null) {
+                        callback.onDeleteComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error deleting calendar event from Firebase", e);
                     if (callback != null) {
                         callback.onDeleteComplete(false);
                     }

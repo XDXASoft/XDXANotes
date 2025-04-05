@@ -25,13 +25,13 @@ import com.google.firebase.database.ValueEventListener;
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.User;
-
-
+import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 
 public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = "SplashActivity";
     private FirebaseAuth mAuth;
+    private FirebaseManager firebaseManager;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -46,6 +46,7 @@ public class SplashActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
+        firebaseManager = FirebaseManager.getInstance(this);
 
         new Handler().postDelayed(this::checkUserAndNavigate, 2000);
     }
@@ -80,7 +81,7 @@ public class SplashActivity extends AppCompatActivity {
                             }
 
                             if (privacyAccepted) {
-                                navigateToMain();
+                                syncDataAndNavigate();
                             } else {
                                 FirebaseAuth.getInstance().signOut();
                                 navigateToLogin(true);
@@ -95,6 +96,39 @@ public class SplashActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    // Метод для синхронизации данных перед переходом на MainActivity
+    private void syncDataAndNavigate() {
+        // Синхронизируем события календаря
+        firebaseManager.syncCalendarEventsWithFirebase(success -> {
+            if (success) {
+                Log.d(TAG, "Синхронизация календарных событий успешно завершена");
+            } else {
+                Log.e(TAG, "Ошибка при синхронизации календарных событий");
+            }
+
+            // Синхронизируем заметки
+            firebaseManager.syncNotesWithFirebase(notesSuccess -> {
+                if (notesSuccess) {
+                    Log.d(TAG, "Синхронизация заметок успешно завершена");
+                } else {
+                    Log.e(TAG, "Ошибка при синхронизации заметок");
+                }
+
+                // Синхронизируем пароли
+                firebaseManager.syncPasswordsWithFirebase(passwordsSuccess -> {
+                    if (passwordsSuccess) {
+                        Log.d(TAG, "Синхронизация паролей успешно завершена");
+                    } else {
+                        Log.e(TAG, "Ошибка при синхронизации паролей");
+                    }
+
+                    // Переходим к главному экрану после всех синхронизаций
+                    navigateToMain();
+                });
+            });
+        });
     }
 
     private void navigateToMain() {
