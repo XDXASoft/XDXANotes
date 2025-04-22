@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Запускаем сервис напоминаний о событиях
-        startCalendarReminderService();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
@@ -273,18 +271,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Запускает сервис напоминаний о событиях календаря
-     */
-    private void startCalendarReminderService() {
-        try {
-            Intent serviceIntent = new Intent(this, CalendarReminderService.class);
-            startService(serviceIntent);
-            Log.d(TAG, "Сервис календарных напоминаний запущен");
-        } catch (Exception e) {
-            Log.e(TAG, "Ошибка при запуске сервиса календарных напоминаний", e);
-        }
-    }
+
+
 
     public void showCustomToast(String message, int drawableRes, int color1, int textColor, int backgroundColor, boolean isDEBUG) {
         ToastManager.showToast(this, message, drawableRes, color1, textColor, backgroundColor, isDEBUG);

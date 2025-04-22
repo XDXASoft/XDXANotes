@@ -61,16 +61,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         searchViewHome = view.findViewById(R.id.searchView_home);
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-            mainActivity.showCustomToast(
-                    "TEST из фрагмента",
-                    R.drawable.ic_settings,
-                    ContextCompat.getColor(requireContext(), R.color.test_gray),
-                    ContextCompat.getColor(requireContext(), R.color.black),
-                    ContextCompat.getColor(requireContext(), R.color.black),
-                    true
-            );
-        }
+
 
         try {
             database = RoomDB.getInstance(requireContext());
