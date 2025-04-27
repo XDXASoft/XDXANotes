@@ -49,12 +49,8 @@
     
     <!-- Цвета переключателей -->
     <color name="colorPrimaryDarkTheme">#404040</color>
-    <color name="colorPrimaryLightTheme">#80BDFF</color>
-    <color name="lime">#00FF21</color>
     <color name="swichtruecolorDark">#282828</color>
-    <color name="swichtruecolorLight">#EDEDED</color>
     <color name="trackTint">#C8C8C8</color>
-    <color name="switchThumbColorLight">#757575</color>
     <color name="switchThumbColorDark">#202020</color>
     
     <!-- Цвета диалогов -->
@@ -79,7 +75,4 @@
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>
-    <color name="blue">#4E69F0</color>
-    <color name="text_color">#FFFFFF</color>
-    <color name="text_secondary">#B0BEC5</color>
-</resources>
+</resources> 

@@ -121,4 +121,24 @@
     <string name="passwords_synced_successfully">Пароли успешно синхронизированы</string>
     <string name="passwords_sync_failed">Ошибка синхронизации паролей</string>
     <string name="please_login_to_sync">Пожалуйста, войдите в аккаунт для синхронизации</string>
+    <string name="calendar_event">Calendar Event</string>
+    <string name="event_title">Title</string>
+    <string name="event_description">Description</string>
+    <string name="event_date">Date</string>
+    <string name="event_time">Time</string>
+    <string name="event_notification_type">Notification Type</string>
+    <string name="event_no_notification">No notification</string>
+    <string name="event_one_time_notification">One-time notification</string>
+    <string name="event_all_day_notification">All-day notification</string>
+    <string name="event_notification_settings">Notification settings</string>
+    <string name="event_remind_at">Remind at</string>
+    <string name="event_remind_15_min_before">Remind 15 minutes before</string>
+    <string name="event_select_date">Select date</string>
+    <string name="event_select_time">Select time</string>
+    <string name="event_save">Save</string>
+    <string name="event_past_warning">This event is in the past. Date and time cannot be changed.</string>
+    <string name="event_create_past_warning">Creating an event in the past. Mark as completed.</string>
+    <string name="event_fill_title">Please enter event title</string>
+    <string name="event_fill_date">Please select a date</string>
+    <string name="event_fill_time">Please select a time</string>
 </resources>

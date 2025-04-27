@@ -61,7 +61,6 @@ public class CalendarReminderService extends Service {
         createNotificationChannel();
 
         // Запускаем фоновую службу
-        startForeground(FOREGROUND_NOTIFICATION_ID, createForegroundNotification());
 
         // Настраиваем планировщик задач
         scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -105,19 +104,7 @@ public class CalendarReminderService extends Service {
         }
     }
 
-    private Notification createForegroundNotification() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("XDXANotes активен")
-                .setContentText("Следим за вашими событиями")
-                .setSmallIcon(R.drawable.ic_calendar)
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .build();
-    }
 
     private void syncEvents() {
         try {

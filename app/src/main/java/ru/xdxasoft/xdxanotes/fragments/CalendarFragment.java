@@ -441,6 +441,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
             if (requestCode == REQUEST_CODE_ADD_EVENT || requestCode == REQUEST_CODE_UPDATE_EVENT) {
                 CalendarEvent event = (CalendarEvent) data.getSerializableExtra("event");
                 if (event != null) {
+                    // Удалена проверка флага returnToEditor, теперь всегда сохраняем событие
+
                     if (requestCode == REQUEST_CODE_ADD_EVENT) {
                         // Добавляем новое событие
                         database.calendarDao().insert(event);
@@ -449,13 +451,13 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
                         if (firebaseManager.isUserLoggedIn()) {
                             firebaseManager.saveCalendarEventToFirebase(event, success -> {
                                 if (success) {
-                                    showToast("Событие сохранено и синхронизировано");
+                                    showToast(getString(R.string.note_saved));
                                 } else {
-                                    showToast("Событие сохранено локально");
+                                    showToast(getString(R.string.note_saved));
                                 }
                             });
                         } else {
-                            showToast("Событие сохранено локально");
+                            showToast(getString(R.string.note_saved));
                         }
                     } else {
                         // Обновляем существующее событие
@@ -471,13 +473,13 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
                         if (firebaseManager.isUserLoggedIn()) {
                             firebaseManager.saveCalendarEventToFirebase(event, success -> {
                                 if (success) {
-                                    showToast("Событие обновлено и синхронизировано");
+                                    showToast(getString(R.string.note_saved));
                                 } else {
-                                    showToast("Событие обновлено локально");
+                                    showToast(getString(R.string.note_saved));
                                 }
                             });
                         } else {
-                            showToast("Событие обновлено локально");
+                            showToast(getString(R.string.note_saved));
                         }
                     }
 

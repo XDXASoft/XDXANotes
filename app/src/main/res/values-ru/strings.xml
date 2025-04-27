@@ -97,5 +97,24 @@
     <string name="Please_add_some_notes">Пожалуйста добавте описание заметки!</string>
     <string name="To_use_the_application_enable_the_Open_supported_links_option">Для работы приложения включите опцию \'Открывать поддерживаемые ссылки\'.</string>
     <string name="Failed_to_open_settings_Please_check_your_settings_manually">Не удалось открыть настройки. Проверьте параметры вручную.</string>
-
+    <string name="calendar_event">Событие календаря</string>
+    <string name="event_title">Название</string>
+    <string name="event_description">Описание</string>
+    <string name="event_date">Дата</string>
+    <string name="event_time">Время</string>
+    <string name="event_notification_type">Тип уведомления</string>
+    <string name="event_no_notification">Без уведомления</string>
+    <string name="event_one_time_notification">Уведомить один раз</string>
+    <string name="event_all_day_notification">Уведомлять весь день</string>
+    <string name="event_notification_settings">Настройки уведомления</string>
+    <string name="event_remind_at">Напомнить в</string>
+    <string name="event_remind_15_min_before">Напомнить за 15 минут</string>
+    <string name="event_select_date">Выберите дату</string>
+    <string name="event_select_time">Выберите время</string>
+    <string name="event_save">Сохранить</string>
+    <string name="event_past_warning">Событие в прошлом. Нельзя изменить дату и время.</string>
+    <string name="event_create_past_warning">Создание события в прошлом. Установите статус \'Выполнено\'.</string>
+    <string name="event_fill_title">Введите название события</string>
+    <string name="event_fill_date">Выберите дату</string>
+    <string name="event_fill_time">Выберите время</string>
 </resources>
