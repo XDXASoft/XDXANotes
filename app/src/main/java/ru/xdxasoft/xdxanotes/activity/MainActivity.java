@@ -37,10 +37,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
-import ru.xdxasoft.xdxanotes.fragments.PasswordFragment;
+import ru.xdxasoft.xdxanotes.fragments.PasswordAuthFragment;
 import ru.xdxasoft.xdxanotes.fragments.CalendarFragment;
 import ru.xdxasoft.xdxanotes.fragments.NotesFragment;
 import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
+import ru.xdxasoft.xdxanotes.fragments.PinAuthFragment;
 import ru.xdxasoft.xdxanotes.utils.AuthDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
 import ru.xdxasoft.xdxanotes.utils.DialogLauncher;
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             signInAnonymously();
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.navigation_notes) {
                 selectedFragment = new NotesFragment();
             } else if (item.getItemId() == R.id.navigation_passwordmanager) {
-                selectedFragment = new PasswordFragment();
+                selectedFragment = new PinAuthFragment();
             } else if (item.getItemId() == R.id.navigation_settings) {
                 selectedFragment = new SettingsFragment();
             } else if (item.getItemId() == R.id.navigation_schedule) {
@@ -270,9 +270,6 @@ public class MainActivity extends AppCompatActivity {
             handler.removeCallbacks(runnable);
         }
     }
-
-
-
 
     public void showCustomToast(String message, int drawableRes, int color1, int textColor, int backgroundColor, boolean isDEBUG) {
         ToastManager.showToast(this, message, drawableRes, color1, textColor, backgroundColor, isDEBUG);

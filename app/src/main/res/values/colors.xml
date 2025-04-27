@@ -82,4 +82,9 @@
     <color name="blue">#4E69F0</color>
     <color name="text_color">#FFFFFF</color>
     <color name="text_secondary">#B0BEC5</color>
+    
+    <!-- PIN colors -->
+    <color name="pin_button_background">#383838</color>
+    <color name="pin_dot_empty">#757575</color>
+    <color name="pin_dot_filled">#FFFFFF</color>
 </resources>

@@ -141,4 +141,39 @@
     <string name="event_fill_title">Please enter event title</string>
     <string name="event_fill_date">Please select a date</string>
     <string name="event_fill_time">Please select a time</string>
+    
+    <!-- Password authentication strings -->
+    <string name="create_password">Create Security Password</string>
+    <string name="create_password_description">Create a password to protect your sensitive data</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_password_description">Enter your security password to access protected data</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password_created">Password created successfully</string>
+    <string name="please_enter_password">Please enter your password</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="passwords_not_match">Passwords do not match</string>
+    <string name="or">OR</string>
+    <string name="use_fingerprint">Use Fingerprint</string>
+    <string name="biometric_login">Biometric Authentication</string>
+    <string name="login_using_biometric_credential">Confirm with your fingerprint</string>
+    <string name="use_password">Use Password Instead</string>
+    <string name="enable_fingerprint">Enable Fingerprint Authentication</string>
+    <string name="do_you_want_to_enable_fingerprint">Do you want to use fingerprint for future logins?</string>
+    <string name="create">Create</string>
+    <string name="no">No</string>
+    <string name="login">Log in</string>
+    <string name="pin_enter">Enter PIN</string>
+    <string name="pin_create">Create PIN</string>
+    <string name="pin_confirm">Confirm PIN</string>
+    <string name="pin_incorrect">Incorrect PIN</string>
+    <string name="pin_not_match">PINs do not match</string>
+    <string name="pin_login">Log in</string>
+    <string name="pin_success">PIN created successfully</string>
+    <string name="empty_password_error">Please enter password</string>
+    <string name="password_mismatch_error">Passwords do not match</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="biometric_login_title">Biometric Authentication</string>
+    <string name="biometric_login_subtitle">Use your fingerprint to login</string>
+    <string name="cancel">Cancel</string>
 </resources>

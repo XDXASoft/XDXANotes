@@ -117,4 +117,39 @@
     <string name="event_fill_title">Введите название события</string>
     <string name="event_fill_date">Выберите дату</string>
     <string name="event_fill_time">Выберите время</string>
+    <string name="pin_enter">Введите PIN-код</string>
+    <string name="pin_create">Создайте PIN-код</string>
+    <string name="pin_confirm">Подтвердите PIN-код</string>
+    <string name="pin_incorrect">Неверный PIN-код</string>
+    <string name="pin_not_match">PIN-коды не совпадают</string>
+    <string name="pin_login">Войти</string>
+    <string name="pin_success">PIN-код успешно создан</string>
+    
+    <!-- Password authentication strings -->
+    <string name="create_password">Создать пароль безопасности</string>
+    <string name="create_password_description">Создайте пароль для защиты ваших данных</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="enter_password_description">Введите пароль для доступа к защищенным данным</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="password_created">Пароль успешно создан</string>
+    <string name="please_enter_password">Пожалуйста, введите пароль</string>
+    <string name="wrong_password">Неверный пароль</string>
+    <string name="passwords_not_match">Пароли не совпадают</string>
+    <string name="or">ИЛИ</string>
+    <string name="use_fingerprint">Использовать отпечаток пальца</string>
+    <string name="biometric_login">Биометрическая аутентификация</string>
+    <string name="login_using_biometric_credential">Подтвердите отпечатком пальца</string>
+    <string name="use_password">Использовать пароль</string>
+    <string name="enable_fingerprint">Включить аутентификацию по отпечатку</string>
+    <string name="do_you_want_to_enable_fingerprint">Хотите использовать отпечаток пальца для входа в будущем?</string>
+    <string name="create">Создать</string>
+    <string name="no">Нет</string>
+    <string name="login">Войти</string>
+    <string name="empty_password_error">Пожалуйста, введите пароль</string>
+    <string name="password_mismatch_error">Пароли не совпадают</string>
+    <string name="invalid_password">Неверный пароль</string>
+    <string name="authentication_failed">Ошибка аутентификации</string>
+    <string name="biometric_login_title">Биометрическая аутентификация</string>
+    <string name="biometric_login_subtitle">Используйте отпечаток пальца для входа</string>
+    <string name="cancel">Отмена</string>
 </resources>
