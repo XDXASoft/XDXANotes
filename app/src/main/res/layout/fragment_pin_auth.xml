@@ -1,36 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:orientation="vertical">
 
-    <!-- Title -->
     <TextView
         android:id="@+id/tvPinTitle"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:text="@string/pin_enter"
         android:textAlignment="center"
         android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textStyle="bold" />
 
-    <!-- PIN indicator container -->
     <LinearLayout
         android:id="@+id/pinIndicatorContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPinTitle">
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
 
-        <!-- PIN Dots -->
         <View
             android:id="@+id/pinDot1"
             android:layout_width="20dp"
@@ -60,179 +53,190 @@
             android:background="@drawable/pin_dot_empty" />
     </LinearLayout>
 
-    <!-- Error message -->
     <TextView
         android:id="@+id/tvPinError"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:textAlignment="center"
         android:textColor="@android:color/holo_red_light"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pinIndicatorContainer" />
+        android:visibility="invisible" />
 
-    <!-- PIN keypad -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/keypadContainer"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPinError">
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <!-- Row 1: 1 2 3 -->
-        <Button
-            android:id="@+id/btnKeypad1"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="1"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad4"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnKeypad2"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="2"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad5"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad3"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad1"
-            app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/btnKeypad1"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:text="1"
+                android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/btnKeypad3"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="3"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad2"
-            app:layout_constraintTop_toTopOf="parent" />
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
 
-        <!-- Row 2: 4 5 6 -->
-        <Button
-            android:id="@+id/btnKeypad4"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="4"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad7"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad1" />
+            <Button
+                android:id="@+id/btnKeypad2"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="2"
+                android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/btnKeypad5"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="5"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad8"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad6"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad4"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad2" />
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
 
-        <Button
-            android:id="@+id/btnKeypad6"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="6"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad9"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad5"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad3" />
+            <Button
+                android:id="@+id/btnKeypad3"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="3"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
-        <!-- Row 3: 7 8 9 -->
-        <Button
-            android:id="@+id/btnKeypad7"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="7"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypadFingerprint"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad4" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnKeypad8"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="8"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypad0"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad9"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad7"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad5" />
+            <Button
+                android:id="@+id/btnKeypad4"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:text="4"
+                android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/btnKeypad9"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="9"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/btnKeypadBackspace"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad8"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad6" />
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
 
-        <!-- Row 4: Fingerprint, 0, Backspace -->
-        <ImageButton
-            android:id="@+id/btnKeypadFingerprint"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:contentDescription="@string/use_fingerprint"
-            android:src="@drawable/ic_fingerprint"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypad0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad9" />
+            <Button
+                android:id="@+id/btnKeypad5"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="5"
+                android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/btnKeypad0"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:text="0"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnKeypadBackspace"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypadFingerprint"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad8" />
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
 
-        <ImageButton
-            android:id="@+id/btnKeypadBackspace"
-            style="@style/PinKeypadButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:contentDescription="Delete"
-            android:src="@drawable/ic_backspace"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnKeypad0"
-            app:layout_constraintTop_toBottomOf="@+id/btnKeypad9" />
+            <Button
+                android:id="@+id/btnKeypad6"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="6"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout> 
+            <Button
+                android:id="@+id/btnKeypad7"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:text="7"
+                android:textColor="@color/white" />
+
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
+
+            <Button
+                android:id="@+id/btnKeypad8"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="8"
+                android:textColor="@color/white" />
+
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
+
+            <Button
+                android:id="@+id/btnKeypad9"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="9"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"/>
+
+            <Button
+                android:id="@+id/btnKeypad0"
+                style="@style/PinKeypadButton"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:text="0"
+                android:textColor="@color/white" />
+
+            <FrameLayout
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp">
+
+                <ImageButton
+                    android:id="@+id/btnKeypadBackspace"
+                    style="@style/PinKeypadButton"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:contentDescription="Delete"
+                    android:src="@drawable/ic_backspace"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btnKeypadFingerprint"
+                    style="@style/PinKeypadButton"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:contentDescription="@string/use_fingerprint"
+                    android:src="@drawable/ic_fingerprint"
+                    android:visibility="visible" />
+
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

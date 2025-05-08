@@ -26,10 +26,11 @@ public class CalendarEvent implements Serializable {
     String description = "";
 
     @ColumnInfo(name = "date")
-    String date = ""; // Формат: yyyy-MM-dd
+    String date = "";
 
     @ColumnInfo(name = "time")
-    String time = ""; // Формат: HH:mm
+    String time = "";
+
 
     @ColumnInfo(name = "completed")
     boolean completed = false;
@@ -41,10 +42,10 @@ public class CalendarEvent implements Serializable {
     long lastModified = 0;
 
     @ColumnInfo(name = "notificationType")
-    int notificationType = 0; // 0 - нет уведомления, 1 - одноразовое, 2 - весь день
+    int notificationType = 0;
 
     @ColumnInfo(name = "notificationTime")
-    String notificationTime = ""; // Время уведомления, если отличается от времени события
+    String notificationTime = "";
 
     public CalendarEvent() {
         this.lastModified = System.currentTimeMillis();

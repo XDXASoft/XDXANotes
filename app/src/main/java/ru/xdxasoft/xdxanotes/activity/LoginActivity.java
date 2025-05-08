@@ -64,11 +64,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mail, pass;
     private Button btn;
 
-    private ImageButton github_button, google_button, vk_button;
+    private ImageButton github_button, google_button;
 
     private PasswordValidationService passwordValidationService;
     private SessionManager sessionManager;
     private AuthManager authManager;
+
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -117,7 +119,6 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.passtext);
         github_button = findViewById(R.id.github_button);
         google_button = findViewById(R.id.google_button);
-        vk_button = findViewById(R.id.vk_button);
 
         github_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,12 +134,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        vk_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signInWithVK();
-            }
-        });
+
 
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 

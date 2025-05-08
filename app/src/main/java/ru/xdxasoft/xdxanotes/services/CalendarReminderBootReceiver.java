@@ -3,13 +3,11 @@ package ru.xdxasoft.xdxanotes.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
-/**
- * Получатель широковещательного сообщения о загрузке системы. Запускает сервис
- * напоминаний календаря при загрузке устройства.
- */
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 public class CalendarReminderBootReceiver extends BroadcastReceiver {
 
     private static final String TAG = "BootReceiver";
@@ -21,17 +19,11 @@ public class CalendarReminderBootReceiver extends BroadcastReceiver {
                 || intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)
                 || intent.getAction().equals(Intent.ACTION_REBOOT))) {
 
-            Log.d(TAG, "Устройство загружено, запускаем сервис календарных напоминаний");
+            Log.d(TAG, "Устройство загружено, планируем задачу синхронизации");
 
-            // Запускаем сервис напоминаний
-            Intent serviceIntent = new Intent(context, CalendarReminderService.class);
-
-            // Для Android 8.0 (API 26) и выше нельзя запускать фоновые сервисы напрямую
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent);
-            } else {
-                context.startService(serviceIntent);
-            }
+            OneTimeWorkRequest syncRequest = new OneTimeWorkRequest.Builder(SyncCalendarWorker.class)
+                    .build();
+            WorkManager.getInstance(context).enqueue(syncRequest);
         }
     }
 }

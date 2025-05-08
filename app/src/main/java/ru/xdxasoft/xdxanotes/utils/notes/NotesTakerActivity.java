@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -73,12 +74,7 @@ public class NotesTakerActivity extends AppCompatActivity {
                         String description = editText_notes.getText().toString();
 
                         if (description.isEmpty()) {
-                            ToastManager.showToast(NotesTakerActivity.this,
-                                    getString(R.string.Please_add_some_notes),
-                                    R.drawable.warning_black,
-                                    ContextCompat.getColor(NotesTakerActivity.this, R.color.warning_yellow),
-                                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black),
-                                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black));
+                            Toast.makeText(NotesTakerActivity.this, getString(R.string.Please_add_some_notes), Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -106,23 +102,13 @@ public class NotesTakerActivity extends AppCompatActivity {
                         finish();
                     } catch (Exception e) {
                         Log.e(TAG, "Error saving note", e);
-                        ToastManager.showToast(NotesTakerActivity.this,
-                                getString(R.string.Error_while_saving) + e.getMessage(),
-                                R.drawable.ic_error,
-                                ContextCompat.getColor(NotesTakerActivity.this, R.color.error_red),
-                                ContextCompat.getColor(NotesTakerActivity.this, R.color.black),
-                                ContextCompat.getColor(NotesTakerActivity.this, R.color.black));
+                        Toast.makeText(NotesTakerActivity.this, getString(R.string.Error_saving_note), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
-            ToastManager.showToast(NotesTakerActivity.this,
-                    getString(R.string.Initialization_error) + e.getMessage(),
-                    R.drawable.ic_error,
-                    ContextCompat.getColor(NotesTakerActivity.this, R.color.error_red),
-                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black),
-                    ContextCompat.getColor(NotesTakerActivity.this, R.color.black));
+            Toast.makeText(NotesTakerActivity.this, getString(R.string.Initialization_error), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -16,7 +16,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Блок информации о пользователе -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +73,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Блок настроек языка -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

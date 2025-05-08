@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -70,23 +71,18 @@
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
-
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="https" />
                 <data android:host="dev.xdxa.ru" />
                 <data android:pathPrefix="/android" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="https" />
                 <data android:host="dev.xdxa.ru" />
                 <data android:path="/test" />
@@ -106,7 +102,6 @@
             android:exported="false"
             android:enabled="true"
             android:foregroundServiceType="dataSync" />
-
         <receiver
             android:name=".services.CalendarReminderBootReceiver"
             android:enabled="true"
@@ -119,5 +114,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

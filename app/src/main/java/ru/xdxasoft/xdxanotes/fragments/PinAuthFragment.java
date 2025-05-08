@@ -1,6 +1,7 @@
 package ru.xdxasoft.xdxanotes.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.os.VibrationEffect;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +25,26 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Executor;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.activity.LoginActivity;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 
 public class PinAuthFragment extends Fragment implements View.OnClickListener {
 
     private static final String PREFS_NAME = "PinPrefs";
-    private static final String PREF_PIN_HASH = "pin_hash";
     private static final String PREF_FINGERPRINT_ENABLED = "fingerprint_enabled";
     private static final String PREF_FIRST_LOGIN = "first_login";
+    private static final String TAG = "PinAuthFragment";
 
-    // UI elements
     private TextView tvPinTitle;
     private TextView tvPinError;
     private View pinDot1, pinDot2, pinDot3, pinDot4;
@@ -45,20 +52,18 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
     private ImageButton btnFingerprint;
     private ImageButton btnBackspace;
 
-    // Pin storage
     private StringBuilder currentPin = new StringBuilder();
     private String confirmPin = "";
     private boolean createMode = false;
 
-    // Services
     private SharedPreferences sharedPreferences;
     private Vibrator vibrator;
     private boolean hasVibrationPermission = false;
 
-    // Biometric authentication
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
+    private FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,43 +74,44 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize services
+        mAuth = FirebaseAuth.getInstance();
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-        // Check if we have vibration permission
+        btnFingerprint = view.findViewById(R.id.btnKeypadFingerprint);
+        btnBackspace = view.findViewById(R.id.btnKeypadBackspace);
+
         hasVibrationPermission = ContextCompat.checkSelfPermission(requireContext(),
                 android.Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED;
 
-        // Initialize UI elements
         initViews(view);
 
-        // Set mode based on PIN existence
-        createMode = !isPinSet();
-        updateUI();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            navigateToLoginActivity();
+            return;
+        }
 
-        // Set up biometric authentication if available
+        checkPinInFirebase(currentUser.getUid());
+
         if (BiometricManager.from(requireContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 == BiometricManager.BIOMETRIC_SUCCESS) {
             setupBiometricAuth();
-            btnFingerprint.setVisibility(View.VISIBLE);
+            updateButtonVisibility();
         } else {
             btnFingerprint.setVisibility(View.GONE);
         }
     }
 
     private void initViews(View view) {
-        // Title and error
         tvPinTitle = view.findViewById(R.id.tvPinTitle);
         tvPinError = view.findViewById(R.id.tvPinError);
 
-        // PIN dots
         pinDot1 = view.findViewById(R.id.pinDot1);
         pinDot2 = view.findViewById(R.id.pinDot2);
         pinDot3 = view.findViewById(R.id.pinDot3);
         pinDot4 = view.findViewById(R.id.pinDot4);
 
-        // Numeric buttons
         numButtons[0] = view.findViewById(R.id.btnKeypad0);
         numButtons[1] = view.findViewById(R.id.btnKeypad1);
         numButtons[2] = view.findViewById(R.id.btnKeypad2);
@@ -117,11 +123,6 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
         numButtons[8] = view.findViewById(R.id.btnKeypad8);
         numButtons[9] = view.findViewById(R.id.btnKeypad9);
 
-        // Special buttons
-        btnFingerprint = view.findViewById(R.id.btnKeypadFingerprint);
-        btnBackspace = view.findViewById(R.id.btnKeypadBackspace);
-
-        // Set click listeners
         for (Button button : numButtons) {
             button.setOnClickListener(this);
         }
@@ -129,11 +130,20 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
         btnFingerprint.setOnClickListener(this);
     }
 
+    private void updateButtonVisibility() {
+        if (currentPin.length() == 0) {
+            btnFingerprint.setVisibility(View.VISIBLE);
+            btnBackspace.setVisibility(View.INVISIBLE);
+        } else {
+            btnFingerprint.setVisibility(View.INVISIBLE);
+            btnBackspace.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
-        // Handle number buttons
         for (int i = 0; i < numButtons.length; i++) {
             if (id == numButtons[i].getId()) {
                 addDigit(String.valueOf(i));
@@ -141,11 +151,10 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
             }
         }
 
-        // Handle special buttons
         if (id == R.id.btnKeypadBackspace) {
             removeDigit();
         } else if (id == R.id.btnKeypadFingerprint) {
-            if (isPinSet() && isFingerprintEnabled() && currentPin.length() == 0) {
+            if (!createMode && isFingerprintEnabled() && currentPin.length() == 0) {
                 showBiometricPrompt();
             }
         }
@@ -153,87 +162,56 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
 
     private void addDigit(String digit) {
         if (currentPin.length() < 4) {
-            // Vibrate on button press - only if permission is granted
-            if (vibrator != null && hasVibrationPermission) {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(20, VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        // Deprecated in API 26
-                        vibrator.vibrate(20);
-                    }
-                } catch (Exception e) {
-                    // Fail silently
-                }
-            }
-
-            // Add digit to current PIN
+            vibrate();
             currentPin.append(digit);
-
-            // Update PIN dots
             updatePinDots();
+            updateButtonVisibility();
 
-            // Check if PIN is complete (4 digits)
             if (currentPin.length() == 4) {
-                Handler handler = new Handler();
-                handler.postDelayed(this::processPinEntry, 200);
+                new Handler().postDelayed(this::processPinEntry, 200);
             }
         }
     }
 
     private void removeDigit() {
         if (currentPin.length() > 0) {
-            // Vibrate on button press - only if permission is granted
-            if (vibrator != null && hasVibrationPermission) {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(20, VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        // Deprecated in API 26
-                        vibrator.vibrate(20);
-                    }
-                } catch (Exception e) {
-                    // Fail silently
-                }
-            }
-
-            // Remove last digit
+            vibrate();
             currentPin.deleteCharAt(currentPin.length() - 1);
-
-            // Update PIN dots
             updatePinDots();
-
-            // Clear error message when editing
+            updateButtonVisibility();
             tvPinError.setVisibility(View.INVISIBLE);
         }
     }
 
+    private void vibrate() {
+        if (vibrator != null && hasVibrationPermission) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(20, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(20);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Vibration failed", e);
+            }
+        }
+    }
+
     private void updatePinDots() {
-        // Update the PIN dots based on current entry
         pinDot1.setBackgroundResource(currentPin.length() >= 1 ? R.drawable.pin_dot_filled : R.drawable.pin_dot_empty);
         pinDot2.setBackgroundResource(currentPin.length() >= 2 ? R.drawable.pin_dot_filled : R.drawable.pin_dot_empty);
         pinDot3.setBackgroundResource(currentPin.length() >= 3 ? R.drawable.pin_dot_filled : R.drawable.pin_dot_empty);
         pinDot4.setBackgroundResource(currentPin.length() >= 4 ? R.drawable.pin_dot_filled : R.drawable.pin_dot_empty);
-
-        // Show/hide fingerprint button based on PIN entry
-        if (isPinSet() && isFingerprintEnabled()) {
-            btnFingerprint.setVisibility(currentPin.length() == 0 ? View.VISIBLE : View.INVISIBLE);
-            btnBackspace.setVisibility(currentPin.length() > 0 ? View.VISIBLE : View.INVISIBLE);
-        }
     }
 
     private void updateUI() {
-        // Update UI based on current mode (create or verify)
         if (createMode) {
             if (confirmPin.isEmpty()) {
-                // First PIN entry in create mode
                 tvPinTitle.setText(R.string.pin_create);
             } else {
-                // Confirming PIN in create mode
                 tvPinTitle.setText(R.string.pin_confirm);
             }
         } else {
-            // Verify mode
             tvPinTitle.setText(R.string.pin_enter);
         }
     }
@@ -243,15 +221,12 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
 
         if (createMode) {
             if (confirmPin.isEmpty()) {
-                // First PIN entry in create mode
                 confirmPin = enteredPin;
                 resetPinEntry();
                 updateUI();
             } else {
-                // Confirming PIN in create mode
                 if (enteredPin.equals(confirmPin)) {
-                    // PINs match, save the PIN
-                    savePin(enteredPin);
+                    savePinToFirebase(enteredPin);
                     ToastManager.showToast(requireContext(), getString(R.string.pin_success),
                             R.drawable.ic_galohca_black,
                             ContextCompat.getColor(requireContext(), R.color.success_green),
@@ -259,7 +234,6 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
                             ContextCompat.getColor(requireContext(), R.color.black));
                     navigateToPasswordFragment();
                 } else {
-                    // PINs don't match
                     showError(getString(R.string.pin_not_match));
                     confirmPin = "";
                     resetPinEntry();
@@ -267,62 +241,101 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
                 }
             }
         } else {
-            // Verify mode
-            if (verifyPin(enteredPin)) {
-                // PIN is correct
-                navigateToPasswordFragment();
-            } else {
-                // PIN is incorrect
-                showError(getString(R.string.pin_incorrect));
-                resetPinEntry();
-            }
+            verifyPinInFirebase(enteredPin);
         }
     }
 
     private void resetPinEntry() {
         currentPin.setLength(0);
         updatePinDots();
+        updateButtonVisibility();
     }
 
     private void showError(String message) {
         tvPinError.setText(message);
         tvPinError.setVisibility(View.VISIBLE);
 
-        // Vibrate on error - only if permission is granted
         if (vibrator != null && hasVibrationPermission) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator.vibrate(VibrationEffect.createWaveform(new long[]{0, 100, 50, 100}, -1));
                 } else {
-                    // Deprecated in API 26
                     vibrator.vibrate(new long[]{0, 100, 50, 100}, -1);
                 }
             } catch (Exception e) {
-                // Fail silently
+                Log.e(TAG, "Vibration failed", e);
             }
         }
     }
 
-    private boolean isPinSet() {
-        return sharedPreferences.contains(PREF_PIN_HASH);
+    private void checkPinInFirebase(String uid) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid).child("pin_hash");
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                createMode = false;
+                updateUI();
+            } else {
+                createMode = true;
+                updateUI();
+            }
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Ошибка проверки пин-кода в Firebase: " + e.getMessage());
+            ToastManager.showToast(requireContext(), "Ошибка сети, попробуйте позже", R.drawable.ic_error_black,
+                    ContextCompat.getColor(requireContext(), R.color.error_red),
+                    ContextCompat.getColor(requireContext(), R.color.black),
+                    ContextCompat.getColor(requireContext(), R.color.black));
+            navigateToLoginActivity();
+        });
     }
 
-    private boolean isFingerprintEnabled() {
-        return sharedPreferences.getBoolean(PREF_FINGERPRINT_ENABLED, false);
-    }
+    private void savePinToFirebase(String pin) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e(TAG, "Пользователь не авторизован при сохранении пин-кода");
+            navigateToLoginActivity();
+            return;
+        }
 
-    private void savePin(String pin) {
         String pinHash = hashPin(pin);
-        sharedPreferences.edit()
-                .putString(PREF_PIN_HASH, pinHash)
-                .putBoolean(PREF_FIRST_LOGIN, false)
-                .apply();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid()).child("pin_hash");
+        userRef.setValue(pinHash).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "Пин-код успешно сохранен в Firebase");
+                sharedPreferences.edit()
+                        .putBoolean(PREF_FIRST_LOGIN, false)
+                        .apply();
+            } else {
+                Log.e(TAG, "Ошибка сохранения пин-кода в Firebase: " + task.getException().getMessage());
+                showError("Ошибка сохранения пин-кода");
+            }
+        });
     }
 
-    private boolean verifyPin(String pin) {
-        String storedHash = sharedPreferences.getString(PREF_PIN_HASH, "");
+    private void verifyPinInFirebase(String pin) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e(TAG, "Пользователь не авторизован при проверке пин-кода");
+            navigateToLoginActivity();
+            return;
+        }
+
         String inputHash = hashPin(pin);
-        return storedHash.equals(inputHash);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid()).child("pin_hash");
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String storedHash = task.getResult().getValue(String.class);
+                if (storedHash != null && storedHash.equals(inputHash)) {
+                    navigateToPasswordFragment();
+                } else {
+                    showError(getString(R.string.pin_incorrect));
+                    resetPinEntry();
+                }
+            } else {
+                Log.e(TAG, "Ошибка проверки пин-кода: " + task.getException().getMessage());
+                showError("Ошибка сети");
+                resetPinEntry();
+            }
+        });
     }
 
     private String hashPin(String pin) {
@@ -339,36 +352,40 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return pin; // Fallback to plain text
+            Log.e(TAG, "Hashing failed", e);
+            return pin;
         }
+    }
+
+    private boolean isFingerprintEnabled() {
+        return sharedPreferences.getBoolean(PREF_FINGERPRINT_ENABLED, false);
     }
 
     private void setupBiometricAuth() {
         executor = ContextCompat.getMainExecutor(requireContext());
         biometricPrompt = new BiometricPrompt(this, executor,
                 new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                navigateToPasswordFragment();
-            }
+                    @Override
+                    public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        navigateToPasswordFragment();
+                    }
 
-            @Override
-            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                if (errorCode != BiometricPrompt.ERROR_USER_CANCELED
-                        && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                    showError(errString.toString());
-                }
-            }
+                    @Override
+                    public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                        super.onAuthenticationError(errorCode, errString);
+                        if (errorCode != BiometricPrompt.ERROR_USER_CANCELED
+                                && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                            showError(errString.toString());
+                        }
+                    }
 
-            @Override
-            public void onAuthenticationFailed() {
-                super.onAuthenticationFailed();
-                showError(getString(R.string.wrong_password));
-            }
-        });
+                    @Override
+                    public void onAuthenticationFailed() {
+                        super.onAuthenticationFailed();
+                        showError(getString(R.string.wrong_password));
+                    }
+                });
 
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.biometric_login))
@@ -381,27 +398,23 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
         biometricPrompt.authenticate(promptInfo);
     }
 
-    private void showEnableFingerprintDialog() {
-        // After successful PIN creation, ask if user wants to enable fingerprint authentication
-        if (BiometricManager.from(requireContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+    private void navigateToPasswordFragment() {
+        if (createMode && BiometricManager.from(requireContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 == BiometricManager.BIOMETRIC_SUCCESS) {
-            // Set flag for fingerprint authentication
             sharedPreferences.edit()
                     .putBoolean(PREF_FINGERPRINT_ENABLED, true)
                     .apply();
         }
-    }
 
-    private void navigateToPasswordFragment() {
-        // If this is first login after creating PIN, ask about fingerprint
-        if (createMode && BiometricManager.from(requireContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                == BiometricManager.BIOMETRIC_SUCCESS) {
-            showEnableFingerprintDialog();
-        }
-
-        // Navigate to the password fragment
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.contentFragment, new PasswordFragment());
         transaction.commit();
+    }
+
+    private void navigateToLoginActivity() {
+        Intent intent = new Intent(requireContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        requireActivity().finish();
     }
 }

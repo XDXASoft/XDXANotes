@@ -4,65 +4,41 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
-import ru.xdxasoft.xdxanotes.fragments.PasswordAuthFragment;
 import ru.xdxasoft.xdxanotes.fragments.CalendarFragment;
 import ru.xdxasoft.xdxanotes.fragments.NotesFragment;
-import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
 import ru.xdxasoft.xdxanotes.fragments.PinAuthFragment;
-import ru.xdxasoft.xdxanotes.utils.AuthDialogHelper;
-import ru.xdxasoft.xdxanotes.utils.CustomDialogHelper;
-import ru.xdxasoft.xdxanotes.utils.DialogLauncher;
-import ru.xdxasoft.xdxanotes.utils.FcmTopicManager;
+import ru.xdxasoft.xdxanotes.fragments.SettingsFragment;
 import ru.xdxasoft.xdxanotes.utils.LinkApprovalChecker;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ThemeManager;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
-import ru.xdxasoft.xdxanotes.services.CalendarReminderService;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Handler handler;
-    private Runnable runnable;
 
     private FirebaseAuth mAuth;
     private static final String TAG = "MainActivity";
 
-    private BottomNavigationView bottomNavigationView;
+    private com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigationView;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -92,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        LinearLayout toastContainer = findViewById(R.id.toastContainer);
+        ToastManager.init(toastContainer);
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             signInAnonymously();
@@ -105,18 +84,16 @@ public class MainActivity extends AppCompatActivity {
 
         ColorStateList colorStateList = new ColorStateList(
                 new int[][]{
-                    new int[]{android.R.attr.state_checked},
-                    new int[]{}
+                        new int[]{android.R.attr.state_checked},
+                        new int[]{}
                 },
                 new int[]{
-                    ContextCompat.getColor(this, R.color.bottom_nav_active),
-                    ContextCompat.getColor(this, R.color.bottom_nav_inactive)
+                        ContextCompat.getColor(this, R.color.bottom_nav_active),
+                        ContextCompat.getColor(this, R.color.bottom_nav_inactive)
                 }
         );
 
         bottomNavigationView.setItemActiveIndicatorColor(colorStateList);
-        LinearLayout toastContainer = findViewById(R.id.toastContainer);
-        ToastManager.init(toastContainer);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -234,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkUserSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-
         } else {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -266,9 +242,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler != null && runnable != null) {
-            handler.removeCallbacks(runnable);
-        }
     }
 
     public void showCustomToast(String message, int drawableRes, int color1, int textColor, int backgroundColor, boolean isDEBUG) {

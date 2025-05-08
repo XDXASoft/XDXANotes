@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -24,9 +25,11 @@ public class ToastManager {
     private static final Queue<View> toastQueue = new LinkedList<>();
     private static final Handler handler = new Handler(Looper.getMainLooper());
     private static LinearLayout toastContainer;
+    private static final String TAG = "ToastManager";
 
     public static void init(LinearLayout container) {
         toastContainer = container;
+        Log.d(TAG, "ToastManager initialized with container: " + (container != null));
     }
 
     public static void showToast(Context context, String message, int iconResId, int backgroundColor, int textColor, int iconColor) {
@@ -34,6 +37,13 @@ public class ToastManager {
     }
 
     public static void showToast(Context context, String message, int iconResId, int backgroundColor, int textColor, int iconColor, boolean isDebug) {
+        if (toastContainer == null) {
+            Log.e(TAG, "ToastContainer is null. Ensure ToastManager.init() is called before showing toasts.");
+
+            android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (toastQueue.size() >= MAX_TOASTS) {
             View oldToast = toastQueue.poll();
             if (oldToast != null) {
@@ -101,9 +111,11 @@ public class ToastManager {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                toastContainer.removeView(toastView);
+                if (toastContainer != null) {
+                    toastContainer.removeView(toastView);
+                }
                 toastQueue.remove(toastView);
-                if (toastContainer.getChildCount() == 0) {
+                if (toastContainer != null && toastContainer.getChildCount() == 0) {
                     toastContainer.setVisibility(View.GONE);
                 }
             }

@@ -5,7 +5,6 @@
     android:background="@drawable/dialog_background"
     android:padding="16dp">
 
-    <!-- Заголовок и крестик -->
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
@@ -25,7 +24,6 @@
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:tint="@color/white" />
 
-    <!-- Сообщение -->
     <TextView
         android:id="@+id/dialog_message"
         android:layout_width="match_parent"
@@ -36,7 +34,6 @@
         android:textColor="@color/white"
         android:textSize="16sp" />
 
-    <!-- Кнопки авторизации -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +41,6 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <!-- GitHub -->
         <ImageButton
             android:id="@+id/github_button"
             android:layout_width="64dp"
@@ -55,7 +51,6 @@
             android:padding="16dp"
             android:src="@drawable/ic_github" />
 
-        <!-- Google -->
         <ImageButton
             android:id="@+id/google_button"
             android:layout_width="64dp"
@@ -66,7 +61,6 @@
             android:padding="16dp"
             android:src="@drawable/ic_google" />
 
-        <!-- VK ID -->
         <ImageButton
             android:id="@+id/vk_button"
             android:layout_width="64dp"

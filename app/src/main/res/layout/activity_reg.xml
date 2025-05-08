@@ -140,7 +140,6 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <!-- GitHub -->
                     <ImageButton
                         android:id="@+id/github_button"
                         android:layout_width="48dp"
@@ -155,7 +154,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="10dp"/>
 
-                    <!-- Google -->
                     <ImageButton
                         android:id="@+id/google_button"
                         android:layout_width="48dp"
@@ -170,15 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="10dp"/>
 
-                    <!-- VK ID -->
-                    <ImageButton
-                        android:id="@+id/vk_button"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/auth_button_background"
-                        android:contentDescription="VK ID"
-                        android:padding="16dp"
-                        android:src="@drawable/ic_vk" />
+
                 </LinearLayout>
 
                 <Space

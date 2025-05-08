@@ -183,7 +183,7 @@ public class LocaleHelper {
             SharedPreferences prefs = activity.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(KEY_LANGUAGE, newLanguage);
-            editor.putBoolean(KEY_USE_SYSTEM_LANGUAGE, false); // Отключаем использование языка системы
+            editor.putBoolean(KEY_USE_SYSTEM_LANGUAGE, false);
             editor.apply();
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {

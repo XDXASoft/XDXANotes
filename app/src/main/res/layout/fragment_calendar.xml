@@ -11,7 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Заголовок календаря с кнопками навигации -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +45,6 @@
                 android:contentDescription="Следующий месяц" />
         </LinearLayout>
 
-        <!-- Дни недели -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,7 +116,6 @@
                 android:textColor="@color/white" />
         </LinearLayout>
 
-        <!-- Контейнер для дней календаря -->
         <LinearLayout
             android:id="@+id/daysContainer"
             android:layout_width="match_parent"
@@ -134,7 +131,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Заголовок для сегодняшних событий -->
         <TextView
             android:id="@+id/textViewTodayEvents"
             android:layout_width="match_parent"
@@ -145,8 +141,7 @@
             android:textColor="@color/white"
             android:padding="16dp" />
 
-        <!-- Пустое представление, когда нет событий -->
-        <TextView
+         <TextView
             android:id="@+id/emptyEventsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -157,7 +152,6 @@
             android:padding="32dp"
             android:visibility="gone" />
 
-        <!-- Список событий -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewEvents"
             android:layout_width="match_parent"
@@ -169,7 +163,6 @@
 
     </LinearLayout>
 
-    <!-- FAB для добавления новых событий -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"
         android:layout_width="wrap_content"

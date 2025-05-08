@@ -46,33 +46,28 @@ android {
 }
 
 dependencies {
-    // Core dependencies
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.play.services.safetynet)
 
-    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
 
-    // УБЕРИТЕ ВЕРСИИ со всех Firebase зависимостей!
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth") // убрана версия
-    implementation("com.google.firebase:firebase-database") // убрана версия
-    implementation("com.google.firebase:firebase-firestore") // убрана версия
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-inappmessaging-display")
     implementation("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-perf")
 
-    // AndroidX и остальные зависимости без изменений
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.activity:activity:1.9.2")
@@ -81,7 +76,6 @@ dependencies {
     implementation("androidx.work:work-runtime:2.7.1")
     implementation("com.google.android.material:material")
 
-    // Play Services
     implementation("com.google.android.gms:play-services-base:18.1.0")
 
     implementation("androidx.room:room-runtime:2.6.1")

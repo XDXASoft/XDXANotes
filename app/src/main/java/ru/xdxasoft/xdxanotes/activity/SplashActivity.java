@@ -98,9 +98,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    // Метод для синхронизации данных перед переходом на MainActivity
     private void syncDataAndNavigate() {
-        // Синхронизируем события календаря
         firebaseManager.syncCalendarEventsWithFirebase(success -> {
             if (success) {
                 Log.d(TAG, "Синхронизация календарных событий успешно завершена");
@@ -108,7 +106,6 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e(TAG, "Ошибка при синхронизации календарных событий");
             }
 
-            // Синхронизируем заметки
             firebaseManager.syncNotesWithFirebase(notesSuccess -> {
                 if (notesSuccess) {
                     Log.d(TAG, "Синхронизация заметок успешно завершена");
@@ -116,7 +113,6 @@ public class SplashActivity extends AppCompatActivity {
                     Log.e(TAG, "Ошибка при синхронизации заметок");
                 }
 
-                // Синхронизируем пароли
                 firebaseManager.syncPasswordsWithFirebase(passwordsSuccess -> {
                     if (passwordsSuccess) {
                         Log.d(TAG, "Синхронизация паролей успешно завершена");
@@ -124,7 +120,6 @@ public class SplashActivity extends AppCompatActivity {
                         Log.e(TAG, "Ошибка при синхронизации паролей");
                     }
 
-                    // Переходим к главному экрану после всех синхронизаций
                     navigateToMain();
                 });
             });

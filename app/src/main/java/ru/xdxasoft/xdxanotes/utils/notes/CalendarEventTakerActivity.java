@@ -3,6 +3,7 @@ package ru.xdxasoft.xdxanotes.utils.notes;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ru.xdxasoft.xdxanotes.R;
+import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.ToastManager;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 import ru.xdxasoft.xdxanotes.utils.notes.Models.CalendarEvent;
@@ -41,15 +43,21 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
 
     private String selectedDate = "";
     private String selectedTime = "";
-    private int selectedNotificationType = 0; // 0 - нет, 1 - уведомление в момент события
+    private int selectedNotificationType = 0;
     private boolean isEditMode = false;
     private CalendarEvent existingEvent;
     private FirebaseManager firebaseManager;
     private Calendar selectedCalendar;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleHelper.applyLanguage(this);
         setContentView(R.layout.activity_calendar_event_taker);
 
         initViews();
@@ -58,10 +66,8 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
         firebaseManager = FirebaseManager.getInstance(this);
         selectedCalendar = Calendar.getInstance();
 
-        // По умолчанию показываем опцию "Без уведомления"
         radioButtonNoNotification.setChecked(true);
 
-        // Проверяем, находимся ли мы в режиме редактирования
         if (getIntent().hasExtra("event")) {
             isEditMode = true;
             existingEvent = (CalendarEvent) getIntent().getSerializableExtra("event");
@@ -73,17 +79,14 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
                 textViewDate.setText(formatDisplayDate(selectedDate));
                 textViewTime.setText(selectedTime);
 
-                // Устанавливаем значения для уведомлений
                 selectedNotificationType = existingEvent.getNotificationType();
 
-                // Выбираем соответствующий радиобаттон
                 if (selectedNotificationType == 0) {
                     radioButtonNoNotification.setChecked(true);
                 } else if (selectedNotificationType == 1) {
                     radioButtonOneTime.setChecked(true);
                 }
 
-                // Проверяем, не является ли событие прошедшим
                 try {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     Calendar eventCalendar = Calendar.getInstance();
@@ -91,7 +94,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
                     if (eventDate != null) {
                         eventCalendar.setTime(eventDate);
 
-                        // Сброс времени для сравнения только дат
                         Calendar today = Calendar.getInstance();
                         today.set(Calendar.HOUR_OF_DAY, 0);
                         today.set(Calendar.MINUTE, 0);
@@ -104,24 +106,13 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
                         eventCalendar.set(Calendar.MILLISECOND, 0);
 
                         if (eventCalendar.before(today)) {
-                            // Если событие в прошлом, запрещаем менять дату и время
                             textViewDate.setEnabled(false);
                             textViewTime.setEnabled(false);
 
-                            // Визуальное отображение отключенных полей
                             textViewDate.setAlpha(0.5f);
                             textViewTime.setAlpha(0.5f);
 
-                            // Показываем предупреждение
-                            ToastManager.showToast(
-                                    this,
-                                    getString(R.string.event_past_warning),
-                                    R.drawable.ic_error,
-                                    ContextCompat.getColor(this, R.color.warning_yellow),
-                                    ContextCompat.getColor(this, R.color.black),
-                                    ContextCompat.getColor(this, R.color.black),
-                                    true
-                            );
+                            Toast.makeText(CalendarEventTakerActivity.this, getString(R.string.event_past_warning), Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (Exception e) {
@@ -129,11 +120,9 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
                 }
             }
         } else if (getIntent().hasExtra("date")) {
-            // Если это создание нового события, и передана дата
             selectedDate = getIntent().getStringExtra("date");
             textViewDate.setText(formatDisplayDate(selectedDate));
 
-            // Проверяем, не является ли событие прошедшим
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Calendar eventCalendar = Calendar.getInstance();
@@ -141,7 +130,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
                 if (eventDate != null) {
                     eventCalendar.setTime(eventDate);
 
-                    // Сброс времени для сравнения только дат
                     Calendar today = Calendar.getInstance();
                     today.set(Calendar.HOUR_OF_DAY, 0);
                     today.set(Calendar.MINUTE, 0);
@@ -154,32 +142,21 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
                     eventCalendar.set(Calendar.MILLISECOND, 0);
 
                     if (eventCalendar.before(today)) {
-                        // При создании события в прошлом, показываем уведомление
-                        ToastManager.showToast(
-                                this,
-                                getString(R.string.event_create_past_warning),
-                                R.drawable.ic_error,
-                                ContextCompat.getColor(this, R.color.warning_yellow),
-                                ContextCompat.getColor(this, R.color.black),
-                                ContextCompat.getColor(this, R.color.black),
-                                true
-                        );
+                        Toast.makeText(CalendarEventTakerActivity.this, getString(R.string.event_create_past_warning), Toast.LENGTH_SHORT).show();
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            // По умолчанию текущая дата
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             selectedDate = dateFormat.format(calendar.getTime());
             textViewDate.setText(formatDisplayDate(selectedDate));
 
-            // По умолчанию текущее время (округленное до ближайших 30 минут)
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
-            minute = (minute / 30) * 30; // Округляем до ближайших 30 минут
+            minute = (minute / 30) * 30;
             calendar.set(Calendar.MINUTE, minute);
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
             selectedTime = timeFormat.format(calendar.getTime());
@@ -198,7 +175,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
         radioButtonNoNotification = findViewById(R.id.radioButtonNoNotification);
         radioButtonOneTime = findViewById(R.id.radioButtonOneTime);
 
-        // Установка календаря по умолчанию на текущее время
         selectedCalendar = Calendar.getInstance();
     }
 
@@ -218,7 +194,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
 
         buttonSave.setOnClickListener(v -> saveEvent());
 
-        // Если мы редактируем событие, заполняем поля существующими данными
         if (isEditMode && existingEvent != null) {
             editTextTitle.setText(existingEvent.getTitle());
             editTextDescription.setText(existingEvent.getDescription());
@@ -227,7 +202,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
             textViewDate.setText(formatDisplayDate(selectedDate));
             textViewTime.setText(selectedTime);
 
-            // Устанавливаем тип уведомления
             selectedNotificationType = existingEvent.getNotificationType();
             if (selectedNotificationType == 0) {
                 radioButtonNoNotification.setChecked(true);
@@ -238,7 +212,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
     }
 
     private void showDatePickerDialog() {
-        // Если поле заблокировано для прошедшего события, не показываем диалог
         if (!textViewDate.isEnabled()) {
             return;
         }
@@ -279,7 +252,6 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
     }
 
     private void showTimePickerDialog() {
-        // Если поле заблокировано для прошедшего события, не показываем диалог
         if (!textViewTime.isEnabled()) {
             return;
         }
@@ -338,65 +310,36 @@ public class CalendarEventTakerActivity extends AppCompatActivity {
         String description = editTextDescription.getText().toString().trim();
 
         if (title.isEmpty()) {
-            ToastManager.showToast(
-                    this,
-                    getString(R.string.event_fill_title),
-                    R.drawable.ic_error,
-                    ContextCompat.getColor(this, R.color.error_red),
-                    ContextCompat.getColor(this, R.color.black),
-                    ContextCompat.getColor(this, R.color.black),
-                    true
-            );
+            Toast.makeText(this, getString(R.string.event_fill_title), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (selectedDate.isEmpty()) {
-            ToastManager.showToast(
-                    this,
-                    getString(R.string.event_fill_date),
-                    R.drawable.ic_error,
-                    ContextCompat.getColor(this, R.color.error_red),
-                    ContextCompat.getColor(this, R.color.black),
-                    ContextCompat.getColor(this, R.color.black),
-                    true
-            );
+            Toast.makeText(this, getString(R.string.event_fill_date), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (selectedTime.isEmpty()) {
-            ToastManager.showToast(
-                    this,
-                    getString(R.string.event_fill_time),
-                    R.drawable.ic_error,
-                    ContextCompat.getColor(this, R.color.error_red),
-                    ContextCompat.getColor(this, R.color.black),
-                    ContextCompat.getColor(this, R.color.black),
-                    true
-            );
+            Toast.makeText(this, getString(R.string.event_fill_time), Toast.LENGTH_SHORT).show();
             return;
         }
 
         CalendarEvent event;
 
         if (isEditMode && existingEvent != null) {
-            // Редактируем существующее событие
             existingEvent.setTitle(title);
             existingEvent.setDescription(description);
             existingEvent.setDate(selectedDate);
             existingEvent.setTime(selectedTime);
             existingEvent.setNotificationType(selectedNotificationType);
-            // Убеждаемся, что у события есть eventId
             if (existingEvent.getEventId() == null || existingEvent.getEventId().isEmpty()) {
                 existingEvent.setEventId(IdGenerator.generateUUID());
             }
             event = existingEvent;
         } else {
-            // Создаем новое событие
             event = new CalendarEvent(title, description, selectedDate, selectedTime,
                     firebaseManager.isUserLoggedIn() ? firebaseManager.getUserId() : "");
             event.setNotificationType(selectedNotificationType);
-            // У нового события eventId должен быть установлен в конструкторе
-            // Но на всякий случай проверим
             if (event.getEventId() == null || event.getEventId().isEmpty()) {
                 event.setEventId(IdGenerator.generateUUID());
             }

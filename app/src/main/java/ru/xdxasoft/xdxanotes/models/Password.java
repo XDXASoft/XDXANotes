@@ -2,6 +2,8 @@ package ru.xdxasoft.xdxanotes.models;
 
 import androidx.annotation.Keep;
 
+import com.google.firebase.database.PropertyName;
+
 import java.io.Serializable;
 
 import ru.xdxasoft.xdxanotes.utils.IdGenerator;
@@ -9,10 +11,19 @@ import ru.xdxasoft.xdxanotes.utils.IdGenerator;
 @Keep
 public class Password implements Serializable {
 
+    @PropertyName("id")
     private String id;
+
+    @PropertyName("title")
     private String title;
+
+    @PropertyName("username")
     private String username;
+
+    @PropertyName("password")
     private String password;
+
+    @PropertyName("userId")
     private String userId;
 
     public Password() {

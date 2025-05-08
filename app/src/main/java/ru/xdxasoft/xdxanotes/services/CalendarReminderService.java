@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -37,7 +36,7 @@ public class CalendarReminderService extends Service {
     private static final String TAG = "CalendarReminder";
     private static final String CHANNEL_ID = "calendar_reminders";
     private static final int FOREGROUND_NOTIFICATION_ID = 1001;
-    private static final long SYNC_INTERVAL = 1 * 60 * 1000; // 1 минут
+    private static final long SYNC_INTERVAL = 1 * 60 * 1000;
 
     private ScheduledExecutorService scheduler;
     private RoomDB database;
@@ -48,33 +47,33 @@ public class CalendarReminderService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         Log.d(TAG, "Сервис календарных напоминаний запущен");
 
-        // Инициализация баз данных и сервисов
-        database = RoomDB.getInstance(this);
-        firebaseManager = FirebaseManager.getInstance(this);
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            database = RoomDB.getInstance(this);
+            firebaseManager = FirebaseManager.getInstance(this);
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        // Создаем канал уведомлений
-        createNotificationChannel();
+            createNotificationChannel();
 
-        // Запускаем фоновую службу
-
-        // Настраиваем планировщик задач
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-
-        // Запускаем задачу синхронизации событий
-        scheduler.scheduleAtFixedRate(this::syncEvents, 0, SYNC_INTERVAL, TimeUnit.MILLISECONDS);
-
-        // Запускаем задачу проверки напоминаний
-        scheduler.scheduleAtFixedRate(this::checkUpcomingEvents, 0, 60, TimeUnit.SECONDS);
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            scheduler.scheduleAtFixedRate(this::syncEvents, 0, SYNC_INTERVAL, TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(this::checkUpcomingEvents, 0, 60, TimeUnit.SECONDS);
+        });
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Будем перезапускать сервис, если он будет убит системой
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Напоминания о событиях")
+                .setContentText("Сервис работает в фоновом режиме")
+                .setSmallIcon(R.drawable.ic_calendar)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+
+        startForeground(FOREGROUND_NOTIFICATION_ID, notification);
+
         return START_STICKY;
     }
 
@@ -97,20 +96,16 @@ public class CalendarReminderService extends Service {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Напоминания о событиях",
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_LOW
             );
             channel.setDescription("Канал для уведомлений о календарных событиях");
             notificationManager.createNotificationChannel(channel);
         }
     }
 
-
-
     private void syncEvents() {
         try {
             Log.d(TAG, "Синхронизация событий календаря");
-
-            // Если пользователь авторизован, синхронизируем с Firebase
             if (firebaseManager.isUserLoggedIn()) {
                 firebaseManager.syncCalendarEventsWithFirebase(success -> {
                     if (success) {
@@ -129,18 +124,16 @@ public class CalendarReminderService extends Service {
         try {
             Log.d(TAG, "Проверка предстоящих событий");
 
-            // Получаем текущее время
             Calendar now = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
             String currentDate = dateFormat.format(now.getTime());
 
-            // Получаем все события на сегодня
             List<CalendarEvent> todayEvents = database.calendarDao().getEventsByDate(currentDate);
 
             for (CalendarEvent event : todayEvents) {
                 if (event.isCompleted()) {
-                    continue; // Пропускаем завершенные события
+                    continue;
                 }
 
                 try {
@@ -151,16 +144,13 @@ public class CalendarReminderService extends Service {
                         continue;
                     }
 
-                    // Разница между текущим временем и временем события в минутах
                     long diffInMillis = eventTime.getTime() - currentTime.getTime();
                     long diffInMinutes = diffInMillis / (60 * 1000);
 
-                    // Если событие начинается в течение следующих 5 минут или тип уведомления - весь день
                     if ((diffInMinutes >= 0 && diffInMinutes <= 5) || event.getNotificationType() == 2) {
                         showEventNotification(event);
                     }
 
-                    // Если у события есть отдельное время для уведомления
                     if (event.getNotificationType() == 1 && !event.getNotificationTime().isEmpty()) {
                         Date notificationTime = timeFormat.parse(event.getNotificationTime());
 
@@ -183,21 +173,17 @@ public class CalendarReminderService extends Service {
     }
 
     private void showEventNotification(CalendarEvent event) {
-        // Создаем уникальный ID для уведомления на основе eventId или ID события
         int notificationId;
         if (event.getEventId() != null && !event.getEventId().isEmpty()) {
-            // Используем хеш-код eventId в качестве ID уведомления
             notificationId = event.getEventId().hashCode();
         } else {
-            // Для обратной совместимости с событиями, у которых нет eventId
             notificationId = event.getID() + 2000;
         }
 
-        // Создаем Intent для перехода к MainActivity
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("openCalendar", true);
         intent.putExtra("eventDate", event.getDate());
-        // Добавляем eventId для точного перехода к событию
+
         if (event.getEventId() != null && !event.getEventId().isEmpty()) {
             intent.putExtra("eventId", event.getEventId());
         }
@@ -206,25 +192,23 @@ public class CalendarReminderService extends Service {
 
         NotificationCompat.Builder builder;
 
-        if (event.getNotificationType() == 2) { // Если это целодневное уведомление
-            // Для целодневных уведомлений создаем постоянное уведомление
+        if (event.getNotificationType() == 2) {
             builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_calendar)
                     .setContentTitle("Весь день: " + event.getTitle())
                     .setContentText(event.getDescription())
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
-                    .setOngoing(true) // Уведомление не может быть смахнуто пользователем
-                    .setTimeoutAfter(-1); // Не истекает автоматически
+                    .setOngoing(true)
+                    .setTimeoutAfter(-1);
         } else {
-            // Для обычных уведомлений
             builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_calendar)
                     .setContentTitle(event.getTitle())
                     .setContentText(event.getDescription())
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
-                    .setAutoCancel(true); // Удаляется при нажатии
+                    .setAutoCancel(true);
         }
 
         notificationManager.notify(notificationId, builder.build());

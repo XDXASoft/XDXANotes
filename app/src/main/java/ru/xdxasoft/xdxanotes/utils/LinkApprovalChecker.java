@@ -15,7 +15,6 @@ import ru.xdxasoft.xdxanotes.R;
 public class LinkApprovalChecker {
 
     public static boolean isLinkSwitchEnabled(Context context) {
-        // Обновляем контекст с нужной локалью
         Context localizedContext = LocaleHelper.applyLanguage(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -40,7 +39,6 @@ public class LinkApprovalChecker {
     }
 
     public static void promptToEnableLinkHandling(Context context) {
-        // Обновляем контекст с нужной локалью
         Context localizedContext = LocaleHelper.applyLanguage(context);
 
         ToastManager.showToast(localizedContext,
@@ -53,7 +51,7 @@ public class LinkApprovalChecker {
         try {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             intent.setData(Uri.parse("package:" + localizedContext.getPackageName()));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Добавляем флаг для перехода
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             localizedContext.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();

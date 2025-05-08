@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">XDXANotes</string>
     <string name="locate">en</string>
@@ -97,30 +98,6 @@
     <string name="Please_add_some_notes">Please add some notes!</string>
     <string name="To_use_the_application_enable_the_Open_supported_links_option">To use the application, enable the \'Open supported links\' option.</string>
     <string name="Failed_to_open_settings_Please_check_your_settings_manually">Failed to open settings. Please check your settings manually.</string>
-    <string name="account_info">Информация об аккаунте</string>
-    <string name="not_logged_in">Вы не вошли в аккаунт</string>
-    <string name="auth_method">Способ авторизации</string>
-    <string name="email">Email</string>
-    <string name="not_available">недоступно</string>
-    <string name="logout">Выйти из аккаунта</string>
-    <string name="logged_out_successfully">Вы успешно вышли из аккаунта</string>
-    <string name="email_password">Email и пароль</string>
-    <string name="phone_number">Номер телефона</string>
-    <string name="unknown">Неизвестно</string>
-    <string name="theme">Тема</string>
-    <string name="current_theme">Текущая тема</string>
-    <string name="light_theme">Светлая</string>
-    <string name="dark_theme">Тёмная</string>
-    <string name="system_theme">Системная</string>
-    <string name="light_theme_applied">Светлая тема применена</string>
-    <string name="dark_theme_applied">Тёмная тема применена</string>
-    <string name="system_theme_applied">Применена системная тема</string>
-    <string name="theme_applied">Тема применена</string>
-    <string name="notes_synced_successfully">Заметки успешно синхронизированы</string>
-    <string name="notes_sync_failed">Ошибка синхронизации заметок</string>
-    <string name="passwords_synced_successfully">Пароли успешно синхронизированы</string>
-    <string name="passwords_sync_failed">Ошибка синхронизации паролей</string>
-    <string name="please_login_to_sync">Пожалуйста, войдите в аккаунт для синхронизации</string>
     <string name="calendar_event">Calendar Event</string>
     <string name="event_title">Title</string>
     <string name="event_description">Description</string>
@@ -141,8 +118,6 @@
     <string name="event_fill_title">Please enter event title</string>
     <string name="event_fill_date">Please select a date</string>
     <string name="event_fill_time">Please select a time</string>
-    
-    <!-- Password authentication strings -->
     <string name="create_password">Create Security Password</string>
     <string name="create_password_description">Create a password to protect your sensitive data</string>
     <string name="enter_password">Enter Password</string>
@@ -176,4 +151,30 @@
     <string name="biometric_login_title">Biometric Authentication</string>
     <string name="biometric_login_subtitle">Use your fingerprint to login</string>
     <string name="cancel">Cancel</string>
+
+    <string name="account_info">Account Info</string>
+    <string name="not_logged_in">You are not logged in</string>
+    <string name="auth_method">Authentication method</string>
+    <string name="not_available">not available</string>
+    <string name="logout">Log out</string>
+    <string name="logged_out_successfully">Logged out successfully</string>
+    <string name="email_password">Email and password</string>
+    <string name="phone_number">Phone number</string>
+    <string name="unknown">Unknown</string>
+    <string name="theme">Theme</string>
+    <string name="current_theme">Current theme</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="system_theme">System</string>
+    <string name="light_theme_applied">Light theme applied</string>
+    <string name="dark_theme_applied">Dark theme applied</string>
+    <string name="system_theme_applied">System theme applied</string>
+    <string name="theme_applied">Theme applied</string>
+    <string name="notes_synced_successfully">Notes synced successfully</string>
+    <string name="notes_sync_failed">Notes sync failed</string>
+    <string name="passwords_synced_successfully">Passwords synced successfully</string>
+    <string name="passwords_sync_failed">Passwords sync failed</string>
+    <string name="please_login_to_sync">Please login to sync</string>
+    <string name="email">Email</string>
+    <string name="pinorunpin">Pip/Unpin</string>
 </resources>

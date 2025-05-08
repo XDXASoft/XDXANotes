@@ -52,7 +52,7 @@ public class RegActivity extends AppCompatActivity {
 
     private Button regbtn;
 
-    private ImageButton github_button, google_button, vk_button;
+    private ImageButton github_button, google_button;
     private EditText mailreg, passreg;
     private FirebaseAuth mauth;
     private AuthManager authManager;
@@ -79,7 +79,6 @@ public class RegActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         github_button = findViewById(R.id.github_button);
         google_button = findViewById(R.id.google_button);
-        vk_button = findViewById(R.id.vk_button);
 
         github_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,12 +94,7 @@ public class RegActivity extends AppCompatActivity {
             }
         });
 
-        vk_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signInWithVK();
-            }
-        });
+
 
         authManager = new AuthManager();
 
@@ -464,13 +458,6 @@ public class RegActivity extends AppCompatActivity {
         finish();
     }
 
-    private void signInWithVK() {
-        ToastManager.showToast(RegActivity.this,
-                getString(R.string.In_development),
-                R.drawable.ic_settings,
-                ContextCompat.getColor(this, R.color.warning_yellow),
-                ContextCompat.getColor(this, R.color.black),
-                ContextCompat.getColor(this, R.color.black));
-    }
+
 
 }

@@ -26,24 +26,17 @@ import ru.xdxasoft.xdxanotes.activity.RegActivity;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 
-/**
- * Фрагмент настроек приложения. Позволяет управлять аккаунтом пользователя и
- * менять языковые настройки.
- */
 public class SettingsFragment extends Fragment {
 
     private static final String TAG = "SettingsFragment";
 
-    // UI компоненты
     private TextView tvUserEmail, tvAuthMethod, tvCurrentLanguage, tvLanguageMode;
     private Button btnLogout, btnToggleLanguage, btnSystemLanguage;
 
-    // Firebase компоненты
     private FirebaseAuth firebaseAuth;
     private FirebaseManager firebaseManager;
 
     public SettingsFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -56,7 +49,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         initViews(view);
@@ -68,7 +60,6 @@ public class SettingsFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        // Инициализация компонентов пользовательского интерфейса
         tvUserEmail = view.findViewById(R.id.tvUserEmail);
         tvAuthMethod = view.findViewById(R.id.tvAuthMethod);
         tvCurrentLanguage = view.findViewById(R.id.tvCurrentLanguage);
@@ -80,9 +71,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // Настройка обработчиков событий
 
-        // Выход из аккаунта
         btnLogout.setOnClickListener(v -> {
             logoutUser();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -91,14 +80,12 @@ public class SettingsFragment extends Fragment {
             mainActivity.finish();
         });
 
-        // Переключение языка
         btnToggleLanguage.setOnClickListener(v -> {
             if (getActivity() != null) {
                 LocaleHelper.toggleLanguage(getActivity());
             }
         });
 
-        // Использование системного языка
         btnSystemLanguage.setOnClickListener(v -> {
             if (getActivity() != null) {
                 LocaleHelper.useSystemLanguage(getActivity());
@@ -110,17 +97,14 @@ public class SettingsFragment extends Fragment {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
         if (currentUser != null) {
-            // Установка email пользователя
             String email = currentUser.getEmail();
             tvUserEmail.setText(getString(R.string.email) + ": " + (email != null ? email : getString(R.string.not_available)));
 
-            // Определение метода авторизации
             String authMethod = getAuthMethod(currentUser);
             tvAuthMethod.setText(getString(R.string.auth_method) + ": " + authMethod);
 
             btnLogout.setEnabled(true);
         } else {
-            // Пользователь не авторизован
             tvUserEmail.setText(getString(R.string.not_logged_in));
             tvAuthMethod.setText(getString(R.string.auth_method) + ": " + getString(R.string.not_available));
             btnLogout.setEnabled(false);

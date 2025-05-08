@@ -27,13 +27,11 @@ import ru.xdxasoft.xdxanotes.services.PasswordValidationService;
 
 public class PasswordAuthFragment extends Fragment {
 
-    // Constants for shared preferences
     private static final String PREFS_NAME = "PasswordPrefs";
     private static final String PREF_PASSWORD_HASH = "password_hash";
     private static final String PREF_FINGERPRINT_ENABLED = "fingerprint_enabled";
     private static final String PREF_FIRST_LOGIN = "first_login";
 
-    // UI elements
     private TextView tvTitle;
     private TextView tvDescription;
     private EditText etPassword;
@@ -42,11 +40,9 @@ public class PasswordAuthFragment extends Fragment {
     private LinearLayout fingerprintContainer;
     private Button btnUseFingerprintAuth;
 
-    // Services
     private PasswordValidationService passwordService;
     private SharedPreferences sharedPreferences;
 
-    // Biometric authentication
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
@@ -60,15 +56,12 @@ public class PasswordAuthFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize services
         passwordService = new PasswordValidationService();
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        // Initialize UI elements
         initViews(view);
         setupUI();
 
-        // Set up biometric authentication if available
         if (BiometricManager.from(requireContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 == BiometricManager.BIOMETRIC_SUCCESS) {
             setupBiometricAuth();
@@ -91,14 +84,10 @@ public class PasswordAuthFragment extends Fragment {
         boolean isFingerprintEnabled = sharedPreferences.getBoolean(PREF_FINGERPRINT_ENABLED, false);
 
         if (passwordHash == null) {
-            // Password not set yet, show create password UI
             setupCreatePasswordUI();
         } else {
-            // Password exists, show login UI
             setupLoginUI(isFingerprintEnabled);
 
-            // If it's the first login on this device and fingerprint is available,
-            // we'll suggest enabling it after successful password verification
             if (isFirstLogin && BiometricManager.from(requireContext())
                     .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                     == BiometricManager.BIOMETRIC_SUCCESS) {
@@ -124,7 +113,6 @@ public class PasswordAuthFragment extends Fragment {
 
         btnSubmit.setOnClickListener(v -> verifyPassword());
 
-        // Show fingerprint button if enabled
         if (isFingerprintEnabled) {
             fingerprintContainer.setVisibility(View.VISIBLE);
             btnUseFingerprintAuth.setOnClickListener(v -> showBiometricPrompt());
@@ -147,20 +135,16 @@ public class PasswordAuthFragment extends Fragment {
             return;
         }
 
-        // Hash and save the password
         String passwordHash = passwordService.hashPassword(password);
         sharedPreferences.edit()
                 .putString(PREF_PASSWORD_HASH, passwordHash)
                 .putBoolean(PREF_FIRST_LOGIN, false)
                 .apply();
 
-        // Check if biometric authentication is available
         if (BiometricManager.from(requireContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 == BiometricManager.BIOMETRIC_SUCCESS) {
-            // Ask if user wants to enable fingerprint authentication
             showEnableFingerprintDialog();
         } else {
-            // Navigate to password fragment
             navigateToPasswordFragment();
         }
     }
@@ -190,14 +174,12 @@ public class PasswordAuthFragment extends Fragment {
             @Override
             public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                // Authentication succeeded, navigate to password fragment
                 navigateToPasswordFragment();
             }
 
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                // If it's not a user cancellation, show error
                 if (errorCode != BiometricPrompt.ERROR_USER_CANCELED
                         && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
                     Toast.makeText(requireContext(), errString, Toast.LENGTH_SHORT).show();
@@ -223,14 +205,11 @@ public class PasswordAuthFragment extends Fragment {
     }
 
     private void showEnableFingerprintDialog() {
-        // Show dialog asking if user wants to enable fingerprint authentication
-        // If yes, enable it in shared preferences
         sharedPreferences.edit().putBoolean(PREF_FINGERPRINT_ENABLED, true).apply();
         navigateToPasswordFragment();
     }
 
     private void navigateToPasswordFragment() {
-        // Navigate to the PasswordFragment
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         transaction.replace(R.id.contentFragment, new PasswordFragment());
         transaction.addToBackStack(null);
