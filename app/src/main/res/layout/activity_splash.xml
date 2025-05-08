@@ -2,30 +2,53 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     android:backgroundTint="@color/gray"
     android:background="@color/white">
 
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginBottom="24dp"
-        android:src="@drawable/ic_xdxasoftfontwhite" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_xdxasoftfontwhite" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminateTint="@color/dialog_neutral_gray" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/dialog_neutral_gray"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Power by XDXASoft"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="10sp" />
+    </LinearLayout>
 </LinearLayout>
