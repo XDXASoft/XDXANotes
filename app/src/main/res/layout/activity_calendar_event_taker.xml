@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_color">
+    app:background="@color/background_color">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -69,9 +69,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/event_title"
+                    android:background="@drawable/rounded_search_background"
                     android:inputType="textCapSentences"
                     android:maxLines="1"
-                    android:textColor="@color/primary_text_color"
+                    android:textColor="@color/white"
                     android:textColorHint="@color/secondary_text_color" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,12 +92,14 @@
                     android:id="@+id/editTextEventDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:gravity="top"
                     android:hint="@string/event_description"
+                    android:background="@drawable/rounded_search_background"
                     android:inputType="textMultiLine"
                     android:maxLines="10"
                     android:minLines="3"
-                    android:textColor="@color/primary_text_color"
+                    android:textColor="@color/white"
                     android:textColorHint="@color/secondary_text_color" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -113,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/gray"
+                android:background="@color/background_color"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
 
@@ -122,9 +125,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_calendar"
+                    app:background="@drawable/rounded_search_background"
                     android:padding="16dp"
                     android:text="@string/event_select_date"
-                    android:textColor="@color/primary_text_color"
+                    android:textColor="@color/white"
                     android:textSize="16sp" />
             </androidx.cardview.widget.CardView>
 
@@ -141,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/gray"
+                app:background="@color/background_color"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
 
@@ -150,6 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_time"
+                    android:background="@drawable/rounded_search_background"
                     android:padding="16dp"
                     android:text="@string/event_select_time"
                     android:textColor="@color/primary_text_color"
@@ -170,7 +175,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_corner_background"
+                android:background="@drawable/rounded_search_background"
                 android:padding="16dp"
                 android:orientation="vertical">
 
@@ -194,6 +199,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonOneTime"
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
                     android:text="@string/event_one_time_notification"
                     android:textColor="@color/primary_text_color"

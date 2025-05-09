@@ -131,13 +131,12 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateButtonVisibility() {
-        if (currentPin.length() == 0) {
+        if (currentPin.length() == 0 && !createMode && isFingerprintEnabled()) {
             btnFingerprint.setVisibility(View.VISIBLE);
-            btnBackspace.setVisibility(View.INVISIBLE);
         } else {
-            btnFingerprint.setVisibility(View.INVISIBLE);
-            btnBackspace.setVisibility(View.VISIBLE);
+            btnFingerprint.setVisibility(View.GONE);
         }
+        btnBackspace.setVisibility(currentPin.length() > 0 ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -273,14 +272,14 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
         userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                 createMode = false;
-                updateUI();
             } else {
                 createMode = true;
-                updateUI();
+                btnFingerprint.setVisibility(View.GONE);
             }
+            updateUI();
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Ошибка проверки пин-кода в Firebase: " + e.getMessage());
-            ToastManager.showToast(requireContext(), "Ошибка сети, попробуйте позже", R.drawable.ic_error_black,
+            ToastManager.showToast(requireContext(), getString(R.string.Network_error_please_try_again_later), R.drawable.ic_error_black,
                     ContextCompat.getColor(requireContext(), R.color.error_red),
                     ContextCompat.getColor(requireContext(), R.color.black),
                     ContextCompat.getColor(requireContext(), R.color.black));
@@ -306,7 +305,7 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
                         .apply();
             } else {
                 Log.e(TAG, "Ошибка сохранения пин-кода в Firebase: " + task.getException().getMessage());
-                showError("Ошибка сохранения пин-кода");
+                showError(getString(R.string.Error_saving_pin_code));
             }
         });
     }
@@ -332,7 +331,7 @@ public class PinAuthFragment extends Fragment implements View.OnClickListener {
                 }
             } else {
                 Log.e(TAG, "Ошибка проверки пин-кода: " + task.getException().getMessage());
-                showError("Ошибка сети");
+                showError(getString(R.string.Network_error));
                 resetPinEntry();
             }
         });

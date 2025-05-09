@@ -241,7 +241,7 @@ public class PasswordFragment extends Fragment {
 
         database.delete("passwords", "id = ?", new String[]{id});
         loadPasswords();
-        showToast("DELLPASS", false);
+        showToast(getString(R.string.Password_removed), false);
     }
 
     private void togglePasswordVisibility(Password password, TextView tvPassword) {

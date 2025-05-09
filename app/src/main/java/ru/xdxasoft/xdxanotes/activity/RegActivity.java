@@ -51,7 +51,6 @@ import ru.xdxasoft.xdxanotes.utils.AuthManager;
 public class RegActivity extends AppCompatActivity {
 
     private Button regbtn;
-
     private ImageButton github_button, google_button;
     private EditText mailreg, passreg;
     private FirebaseAuth mauth;
@@ -93,8 +92,6 @@ public class RegActivity extends AppCompatActivity {
                 signInWithGoogle();
             }
         });
-
-
 
         authManager = new AuthManager();
 
@@ -182,16 +179,20 @@ public class RegActivity extends AppCompatActivity {
             public void onSuccess(String message) {
                 showLoading(false);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                ToastManager.showToast(
+                        RegActivity.this,
+                        getString(R.string.Account_created_verification_email_sent),
+                        R.drawable.ic_galohca_black,
+                        ContextCompat.getColor(RegActivity.this, R.color.success_green),
+                        ContextCompat.getColor(RegActivity.this, R.color.black),
+                        ContextCompat.getColor(RegActivity.this, R.color.black)
+                );
                 if (user != null) {
-                    ToastManager.showToast(
-                            RegActivity.this,
-                            getString(R.string.To_use_the_application_you_must_accept_the_terms_of_use),
-                            R.drawable.ic_galohca_black,
-                            ContextCompat.getColor(RegActivity.this, R.color.success_green),
-                            ContextCompat.getColor(RegActivity.this, R.color.black),
-                            ContextCompat.getColor(RegActivity.this, R.color.black)
-                    );
-                    showPrivacyTermsDialogForService(user, "email");
+                    user.sendEmailVerification()
+                            .addOnCompleteListener(task -> {
+
+                                showPrivacyTermsDialogForService(user, "email");
+                            });
                 }
             }
 
@@ -249,6 +250,12 @@ public class RegActivity extends AppCompatActivity {
                                         }
                                     }
                                     if (privacyAccepted) {
+                                        ToastManager.showToast(RegActivity.this,
+                                                getString(R.string.Account_created),
+                                                R.drawable.ic_galohca_black,
+                                                ContextCompat.getColor(RegActivity.this, R.color.success_green),
+                                                ContextCompat.getColor(RegActivity.this, R.color.black),
+                                                ContextCompat.getColor(RegActivity.this, R.color.black));
                                         navigateToMainActivity(user.getEmail(), true);
                                     } else {
                                         showPrivacyTermsDialogForService(user, "github");
@@ -311,6 +318,12 @@ public class RegActivity extends AppCompatActivity {
                                         }
                                     }
                                     if (privacyAccepted) {
+                                        ToastManager.showToast(RegActivity.this,
+                                                getString(R.string.Account_created),
+                                                R.drawable.ic_galohca_black,
+                                                ContextCompat.getColor(RegActivity.this, R.color.success_green),
+                                                ContextCompat.getColor(RegActivity.this, R.color.black),
+                                                ContextCompat.getColor(RegActivity.this, R.color.black));
                                         navigateToMainActivity(user.getEmail(), true);
                                     } else {
                                         showPrivacyTermsDialogForService(user, "google");
@@ -392,7 +405,7 @@ public class RegActivity extends AppCompatActivity {
                         usersRef.push().setValue(newUser)
                                 .addOnSuccessListener(aVoid -> {
                                     ToastManager.showToast(RegActivity.this,
-                                            getString(R.string.Registration_successful),
+                                            getString(R.string.Account_created),
                                             R.drawable.ic_galohca_black,
                                             ContextCompat.getColor(RegActivity.this, R.color.success_green),
                                             ContextCompat.getColor(RegActivity.this, R.color.black),
@@ -411,10 +424,26 @@ public class RegActivity extends AppCompatActivity {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             String userKey = snapshot.getKey();
                             if (userKey != null) {
-                                usersRef.child(userKey).child("privacyAccepted").setValue(true);
+                                usersRef.child(userKey).child("privacyAccepted").setValue(true)
+                                        .addOnSuccessListener(aVoid -> {
+                                            ToastManager.showToast(RegActivity.this,
+                                                    getString(R.string.Account_created),
+                                                    R.drawable.ic_galohca_black,
+                                                    ContextCompat.getColor(RegActivity.this, R.color.success_green),
+                                                    ContextCompat.getColor(RegActivity.this, R.color.black),
+                                                    ContextCompat.getColor(RegActivity.this, R.color.black));
+                                            navigateToMainActivity(user.getEmail(), true);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            ToastManager.showToast(RegActivity.this,
+                                                    getString(R.string.Error_creating_profile) + e.getMessage(),
+                                                    R.drawable.ic_error,
+                                                    ContextCompat.getColor(RegActivity.this, R.color.error_red),
+                                                    ContextCompat.getColor(RegActivity.this, R.color.black),
+                                                    ContextCompat.getColor(RegActivity.this, R.color.black));
+                                        });
                             }
                         }
-                        navigateToMainActivity(user.getEmail(), true);
                     }
                 }
 
@@ -457,7 +486,4 @@ public class RegActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-
-
 }

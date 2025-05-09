@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Заголовок диалога"
+        android:text="@string/Dialogue_title"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Сообщение диалога"
+        android:text="@string/Dialogue_message"
         android:textColor="@color/white"
         android:textSize="16sp" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@color/colorPrimaryDarkTheme"
-        android:hint="Введите текст"
+        android:hint="@string/Enter_text"
         android:padding="12dp"
         android:textColor="@color/white"
         android:textColorHint="@color/gray_text" />
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Отмена"
+            android:text="@string/Cancel"
             android:textColor="@color/colorPrimaryDarkTheme" />
 
         <Button
@@ -55,7 +55,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ОК"
+            android:text="@string/OK"
             android:textColor="@color/colorPrimaryDarkTheme" />
     </LinearLayout>
 </LinearLayout>

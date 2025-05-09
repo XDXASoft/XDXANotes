@@ -33,7 +33,7 @@ public class FirebaseInitializer {
                     } else {
                         Log.e(TAG, "Ошибка получения токена", task.getException());
                         ToastManager.showToast(localizedApplication,
-                                "Ошибка получения токена",
+                                application.getString(R.string.Error_getting_token),
                                 R.drawable.ic_error,
                                 ContextCompat.getColor(localizedApplication, R.color.error_red),
                                 ContextCompat.getColor(localizedApplication, R.color.black),

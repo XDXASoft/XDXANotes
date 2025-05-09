@@ -95,10 +95,10 @@ public class CalendarReminderService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Напоминания о событиях",
+                    getString(R.string.Event_Reminders),
                     NotificationManager.IMPORTANCE_LOW
             );
-            channel.setDescription("Канал для уведомлений о календарных событиях");
+            channel.setDescription(getString(R.string.Channel_for_calendar_event_notifications));
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -195,7 +195,7 @@ public class CalendarReminderService extends Service {
         if (event.getNotificationType() == 2) {
             builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_calendar)
-                    .setContentTitle("Весь день: " + event.getTitle())
+                    .setContentTitle(getString(R.string.All_day) + ": " + event.getTitle())
                     .setContentText(event.getDescription())
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)

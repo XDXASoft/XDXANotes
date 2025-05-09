@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkURL();
 
-        tets();
     }
 
     private void checkSystemLanguage() {
@@ -152,22 +151,7 @@ public class MainActivity extends AppCompatActivity {
         checkSystemLanguage();
     }
 
-    public void tets() {
-        Intent intent = getIntent();
-        if (intent.getData() != null && intent.getData().getPath().equals("/test")) {
-            String errCode = "E100";
-            ToastManager.showToast(this,
-                    "Ошибка подключения!\nКод ошибки: " + errCode,
-                    R.drawable.ic_error_black,
-                    ContextCompat.getColor(this, R.color.error_red),
-                    ContextCompat.getColor(this, R.color.black),
-                    ContextCompat.getColor(this, R.color.black));
-        }
 
-        if (mAuth.getCurrentUser() != null) {
-            loadUserData();
-        }
-    }
 
     public void checkURL() {
         boolean isSwitchEnabled = LinkApprovalChecker.isLinkSwitchEnabled(this);

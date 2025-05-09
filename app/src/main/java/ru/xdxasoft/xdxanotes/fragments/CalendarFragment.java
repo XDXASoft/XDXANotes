@@ -36,19 +36,12 @@ import ru.xdxasoft.xdxanotes.utils.notes.CalendarEventTakerActivity;
 import ru.xdxasoft.xdxanotes.utils.notes.DataBase.RoomDB;
 import ru.xdxasoft.xdxanotes.utils.notes.Models.CalendarEvent;
 
-/**
- * A simple {@link Fragment} subclass. Use the
- * {@link CalendarFragment#newInstance} factory method to create an instance of
- * this fragment.
- */
+
 public class CalendarFragment extends Fragment implements View.OnClickListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -77,18 +70,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
 
 
     public CalendarFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of this fragment using
-     * the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CalendarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static CalendarFragment newInstance(String param1, String param2) {
         CalendarFragment fragment = new CalendarFragment();
         Bundle args = new Bundle();
@@ -366,7 +350,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
 
         TextView todayHeader = rootView.findViewById(R.id.textViewTodayEvents);
         if (isDateToday(selectedDateCalendar)) {
-            todayHeader.setText("Сегодня");
+            todayHeader.setText(getString(R.string.Today));
         } else {
             SimpleDateFormat displayFormat = new SimpleDateFormat("dd MMMM", new Locale("ru"));
             todayHeader.setText(displayFormat.format(selectedDateCalendar.getTime()));
@@ -488,7 +472,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
             CalendarEvent event = events.get(position);
 
             if (event.getNotificationType() == 2) {
-                holder.textViewTime.setText("Весь день");
+                holder.textViewTime.setText(getString(R.string.All_day));
                 holder.textViewTime.setTypeface(null, android.graphics.Typeface.BOLD);
             } else {
                 holder.textViewTime.setText(event.getTime());
@@ -537,7 +521,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener {
 
                 loadEvents();
 
-                showToast("Событие удалено");
+                showToast(getString(R.string.Event_removed));
                 return false;
             });
         }
