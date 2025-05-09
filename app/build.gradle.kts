@@ -17,6 +17,7 @@ android {
                 this.outputFileName = "XDXANotes_${versionName}.apk"
             }
         }
+
     }
 
     defaultConfig {
