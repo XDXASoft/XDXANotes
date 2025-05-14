@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import ru.xdxasoft.xdxanotes.R;
 import ru.xdxasoft.xdxanotes.utils.LocaleHelper;
+import ru.xdxasoft.xdxanotes.utils.ThemeManager;
 import ru.xdxasoft.xdxanotes.utils.User;
 import ru.xdxasoft.xdxanotes.utils.firebase.FirebaseManager;
 
@@ -42,6 +43,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocaleHelper.applyLanguage(this);
+        ThemeManager.applyTheme(this);
         setContentView(R.layout.activity_splash);
 
         FirebaseApp.initializeApp(this);
